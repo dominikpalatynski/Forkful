@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { LayoutWrapper } from "@/components/layout-wrapper";
 
 interface Props {
   title?: string;
@@ -18,7 +19,9 @@ const { title = "10x Astro Starter" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <slot />
+    <LayoutWrapper client:load>
+      <slot />
+    </LayoutWrapper>
   </body>
 </html>
 
