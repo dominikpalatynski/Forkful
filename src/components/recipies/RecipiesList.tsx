@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../store/query";
+import { RecipieAdd } from "./RecipieAdd";
 
 export const RecipiesList = () => {
     const { isPending, error, data } = useQuery({
@@ -15,5 +16,10 @@ export const RecipiesList = () => {
       if (error) return 'An error has occurred: ' + error.message
 
     
-  return <div>RecipiesList {JSON.stringify(data)}</div>;
+  return (
+  <>
+  <div>RecipiesList {JSON.stringify(data)}</div>
+  <RecipieAdd />
+  </>
+  );
 };
