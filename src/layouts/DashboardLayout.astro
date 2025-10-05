@@ -1,0 +1,17 @@
+---
+// src/layouts/DashboardLayout.astro
+import BaseLayout from "./BaseLayout.astro";
+import { LayoutWrapper } from "@/components/layout-wrapper";
+
+interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props as Props;
+---
+
+<BaseLayout title={title}>
+  <LayoutWrapper client:idle>
+    <slot />
+  </LayoutWrapper>
+</BaseLayout>
