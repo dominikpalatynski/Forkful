@@ -38,7 +38,7 @@ export type RecipeStepCommand = Pick<
  */
 export type CreateRecipeCommand = {
   name: Recipe["name"]
-  description: Recipe["description"]
+  description?: Recipe["description"]
   generationId?: Recipe["generation_id"]
   ingredients: RecipeIngredientCommand[]
   steps: RecipeStepCommand[]
@@ -58,7 +58,7 @@ export type UpdateRecipeStepCommand = RecipeStepCommand & Partial<Pick<Step, "id
  */
 export type UpdateRecipeCommand = {
   name: Recipe["name"]
-  description: Recipe["description"]
+  description?: Recipe["description"]
   ingredients: UpdateRecipeIngredientCommand[]
   steps: UpdateRecipeStepCommand[]
   tags: string[]

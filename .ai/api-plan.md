@@ -35,12 +35,22 @@
     ```
 -   **Success Response**:
     -   **Code**: `201 Created`
-    -   **Content**: The newly created recipe object.
+    -   **Content**: The full recipe object including ingredients, steps, and tags.
         ```json
         {
           "id": "uuid-goes-here",
           "name": "Spaghetti Carbonara",
-          "description": "tasty carbonnara"
+          "description": "A classic Italian pasta dish.",
+          "ingredients": [
+            { "id": "uuid", "content": "200g spaghetti", "position": 1 },
+            { "id": "uuid", "content": "100g pancetta", "position": 2 },
+            { "id": "uuid", "content": "2 large eggs", "position": 3 },
+          ],
+          "steps": [
+            { "id": "uuid", "content": "Boil the pasta.", "position": 1 },
+            { "id": "uuid", "content": "Fry the pancetta.", "position": 2 }
+          ],
+          "tags": ["pasta", "italian", "quick"]
         }
         ```
 -   **Error Responses**:
