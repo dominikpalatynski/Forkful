@@ -2,9 +2,15 @@ import type { SupabaseClientType } from "../../db/supabase.client";
 import type {
   CreateRecipeCommand,
   RecipeDetailDto,
+  PaginatedRecipesDto,
+  RecipeListItemDto
 } from "../../types";
+import type { GetRecipesSchemaType } from "../schemas/recipe.schema";
+
+
 import { 
-  SupabaseRecipeWithJoinsSchema,
+  SupabaseRecipeWithJoinsSchema, 
+  RecipeListResultSchema,
 } from "../schemas/recipe.schema";
 
 /**
@@ -249,6 +255,99 @@ export class RecipeService {
     };
 
     return recipeDetailDto;
+  }
+
+  /**
+   * Retrieves a paginated, sortable, and filterable list of recipes for a user.
+   * Supports filtering by tag, sorting by name or created_at, and pagination.
+   *
+   * @param userId - The authenticated user's ID
+   * @param options - Query options including pagination, sorting, and filtering
+   * @returns Paginated list of recipes with metadata
+   * @throws Error if database operations fail
+   */
+  async getRecipesForUser(
+    userId: string,
+    options: GetRecipesSchemaType
+  ): Promise<PaginatedRecipesDto> {
+    const { page, pageSize, sortBy, order, tag } = options;
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    try {
+      // Build the base query for recipes
+      let query = this.supabase
+        .from("recipes")
+        .select(`
+          id,
+          name,
+          description,
+          created_at,
+          recipe_tags (
+            tags (
+              name
+            )
+          )
+        `, { count: 'exact' })
+        .eq("user_id", userId);
+
+      // Apply tag filter if provided
+      if (tag) {
+        query = query
+          .eq("recipe_tags.tags.name", tag);
+      }
+
+      // Apply sorting
+      const isAscending = order === 'asc';
+      query = query.order(sortBy, { ascending: isAscending });
+
+      // Apply pagination
+      query = query.range(from, to);
+
+      // Execute the query
+      const { data: recipes, error: recipesError, count } = await query;
+
+      if (recipesError) {
+        throw new Error(`Failed to fetch recipes: ${recipesError.message}`);
+      }
+
+      const parseResult = RecipeListResultSchema.safeParse(recipes);
+
+      if (!parseResult.success) {
+        throw new Error(`Invalid recipe data structure: ${parseResult.error.message}`);
+      }
+
+      const recipesWithTags = parseResult.data;
+            
+      const recipeListItems: RecipeListItemDto[] = (recipesWithTags ?? []).map((recipe) => ({
+        id: recipe.id,
+        name: recipe.name,
+        description: recipe.description,
+        tags: (recipe.recipe_tags ?? [])
+          .map((rt) => rt.tags?.name ?? "")
+          .filter((name: string | undefined): name is string => !!name),
+      }));
+
+      // Calculate pagination metadata
+      const totalItems = count ?? 0;
+      const totalPages = Math.ceil(totalItems / pageSize);
+
+      return {
+        data: recipeListItems,
+        pagination: {
+          page,
+          pageSize,
+          totalItems,
+          totalPages,
+        },
+      };
+    } catch (error) {
+      throw new Error(
+        error instanceof Error
+          ? `Failed to get recipes for user: ${error.message}`
+          : "Failed to get recipes for user: Unknown error"
+      );
+    }
   }
 }
 

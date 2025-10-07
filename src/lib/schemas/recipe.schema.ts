@@ -24,7 +24,7 @@ export const RecipeStepCommandSchema = z.object({
  */
 export const CreateRecipeSchema = z.object({
   name: z.string().min(1, "Recipe name is required").max(255, "Recipe name is too long"),
-  description: z.string().nullable().optional(),
+  description: z.string().optional(),
   generationId: z.string().uuid("Invalid generation ID format").optional(),
   ingredients: z.array(RecipeIngredientCommandSchema).default([]),
   steps: z.array(RecipeStepCommandSchema).default([]),
@@ -60,6 +60,43 @@ export const SupabaseRecipeWithJoinsSchema = z.object({
     }).nullable(),
   })).nullable(),
 });
+
+/**
+ * Schema for validating Supabase query result when fetching a recipe with joins.
+ * This validates the raw structure returned by Supabase before transforming it to DTO.
+ */
+export const RecipeListResultSchema = z.array(z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  description: z.string().nullable(),
+  created_at: z.string(),
+  recipe_tags: z.array(z.object({
+    tags: z.object({
+      name: z.string(),
+    }).nullable(),
+  })).nullable(),
+}));
+
+/**
+ * Schema for validating GET /api/recipes query parameters.
+ * Used for paginated, sortable and filterable recipe listing.
+ */
+export const GetRecipesSchema = z.object({
+  page: z.number().int().positive("Page must be a positive integer").default(1),
+  pageSize: z.number().int().positive("Page size must be a positive integer").max(100, "Page size cannot exceed 100").default(10),
+  sortBy: z.enum(["name", "created_at"], {
+    errorMap: () => ({ message: "Sort by must be either 'name' or 'created_at'" })
+  }).default("created_at"),
+  order: z.enum(["asc", "desc"], {
+    errorMap: () => ({ message: "Order must be either 'asc' or 'desc'" })
+  }).default("desc"),
+  tag: z.string().min(1, "Tag name cannot be empty").optional(),
+});
+
+/**
+ * Type inference for GetRecipesSchema
+ */
+export type GetRecipesSchemaType = z.infer<typeof GetRecipesSchema>;
 
 /**
  * Type inference for SupabaseRecipeWithJoinsSchema

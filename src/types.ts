@@ -40,9 +40,9 @@ export type CreateRecipeCommand = {
   name: Recipe["name"]
   description?: Recipe["description"]
   generationId?: Recipe["generation_id"]
-  ingredients: RecipeIngredientCommand[]
-  steps: RecipeStepCommand[]
-  tags: string[]
+  ingredients?: RecipeIngredientCommand[]
+  steps?: RecipeStepCommand[]
+  tags?: string[]
 }
 
 /** Helper type for ingredients in update command. ID is optional for new items. */
@@ -58,7 +58,7 @@ export type UpdateRecipeStepCommand = RecipeStepCommand & Partial<Pick<Step, "id
  */
 export type UpdateRecipeCommand = {
   name: Recipe["name"]
-  description?: Recipe["description"]
+  description: Recipe["description"]
   ingredients: UpdateRecipeIngredientCommand[]
   steps: UpdateRecipeStepCommand[]
   tags: string[]
