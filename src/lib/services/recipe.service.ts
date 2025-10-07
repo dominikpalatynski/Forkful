@@ -732,5 +732,54 @@ export class RecipeService {
       console.error("Failed to rollback recipe update:", rollbackError);
     }
   }
+
+  /**
+   * Deletes a recipe and all its related data (ingredients, steps, recipe_tags).
+   * Implements proper authorization checking to ensure only the owner can delete the recipe.
+   * Uses database CASCADE constraints for automatic cleanup of related data.
+   * 
+   * @param recipeId - The recipe's UUID to delete
+   * @param userId - The authenticated user's ID (for authorization)
+   * @throws NotFoundError if recipe doesn't exist
+   * @throws ForbiddenError if user doesn't own the recipe
+   * @throws Error for other database errors
+   */
+  async deleteRecipe(recipeId: string, userId: string): Promise<void> {
+    // Step 1: Check if recipe exists (without user filter)
+    const { data: recipeExists, error: existsError } = await this.supabase
+      .from("recipes")
+      .select("id, user_id")
+      .eq("id", recipeId)
+      .single();
+
+    if (existsError) {
+      if (existsError.code === 'PGRST116') {
+        // No rows returned - recipe doesn't exist
+        throw new NotFoundError(`Recipe with ID '${recipeId}' not found`);
+      }
+      // Other database error
+      throw new Error(`Failed to check recipe existence: ${existsError.message}`);
+    }
+
+    if (!recipeExists) {
+      throw new NotFoundError(`Recipe with ID '${recipeId}' not found`);
+    }
+
+    // Step 2: Check if user owns the recipe
+    if (recipeExists.user_id !== userId) {
+      throw new ForbiddenError(`Access denied. You don't have permission to delete this recipe`);
+    }
+
+    // Step 3: Delete the recipe (CASCADE will handle related data)
+    const { error: deleteError } = await this.supabase
+      .from("recipes")
+      .delete()
+      .eq("id", recipeId)
+      .eq("user_id", userId); // Additional safety check
+
+    if (deleteError) {
+      throw new Error(`Failed to delete recipe: ${deleteError.message}`);
+    }
+  }
 }
 

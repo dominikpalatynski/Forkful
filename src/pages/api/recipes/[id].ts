@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
-import { GetRecipeByIdParamsSchema, UpdateRecipeSchema } from "../../../lib/schemas/recipe.schema";
+import { RecipeIdParamsSchema, UpdateRecipeSchema } from "../../../lib/schemas/recipe.schema";
 import { RecipeService, NotFoundError, ForbiddenError } from "../../../lib/services/recipe.service";
 
 // Disable prerendering for this API endpoint
@@ -30,7 +30,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
     // Validate the recipe ID parameter
     let validatedParams;
     try {
-      validatedParams = GetRecipeByIdParamsSchema.parse(params);
+      validatedParams = RecipeIdParamsSchema.parse(params);
     } catch (validationError) {
       if (validationError instanceof z.ZodError) {
         return new Response(
@@ -159,7 +159,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     // Step 1: Validate the recipe ID parameter
     let validatedParams;
     try {
-      validatedParams = GetRecipeByIdParamsSchema.parse(params);
+      validatedParams = RecipeIdParamsSchema.parse(params);
     } catch (validationError) {
       if (validationError instanceof z.ZodError) {
         return new Response(
@@ -290,6 +290,128 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
   } catch (error) {
     // Catch-all for unexpected errors
     console.error("Unexpected error in PUT /api/recipes/[id]:", error);
+    return new Response(
+      JSON.stringify({
+        error: "Internal server error",
+        message: "An unexpected error occurred while processing your request",
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+};
+
+/**
+ * DELETE /api/recipes/{id}
+ * Deletes a recipe and all its related data for the authenticated user.
+ * 
+ * Path parameters:
+ * - id: UUID of the recipe to delete
+ * 
+ * Returns 204 No Content on success or appropriate error codes:
+ * - 400 Bad Request: Invalid UUID format
+ * - 401 Unauthorized: User not authenticated
+ * - 403 Forbidden: User doesn't own the recipe
+ * - 404 Not Found: Recipe not found
+ * - 500 Internal Server Error: Database or unexpected error
+ */
+export const DELETE: APIRoute = async ({ params, locals }) => {
+  try {
+    // TODO: In production, get userId from authenticated session
+    // For development, use a default user ID
+    const DEFAULT_DEV_USER_ID = "ba120fed-a207-4eb6-85ec-934467468eaf";
+    const userId = DEFAULT_DEV_USER_ID;
+
+    // Step 1: Validate the recipe ID parameter
+    let validatedParams;
+    try {
+      validatedParams = RecipeIdParamsSchema.parse(params);
+    } catch (validationError) {
+      if (validationError instanceof z.ZodError) {
+        return new Response(
+          JSON.stringify({
+            error: "Invalid recipe ID",
+            details: validationError.errors,
+          }),
+          {
+            status: 400,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+      throw validationError;
+    }
+
+    // Step 2: Initialize recipe service and delete recipe
+    const recipeService = new RecipeService(locals.supabase);
+
+    try {
+      await recipeService.deleteRecipe(validatedParams.id, userId);
+    } catch (serviceError) {
+      console.error("Failed to delete recipe:", serviceError);
+      
+      // Handle specific custom error types
+      if (serviceError instanceof NotFoundError) {
+        return new Response(
+          JSON.stringify({
+            error: "Recipe not found",
+            message: "The recipe with the specified ID does not exist.",
+          }),
+          {
+            status: 404,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+      
+      if (serviceError instanceof ForbiddenError) {
+        return new Response(
+          JSON.stringify({
+            error: "Access forbidden",
+            message: "You don't have permission to delete this recipe.",
+          }),
+          {
+            status: 403,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+      
+      // Generic server error for other errors
+      return new Response(
+        JSON.stringify({
+          error: "Failed to delete recipe",
+          message:
+            serviceError instanceof Error
+              ? serviceError.message
+              : "An unexpected error occurred",
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    // Step 3: Return success response (204 No Content)
+    return new Response(null, {
+      status: 204,
+    });
+  } catch (error) {
+    // Catch-all for unexpected errors
+    console.error("Unexpected error in DELETE /api/recipes/[id]:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
