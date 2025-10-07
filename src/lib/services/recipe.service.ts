@@ -14,6 +14,23 @@ import {
 } from "../schemas/recipe.schema";
 
 /**
+ * Custom error classes for recipe service operations
+ */
+export class NotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "NotFoundError";
+  }
+}
+
+export class ForbiddenError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ForbiddenError";
+  }
+}
+
+/**
  * Service for handling recipe-related business logic and database operations.
  */
 export class RecipeService {
@@ -190,17 +207,45 @@ export class RecipeService {
 
   /**
    * Retrieves a complete recipe by ID, including ingredients, steps, and tags using JOIN.
+   * Implements proper authorization checking to differentiate between NotFound and Forbidden errors.
    * 
    * @param recipeId - The recipe's UUID
    * @param userId - The authenticated user's ID (for authorization)
    * @returns The recipe details
-   * @throws Error if recipe not found or database error occurs
+   * @throws NotFoundError if recipe doesn't exist
+   * @throws ForbiddenError if user doesn't own the recipe
+   * @throws Error for other database errors
    */
   async getRecipeById(
     recipeId: string,
     userId: string
   ): Promise<RecipeDetailDto> {
-    // Fetch recipe with all related data using JOIN
+    // Step 1: First check if recipe exists (without user filter)
+    const { data: recipeExists, error: existsError } = await this.supabase
+      .from("recipes")
+      .select("id, user_id")
+      .eq("id", recipeId)
+      .single();
+
+    if (existsError) {
+      if (existsError.code === 'PGRST116') {
+        // No rows returned - recipe doesn't exist
+        throw new NotFoundError(`Recipe with ID '${recipeId}' not found`);
+      }
+      // Other database error
+      throw new Error(`Failed to check recipe existence: ${existsError.message}`);
+    }
+
+    if (!recipeExists) {
+      throw new NotFoundError(`Recipe with ID '${recipeId}' not found`);
+    }
+
+    // Step 2: Check if user owns the recipe
+    if (recipeExists.user_id !== userId) {
+      throw new ForbiddenError(`Access denied. You don't have permission to view this recipe`);
+    }
+
+    // Step 3: Fetch recipe with all related data using JOIN
     const { data: recipe, error: recipeError } = await this.supabase
       .from("recipes")
       .select(`
@@ -228,10 +273,10 @@ export class RecipeService {
       .single();
 
     if (recipeError || !recipe) {
-      throw new Error(`Failed to fetch recipe: ${recipeError?.message ?? "Recipe not found"}`);
+      throw new Error(`Failed to fetch recipe details: ${recipeError?.message ?? "Unknown error"}`);
     }
 
-    // Validate and parse Supabase query result with runtime type checking
+    // Step 4: Validate and parse Supabase query result with runtime type checking
     const parseResult = SupabaseRecipeWithJoinsSchema.safeParse(recipe);
     
     if (!parseResult.success) {
@@ -240,7 +285,7 @@ export class RecipeService {
 
     const supabaseRecipe = parseResult.data;
 
-    // Transform Supabase structure to clean DTO structure
+    // Step 5: Transform Supabase structure to clean DTO structure
     const recipeDetailDto: RecipeDetailDto = {
       id: supabaseRecipe.id,
       name: supabaseRecipe.name,

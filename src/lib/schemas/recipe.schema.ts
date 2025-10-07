@@ -99,6 +99,19 @@ export const GetRecipesSchema = z.object({
 export type GetRecipesSchemaType = z.infer<typeof GetRecipesSchema>;
 
 /**
+ * Schema for validating the recipe ID parameter from URL path.
+ * Ensures the ID is a valid UUID format for GET /api/recipes/{id}.
+ */
+export const GetRecipeByIdParamsSchema = z.object({
+  id: z.string().uuid("Invalid recipe ID format. Must be a valid UUID."),
+});
+
+/**
+ * Type inference for GetRecipeByIdParamsSchema
+ */
+export type GetRecipeByIdParamsType = z.infer<typeof GetRecipeByIdParamsSchema>;
+
+/**
  * Type inference for SupabaseRecipeWithJoinsSchema
  */
 export type SupabaseRecipeWithJoins = z.infer<typeof SupabaseRecipeWithJoinsSchema>;
