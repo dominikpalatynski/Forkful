@@ -112,6 +112,43 @@ export const GetRecipeByIdParamsSchema = z.object({
 export type GetRecipeByIdParamsType = z.infer<typeof GetRecipeByIdParamsSchema>;
 
 /**
+ * Schema for validating ingredients in update recipe commands.
+ * Each ingredient can have an optional ID (for existing items) and must have content and position.
+ */
+export const UpdateRecipeIngredientCommandSchema = z.object({
+  id: z.string().uuid("Invalid ingredient ID format").optional(),
+  content: z.string().min(1, "Ingredient content cannot be empty"),
+  position: z.number().int().positive("Position must be a positive integer"),
+});
+
+/**
+ * Schema for validating steps in update recipe commands.
+ * Each step can have an optional ID (for existing items) and must have content and position.
+ */
+export const UpdateRecipeStepCommandSchema = z.object({
+  id: z.string().uuid("Invalid step ID format").optional(),
+  content: z.string().min(1, "Step content cannot be empty"),
+  position: z.number().int().positive("Position must be a positive integer"),
+});
+
+/**
+ * Schema for validating the PUT /api/recipes/{id} request body.
+ * Used to update an existing recipe with ingredients, steps, and tags.
+ */
+export const UpdateRecipeSchema = z.object({
+  name: z.string().min(1, "Recipe name is required").max(255, "Recipe name is too long"),
+  description: z.string().nullable(),
+  ingredients: z.array(UpdateRecipeIngredientCommandSchema),
+  steps: z.array(UpdateRecipeStepCommandSchema),
+  tags: z.array(z.string().min(1, "Tag name cannot be empty")),
+});
+
+/**
+ * Type inference for UpdateRecipeSchema
+ */
+export type UpdateRecipeSchemaType = z.infer<typeof UpdateRecipeSchema>;
+
+/**
  * Type inference for SupabaseRecipeWithJoinsSchema
  */
 export type SupabaseRecipeWithJoins = z.infer<typeof SupabaseRecipeWithJoinsSchema>;

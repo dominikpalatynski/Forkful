@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
-import { GetRecipeByIdParamsSchema } from "../../../lib/schemas/recipe.schema";
+import { GetRecipeByIdParamsSchema, UpdateRecipeSchema } from "../../../lib/schemas/recipe.schema";
 import { RecipeService, NotFoundError, ForbiddenError } from "../../../lib/services/recipe.service";
 
 // Disable prerendering for this API endpoint
@@ -118,6 +118,178 @@ export const GET: APIRoute = async ({ params, locals }) => {
   } catch (error) {
     // Catch-all for unexpected errors
     console.error("Unexpected error in GET /api/recipes/[id]:", error);
+    return new Response(
+      JSON.stringify({
+        error: "Internal server error",
+        message: "An unexpected error occurred while processing your request",
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+};
+
+/**
+ * PUT /api/recipes/{id}
+ * Updates an existing recipe for the authenticated user.
+ * 
+ * Path parameters:
+ * - id: UUID of the recipe to update
+ * 
+ * Request body: UpdateRecipeCommand with name, description, ingredients, steps, and tags
+ * 
+ * Returns 200 OK with updated RecipeDetailDto or appropriate error codes:
+ * - 400 Bad Request: Invalid UUID format or validation errors
+ * - 401 Unauthorized: User not authenticated
+ * - 403 Forbidden: User doesn't own the recipe
+ * - 404 Not Found: Recipe not found
+ * - 500 Internal Server Error: Database or unexpected error
+ */
+export const PUT: APIRoute = async ({ params, request, locals }) => {
+  try {
+    // TODO: In production, get userId from authenticated session
+    // For development, use a default user ID
+    const DEFAULT_DEV_USER_ID = "ba120fed-a207-4eb6-85ec-934467468eaf";
+    const userId = DEFAULT_DEV_USER_ID;
+
+    // Step 1: Validate the recipe ID parameter
+    let validatedParams;
+    try {
+      validatedParams = GetRecipeByIdParamsSchema.parse(params);
+    } catch (validationError) {
+      if (validationError instanceof z.ZodError) {
+        return new Response(
+          JSON.stringify({
+            error: "Invalid recipe ID",
+            details: validationError.errors,
+          }),
+          {
+            status: 400,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+      throw validationError;
+    }
+
+    // Step 2: Parse and validate request body
+    let requestBody;
+    try {
+      requestBody = await request.json();
+    } catch (parseError) {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid JSON",
+          message: "Request body must be valid JSON",
+        }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    let validatedData;
+    try {
+      validatedData = UpdateRecipeSchema.parse(requestBody);
+    } catch (validationError) {
+      if (validationError instanceof z.ZodError) {
+        return new Response(
+          JSON.stringify({
+            error: "Validation failed",
+            details: validationError.errors,
+          }),
+          {
+            status: 400,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+      throw validationError;
+    }
+
+    // Step 3: Initialize recipe service and update recipe
+    const recipeService = new RecipeService(locals.supabase);
+
+    let updatedRecipe;
+    try {
+      updatedRecipe = await recipeService.updateRecipe(
+        validatedParams.id,
+        validatedData,
+        userId
+      );
+    } catch (serviceError) {
+      console.error("Failed to update recipe:", serviceError);
+      
+      // Handle specific custom error types
+      if (serviceError instanceof NotFoundError) {
+        return new Response(
+          JSON.stringify({
+            error: "Recipe not found",
+            message: "The recipe with the specified ID does not exist.",
+          }),
+          {
+            status: 404,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+      
+      if (serviceError instanceof ForbiddenError) {
+        return new Response(
+          JSON.stringify({
+            error: "Access forbidden",
+            message: "You don't have permission to update this recipe.",
+          }),
+          {
+            status: 403,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+      
+      // Generic server error for other errors
+      return new Response(
+        JSON.stringify({
+          error: "Failed to update recipe",
+          message:
+            serviceError instanceof Error
+              ? serviceError.message
+              : "An unexpected error occurred",
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    // Step 4: Return success response
+    return new Response(JSON.stringify(updatedRecipe), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    // Catch-all for unexpected errors
+    console.error("Unexpected error in PUT /api/recipes/[id]:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
