@@ -154,6 +154,21 @@ export const UpdateRecipeSchema = z.object({
 export type UpdateRecipeSchemaType = z.infer<typeof UpdateRecipeSchema>;
 
 /**
+ * Schema for validating the POST /api/recipes/generate request body.
+ * Used to validate input text for AI recipe generation.
+ */
+export const GenerateRecipeSchema = z.object({
+  inputText: z.string()
+    .min(20, { message: "Input text must be at least 20 characters long." })
+    .max(10000, { message: "Input text cannot exceed 10,000 characters." })
+});
+
+/**
+ * Type inference for GenerateRecipeSchema
+ */
+export type GenerateRecipeSchemaType = z.infer<typeof GenerateRecipeSchema>;
+
+/**
  * Type inference for SupabaseRecipeWithJoinsSchema
  */
 export type SupabaseRecipeWithJoins = z.infer<typeof SupabaseRecipeWithJoinsSchema>;
