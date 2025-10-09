@@ -322,9 +322,8 @@ export class RecipeService {
 
     try {
       // Build the base query for recipes
-      let query = this.supabase
-        .from("recipes")
-        .select(`
+      // Use inner joins only when filtering by tag, so we don't exclude tagless recipes otherwise
+      const baseSelect = `
           id,
           name,
           description,
@@ -334,13 +333,28 @@ export class RecipeService {
               name
             )
           )
-        `, { count: 'exact' })
+        `;
+
+      const tagFilteredSelect = `
+          id,
+          name,
+          description,
+          created_at,
+          recipe_tags!inner (
+            tags!inner (
+              name
+            )
+          )
+        `;
+
+      let query = this.supabase
+        .from("recipes")
+        .select(tag ? tagFilteredSelect : baseSelect, { count: 'exact' })
         .eq("user_id", userId);
 
-      // Apply tag filter if provided
+      // Apply tag filter if provided (scope the filter to the nested foreign table)
       if (tag) {
-        query = query
-          .eq("recipe_tags.tags.name", tag);
+        query = query.eq("recipe_tags.tags.name", tag);
       }
 
       // Apply sorting
@@ -377,7 +391,7 @@ export class RecipeService {
       // Calculate pagination metadata
       const totalItems = count ?? 0;
       const totalPages = Math.ceil(totalItems / pageSize);
-
+      console.log("recipeListItems", recipeListItems)
       return {
         data: recipeListItems,
         pagination: {

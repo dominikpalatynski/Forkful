@@ -82,8 +82,14 @@ export const RecipeListResultSchema = z.array(z.object({
  * Used for paginated, sortable and filterable recipe listing.
  */
 export const GetRecipesSchema = z.object({
-  page: z.number().int().positive("Page must be a positive integer").default(1),
-  pageSize: z.number().int().positive("Page size must be a positive integer").max(100, "Page size cannot exceed 100").default(10),
+  page: z.coerce.number().int().positive("Page must be a positive integer").default(1),
+  pageSize: z
+    .coerce
+    .number()
+    .int()
+    .positive("Page size must be a positive integer")
+    .max(100, "Page size cannot exceed 100")
+    .default(10),
   sortBy: z.enum(["name", "created_at"], {
     errorMap: () => ({ message: "Sort by must be either 'name' or 'created_at'" })
   }).default("created_at"),
