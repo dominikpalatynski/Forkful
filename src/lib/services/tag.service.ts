@@ -11,7 +11,7 @@ export class TagService {
   /**
    * Retrieves all unique tags belonging to the specified user.
    * Optionally filters tags by name using case-insensitive search.
-   * 
+   *
    * @param userId - The ID of the user whose tags to retrieve
    * @param query - Optional search query to filter tags by name (case-insensitive)
    * @returns Promise<TagDto[]> - Array of tag DTOs
@@ -38,16 +38,20 @@ export class TagService {
       }
 
       // Transform the data to TagDto format
-      return (data || []).map((tag): TagDto => ({
-        id: tag.id,
-        name: tag.name,
-      }));
+      return (data || []).map(
+        (tag): TagDto => ({
+          id: tag.id,
+          name: tag.name,
+        })
+      );
     } catch (error) {
       // Re-throw with more context if it's not already our custom error
       if (error instanceof Error && error.message.startsWith("Failed to fetch tags:")) {
         throw error;
       }
-      throw new Error(`Unexpected error while fetching tags: ${error instanceof Error ? error.message : "Unknown error"}`);
+      throw new Error(
+        `Unexpected error while fetching tags: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
     }
   }
 }

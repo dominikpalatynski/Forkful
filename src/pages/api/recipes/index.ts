@@ -63,10 +63,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
       return new Response(
         JSON.stringify({
           error: "Failed to get recipes",
-          message:
-            serviceError instanceof Error
-              ? serviceError.message
-              : "An unexpected error occurred",
+          message: serviceError instanceof Error ? serviceError.message : "An unexpected error occurred",
         }),
         {
           status: 500,
@@ -169,10 +166,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return new Response(
         JSON.stringify({
           error: "Failed to create recipe",
-          message:
-            serviceError instanceof Error
-              ? serviceError.message
-              : "An unexpected error occurred",
+          message: serviceError instanceof Error ? serviceError.message : "An unexpected error occurred",
         }),
         {
           status: 500,
@@ -207,4 +201,3 @@ export const POST: APIRoute = async ({ request, locals }) => {
     );
   }
 };
-

@@ -21,5 +21,3 @@ export function TagFilter({ tags, selectedTag, onTagSelect }: TagFilterProps): R
     </div>
   );
 }
-
-

@@ -11,6 +11,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
 ## 3. Wymagania funkcjonalne
 
 ### 3.1. Zarządzanie kontem użytkownika
+
 - Użytkownicy muszą mieć możliwość założenia konta za pomocą adresu e-mail i hasła.
 - Proces rejestracji musi obejmować weryfikację adresu e-mail.
 - Zalogowani użytkownicy mogą uzyskać dostęp do swojej prywatnej bazy przepisów.
@@ -18,6 +19,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
 - System powinien egzekwować zasady dotyczące silnych haseł i stosować mechanizmy ograniczające liczbę prób logowania (rate limiting).
 
 ### 3.2. Tworzenie i edycja przepisów
+
 - Aplikacja musi udostępniać jeden, spójny interfejs edytora zarówno do tworzenia przepisów wspomaganego przez AI, jak i manualnego.
 - Pola dostępne w edytorze to: nazwa, opis, lista składników, lista kroków, tagi.
 - Użytkownik może wkleić surowy tekst przepisu (do 10 000 znaków) w dedykowane pole, aby AI automatycznie wypełniło formularz.
@@ -28,30 +30,36 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
 - Edytowanie kolejności kroków musi być zaimplementowane w postaci drag and drop
 
 ### 3.3. Model danych
+
 - Przepis: Zawiera pola `nazwa` (tekst), `opis` (tekst).
 - Składniki: Przechowywane w osobnej tabeli z relacją do przepisu. Każdy składnik ma dwa pola tekstowe: `jednostka` i `wartość`, `nazwa`.
 - Kroki: Przechowywane jako tekst w osobnej tabeli, z polem `position` (liczba całkowita) do zachowania deterministycznej kolejności oraz `opis` gdzie znajdziemy opis danege kroku.
 - Tagi: Przechowywane w osobnej tabeli `tags` w celu normalizacji i unikania duplikatów. Relacja wiele-do-wielu między przepisami a tagami. Będzie zawierać pole `nazwa`
 
 ### 3.4. Przeglądanie przepisów
+
 - Użytkownik musi mieć dostęp do listy wszystkich swoich zapisanych przepisów.
 - Lista przepisów powinna oferować prosty mechanizm filtrowania na podstawie tagów lub nazwie przepisu.
 - Użytkownik musi mieć możliwość wyświetlenia pełnych szczegółów wybranego przepisu.
 - W szczegółach produktu powinny zostać wyświetlone składniki oraz lista kroków danego przepisu.
 
 ### 3.5 Przechowywanie i skalowalność
+
 - Dane o przepisach i uzytkownikach przechowywane w sposób zapewniający skalowalność i bezpieczeństwo
 
 ### 3.6 Statystyki generowania przepisów
+
 - Zbieranie informacji o tym ile przepisów zostało całkowicie wygenerowane przez AI i ile z nich ostatecznie zaakceptowano.
 
 ### 3.7 Wymagania prawne i ograniczenia:
+
 - Dane osobowe uzytkowników i przepisów przechowywane zgodnie z RODO.
 - Prawo do wglądu i usunięcia danych na wniosek uzytkownika
 
 ## 4. Granice produktu
 
 ### 4.1. Funkcjonalności w zakresie MVP
+
 - Przetwarzanie przez AI wklejonego tekstu w celu automatycznego wypełnienia pól przepisu.
 - Ekran weryfikacji i edycji danych wygenerowanych przez AI.
 - Manualne tworzenie i edytowanie przepisów.
@@ -59,6 +67,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
 - System kont użytkowników (rejestracja, logowanie) do przechowywania prywatnej bazy przepisów.
 
 ### 4.2. Funkcjonalności poza zakresem MVP
+
 - Automatyczny import przepisu na podstawie linku (URL).
 - Generowanie listy zakupów.
 - Interaktywne instrukcje wykonania (np. klikalne timery, odhaczanie kroków).
@@ -69,6 +78,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
 ## 5. Historyjki użytkowników
 
 ### ID: US-001
+
 - Tytuł: Rejestracja nowego użytkownika
 - Opis: Jako nowy użytkownik, chcę móc założyć konto w aplikacji przy użyciu mojego adresu e-mail i hasła, aby móc zapisywać swoje przepisy.
 - Kryteria akceptacji:
@@ -80,6 +90,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   6. Użytkownik nie może się zalogować, dopóki nie zweryfikuje swojego adresu e-mail.
 
 ### ID: US-002
+
 - Tytuł: Logowanie do aplikacji
 - Opis: Jako zarejestrowany użytkownik, chcę móc zalogować się na moje konto, aby uzyskać dostęp do moich przepisów.
 - Kryteria akceptacji:
@@ -89,6 +100,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   4. Po pomyślnym zalogowaniu, użytkownik jest przekierowany do głównego widoku aplikacji (lista przepisów).
 
 ### ID: US-003
+
 - Tytuł: Resetowanie hasła
 - Opis: Jako zarejestrowany użytkownik, który zapomniał hasła, chcę móc je zresetować, aby odzyskać dostęp do konta.
 - Kryteria akceptacji:
@@ -99,6 +111,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   5. Strona resetowania hasła pozwala na wprowadzenie i potwierdzenie nowego hasła.
 
 ### ID: US-004
+
 - Tytuł: Tworzenie przepisu za pomocą AI
 - Opis: Jako użytkownik, chcę wkleić tekst przepisu do aplikacji i pozwolić AI automatycznie wypełnić formularz, aby zaoszczędzić czas.
 - Kryteria akceptacji:
@@ -110,6 +123,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   6. Po pomyślnym zakończeniu generowania przez AI, system odnotowuje to zdarzenie w celach statystycznych, przypisując do sesji unikalny identyfikator generacji.
 
 ### ID: US-005
+
 - Tytuł: Ręczna edycja przepisu wygenerowanego przez AI
 - Opis: Jako użytkownik, chcę mieć możliwość poprawienia danych wygenerowanych przez AI oraz ręcznego dodania tagów, aby upewnić się, że przepis jest dokładny i kompletny przed zapisaniem.
 - Kryteria akceptacji:
@@ -122,6 +136,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   7. W momencie zapisu, jeśli przepis był zainicjowany przez AI (posiada identyfikator generacji), system odnotowuje zdarzenie "akceptacji" w celach statystycznych.
 
 ### ID: US-006
+
 - Tytuł: Manualne tworzenie przepisu
 - Opis: Jako użytkownik, chcę mieć możliwość ręcznego dodania przepisu od zera, jeśli nie mam gotowego tekstu do wklejenia.
 - Kryteria akceptacji:
@@ -132,6 +147,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   5. Przycisk "Zapisz" staje się aktywny dopiero po wypełnieniu wymaganych pól (np. nazwa, co najmniej jeden składnik i jeden krok).
 
 ### ID: US-007
+
 - Tytuł: Przeglądanie listy przepisów
 - Opis: Jako użytkownik, chcę widzieć listę wszystkich moich zapisanych przepisów, aby móc szybko znaleźć to, czego szukam.
 - Kryteria akceptacji:
@@ -141,6 +157,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   4. Na stronie znajduje się pole do filtrowania przepisów po tagach oraz nazwie.
 
 ### ID: US-008
+
 - Tytuł: Wyświetlanie szczegółów przepisu
 - Opis: Jako użytkownik, chcę móc kliknąć na przepis z listy, aby zobaczyć jego pełne szczegóły.
 - Kryteria akceptacji:
@@ -149,6 +166,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   3. Z widoku szczegółowego istnieje możliwość przejścia do trybu edycji przepisu.
 
 ### ID: US-009
+
 - Tytuł: Edycja istniejącego przepisu
 - Opis: Jako użytkownik, chcę móc edytować wcześniej zapisany przepis, aby wprowadzić poprawki lub modyfikacje.
 - Kryteria akceptacji:
@@ -158,6 +176,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   4. Po zapisaniu zmian, przepis jest zaktualizowany w mojej bazie.
 
 ### ID: US-010
+
 - Tytuł: Usuwanie przepisu
 - Opis: Jako użytkownik, chcę mieć możliwość usunięcia przepisu, którego już nie potrzebuję.
 - Kryteria akceptacji:
@@ -166,6 +185,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   3. Po potwierdzeniu, przepis jest trwale usuwany z mojej bazy danych wraz z powiązanymi składnikami oraz krokami, tagi nie zostają natomiast usunięte.
 
 ### ID: US-011
+
 - Tytuł: Obsługa błędów AI
 - Opis: Jako użytkownik, w przypadku gdy AI nie jest w stanie przetworzyć wklejonego tekstu, chcę otrzymać jasny komunikat o błędzie.
 - Kryteria akceptacji:
@@ -174,6 +194,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   3. Po kliknięciu wprowadź dane ręczne zostaje włączony ręczny tryb formularza bez text area na wrzucenie contextu do AI
 
 ### ID: US-012
+
 - Tytuł: Zarządzanie tagami
 - Opis: Jako użytkownik, chcę móc świadomie tworzyć nowe tagi lub wybierać z listy istniejących, aby przypisać je do przepisu i łatwiej go kategoryzować.
 - Kryteria akceptacji:
@@ -186,6 +207,7 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   7. System normalizuje tekst nowego taga przed zapisaniem (np. zmienia na małe litery, usuwa zbędne spacje), aby unikać duplikatów.
 
 ### ID: US-013
+
 - Tytuł: Porzucenie formularza przepisu
 - Opis: Jako użytkownik, chcę mieć możliwość anulowania tworzenia lub edycji przepisu i powrotu do poprzedniego widoku bez zapisywania zmian.
 - Kryteria akceptacji:
@@ -195,5 +217,6 @@ Głównym problemem, który rozwiązuje Forkful, jest czasochłonność i frustr
   4. Jeśli porzucony formularz dotyczył przepisu zainicjowanego przez AI (posiada identyfikator generacji), system odnotowuje zdarzenie "porzucenia" w celach statystycznych.
 
 ## 6. Metryki sukcesu
+
 - 80% nowo tworzonych przepisów w aplikacji jest inicjowanych przez wklejenie tekstu i przetworzenie go przez AI.
 - Wskaźnik akceptacji przepisów wygenerowanych przez AI (stosunek zapisanych przepisów do wygenerowanych) wynosi co najmniej 85%.

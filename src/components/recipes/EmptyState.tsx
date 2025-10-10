@@ -11,11 +11,7 @@ export function EmptyState({ variant }: EmptyStateProps): React.ReactElement {
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          {isNoRecipes ? (
-            <ChefHat className="size-16" />
-          ) : (
-            <Search className="size-16" />
-          )}
+          {isNoRecipes ? <ChefHat className="size-16" /> : <Search className="size-16" />}
         </EmptyMedia>
         <EmptyTitle>{isNoRecipes ? "Brak przepisów" : "Brak wyników"}</EmptyTitle>
         <EmptyDescription>
@@ -34,5 +30,3 @@ export function EmptyState({ variant }: EmptyStateProps): React.ReactElement {
     </Empty>
   );
 }
-
-

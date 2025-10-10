@@ -34,11 +34,7 @@ export const RecipieAdd = () => {
             <FormItem>
               <FormLabel>Name *</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Recipie name"
-                  {...field}
-                />
+                <Input type="text" placeholder="Recipie name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -51,21 +47,13 @@ export const RecipieAdd = () => {
             <FormItem>
               <FormLabel>Description *</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Recipie description"
-                  {...field}
-                />
+                <Input type="text" placeholder="Recipie description" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-        >
-          Add Recipie
-        </Button>
+        <Button type="submit">Add Recipie</Button>
       </form>
     </Form>
   );

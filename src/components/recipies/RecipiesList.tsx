@@ -3,23 +3,22 @@ import { queryClient } from "../../store/query";
 import { RecipieAdd } from "./RecipieAdd";
 
 export const RecipiesList = () => {
-    const { isPending, error, data } = useQuery({
-        queryKey: ['test'],
-        queryFn: () =>
-          fetch('http://localhost:3000/api/test').then((res) =>
-            res.json(),
-          ),
-      }, queryClient)
-    
-      if (isPending) return 'Loading...'
-    
-      if (error) return 'An error has occurred: ' + error.message
+  const { isPending, error, data } = useQuery(
+    {
+      queryKey: ["test"],
+      queryFn: () => fetch("http://localhost:3000/api/test").then((res) => res.json()),
+    },
+    queryClient
+  );
 
-    
+  if (isPending) return "Loading...";
+
+  if (error) return "An error has occurred: " + error.message;
+
   return (
-  <>
-  <div>RecipiesList {JSON.stringify(data)}</div>
-  <RecipieAdd />
-  </>
+    <>
+      <div>RecipiesList {JSON.stringify(data)}</div>
+      <RecipieAdd />
+    </>
   );
 };

@@ -60,10 +60,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
       return new Response(
         JSON.stringify({
           error: "Failed to get tags",
-          message:
-            serviceError instanceof Error
-              ? serviceError.message
-              : "An unexpected error occurred",
+          message: serviceError instanceof Error ? serviceError.message : "An unexpected error occurred",
         }),
         {
           status: 500,

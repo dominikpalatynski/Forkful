@@ -15,17 +15,10 @@ export function RecipeListView(): React.ReactElement {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <RecipeListHeader
-        searchValue={state.searchQuery}
-        onSearchChange={state.handleSearchChange}
-      />
+      <RecipeListHeader searchValue={state.searchQuery} onSearchChange={state.handleSearchChange} />
 
       {state.tags.length > 0 && (
-        <TagFilter
-          tags={state.tags}
-          selectedTag={state.selectedTag}
-          onTagSelect={state.handleTagSelect}
-        />
+        <TagFilter tags={state.tags} selectedTag={state.selectedTag} onTagSelect={state.handleTagSelect} />
       )}
 
       <RecipeGrid
@@ -48,5 +41,3 @@ export function RecipeListView(): React.ReactElement {
     </div>
   );
 }
-
-

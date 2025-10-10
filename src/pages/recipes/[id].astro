@@ -1,0 +1,16 @@
+---
+import DashboardLayout from "../../layouts/DashboardLayout.astro";
+import { RecipeDetailView } from "../../components/recipes/RecipeDetailView";
+
+// Extract recipe ID from URL params
+const { id } = Astro.params;
+
+// Validate that ID exists (Astro will handle 404 if route doesn't match)
+if (!id) {
+  return Astro.redirect("/recipes");
+}
+---
+
+<DashboardLayout title="Szczegóły przepisu">
+  <RecipeDetailView client:load recipeId={id} />
+</DashboardLayout>

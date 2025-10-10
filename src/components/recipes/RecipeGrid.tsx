@@ -31,5 +31,3 @@ export function RecipeGrid({ recipes, isLoading, isEmpty }: RecipeGridProps): Re
     </div>
   );
 }
-
-

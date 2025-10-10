@@ -44,38 +44,61 @@ export const SupabaseRecipeWithJoinsSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   description: z.string().nullable(),
-  ingredients: z.array(z.object({
-    id: z.string().uuid(),
-    content: z.string(),
-    position: z.number(),
-  })).nullable(),
-  steps: z.array(z.object({
-    id: z.string().uuid(),
-    content: z.string(),
-    position: z.number(),
-  })).nullable(),
-  recipe_tags: z.array(z.object({
-    tags: z.object({
-      name: z.string(),
-    }).nullable(),
-  })).nullable(),
+  created_at: z.string(),
+  ingredients: z
+    .array(
+      z.object({
+        id: z.string().uuid(),
+        content: z.string(),
+        position: z.number(),
+      })
+    )
+    .nullable(),
+  steps: z
+    .array(
+      z.object({
+        id: z.string().uuid(),
+        content: z.string(),
+        position: z.number(),
+      })
+    )
+    .nullable(),
+  recipe_tags: z
+    .array(
+      z.object({
+        tags: z
+          .object({
+            name: z.string(),
+          })
+          .nullable(),
+      })
+    )
+    .nullable(),
 });
 
 /**
  * Schema for validating Supabase query result when fetching a recipe with joins.
  * This validates the raw structure returned by Supabase before transforming it to DTO.
  */
-export const RecipeListResultSchema = z.array(z.object({
-  id: z.string().uuid(),
-  name: z.string(),
-  description: z.string().nullable(),
-  created_at: z.string(),
-  recipe_tags: z.array(z.object({
-    tags: z.object({
-      name: z.string(),
-    }).nullable(),
-  })).nullable(),
-}));
+export const RecipeListResultSchema = z.array(
+  z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    description: z.string().nullable(),
+    created_at: z.string(),
+    recipe_tags: z
+      .array(
+        z.object({
+          tags: z
+            .object({
+              name: z.string(),
+            })
+            .nullable(),
+        })
+      )
+      .nullable(),
+  })
+);
 
 /**
  * Schema for validating GET /api/recipes query parameters.
@@ -83,19 +106,22 @@ export const RecipeListResultSchema = z.array(z.object({
  */
 export const GetRecipesSchema = z.object({
   page: z.coerce.number().int().positive("Page must be a positive integer").default(1),
-  pageSize: z
-    .coerce
+  pageSize: z.coerce
     .number()
     .int()
     .positive("Page size must be a positive integer")
     .max(100, "Page size cannot exceed 100")
     .default(10),
-  sortBy: z.enum(["name", "created_at"], {
-    errorMap: () => ({ message: "Sort by must be either 'name' or 'created_at'" })
-  }).default("created_at"),
-  order: z.enum(["asc", "desc"], {
-    errorMap: () => ({ message: "Order must be either 'asc' or 'desc'" })
-  }).default("desc"),
+  sortBy: z
+    .enum(["name", "created_at"], {
+      errorMap: () => ({ message: "Sort by must be either 'name' or 'created_at'" }),
+    })
+    .default("created_at"),
+  order: z
+    .enum(["asc", "desc"], {
+      errorMap: () => ({ message: "Order must be either 'asc' or 'desc'" }),
+    })
+    .default("desc"),
   tag: z.string().min(1, "Tag name cannot be empty").optional(),
 });
 
@@ -164,9 +190,10 @@ export type UpdateRecipeSchemaType = z.infer<typeof UpdateRecipeSchema>;
  * Used to validate input text for AI recipe generation.
  */
 export const GenerateRecipeSchema = z.object({
-  inputText: z.string()
+  inputText: z
+    .string()
     .min(20, { message: "Input text must be at least 20 characters long." })
-    .max(10000, { message: "Input text cannot exceed 10,000 characters." })
+    .max(10000, { message: "Input text cannot exceed 10,000 characters." }),
 });
 
 /**
@@ -178,4 +205,3 @@ export type GenerateRecipeSchemaType = z.infer<typeof GenerateRecipeSchema>;
  * Type inference for SupabaseRecipeWithJoinsSchema
  */
 export type SupabaseRecipeWithJoins = z.infer<typeof SupabaseRecipeWithJoinsSchema>;
-

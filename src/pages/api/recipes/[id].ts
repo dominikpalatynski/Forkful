@@ -9,10 +9,10 @@ export const prerender = false;
 /**
  * GET /api/recipes/{id}
  * Retrieves a single recipe by its ID for the authenticated user.
- * 
+ *
  * Path parameters:
  * - id: UUID of the recipe to retrieve
- * 
+ *
  * Returns 200 OK with RecipeDetailDto or appropriate error codes:
  * - 400 Bad Request: Invalid UUID format
  * - 401 Unauthorized: User not authenticated
@@ -58,7 +58,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
       recipe = await recipeService.getRecipeById(validatedParams.id, userId);
     } catch (serviceError) {
       console.error("Failed to get recipe by ID:", serviceError);
-      
+
       // Handle specific custom error types
       if (serviceError instanceof NotFoundError) {
         return new Response(
@@ -74,7 +74,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
           }
         );
       }
-      
+
       if (serviceError instanceof ForbiddenError) {
         return new Response(
           JSON.stringify({
@@ -89,15 +89,12 @@ export const GET: APIRoute = async ({ params, locals }) => {
           }
         );
       }
-      
+
       // Generic server error for other errors
       return new Response(
         JSON.stringify({
           error: "Failed to get recipe",
-          message:
-            serviceError instanceof Error
-              ? serviceError.message
-              : "An unexpected error occurred",
+          message: serviceError instanceof Error ? serviceError.message : "An unexpected error occurred",
         }),
         {
           status: 500,
@@ -136,12 +133,12 @@ export const GET: APIRoute = async ({ params, locals }) => {
 /**
  * PUT /api/recipes/{id}
  * Updates an existing recipe for the authenticated user.
- * 
+ *
  * Path parameters:
  * - id: UUID of the recipe to update
- * 
+ *
  * Request body: UpdateRecipeCommand with name, description, ingredients, steps, and tags
- * 
+ *
  * Returns 200 OK with updated RecipeDetailDto or appropriate error codes:
  * - 400 Bad Request: Invalid UUID format or validation errors
  * - 401 Unauthorized: User not authenticated
@@ -223,14 +220,10 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 
     let updatedRecipe;
     try {
-      updatedRecipe = await recipeService.updateRecipe(
-        validatedParams.id,
-        validatedData,
-        userId
-      );
+      updatedRecipe = await recipeService.updateRecipe(validatedParams.id, validatedData, userId);
     } catch (serviceError) {
       console.error("Failed to update recipe:", serviceError);
-      
+
       // Handle specific custom error types
       if (serviceError instanceof NotFoundError) {
         return new Response(
@@ -246,7 +239,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
           }
         );
       }
-      
+
       if (serviceError instanceof ForbiddenError) {
         return new Response(
           JSON.stringify({
@@ -261,15 +254,12 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
           }
         );
       }
-      
+
       // Generic server error for other errors
       return new Response(
         JSON.stringify({
           error: "Failed to update recipe",
-          message:
-            serviceError instanceof Error
-              ? serviceError.message
-              : "An unexpected error occurred",
+          message: serviceError instanceof Error ? serviceError.message : "An unexpected error occurred",
         }),
         {
           status: 500,
@@ -308,10 +298,10 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 /**
  * DELETE /api/recipes/{id}
  * Deletes a recipe and all its related data for the authenticated user.
- * 
+ *
  * Path parameters:
  * - id: UUID of the recipe to delete
- * 
+ *
  * Returns 204 No Content on success or appropriate error codes:
  * - 400 Bad Request: Invalid UUID format
  * - 401 Unauthorized: User not authenticated
@@ -355,7 +345,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       await recipeService.deleteRecipe(validatedParams.id, userId);
     } catch (serviceError) {
       console.error("Failed to delete recipe:", serviceError);
-      
+
       // Handle specific custom error types
       if (serviceError instanceof NotFoundError) {
         return new Response(
@@ -371,7 +361,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
           }
         );
       }
-      
+
       if (serviceError instanceof ForbiddenError) {
         return new Response(
           JSON.stringify({
@@ -386,15 +376,12 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
           }
         );
       }
-      
+
       // Generic server error for other errors
       return new Response(
         JSON.stringify({
           error: "Failed to delete recipe",
-          message:
-            serviceError instanceof Error
-              ? serviceError.message
-              : "An unexpected error occurred",
+          message: serviceError instanceof Error ? serviceError.message : "An unexpected error occurred",
         }),
         {
           status: 500,

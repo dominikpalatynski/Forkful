@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { PaginatedRecipesDto, TagDto } from "@/types";
 import { useDebounce } from "./useDebounce";
-import {queryClient} from '@/store/query';
+import { queryClient } from "@/store/query";
 export type SortBy = "name" | "created_at";
 export type SortOrder = "asc" | "desc";
 
@@ -54,29 +54,28 @@ export function useRecipeListState() {
     isError,
     error,
     refetch,
-  } = useQuery<PaginatedRecipesDto>({
-    queryKey: [
-      "recipes",
-      currentPage,
-      pageSize,
-      sortBy,
-      order,
-      selectedTag,
-    ],
-    queryFn: () =>
-      fetchRecipes({
-        page: currentPage,
-        pageSize: pageSize,
-        sortBy,
-        order,
-        tag: selectedTag ?? undefined,
-      }),
-  }, queryClient);
+  } = useQuery<PaginatedRecipesDto>(
+    {
+      queryKey: ["recipes", currentPage, pageSize, sortBy, order, selectedTag],
+      queryFn: () =>
+        fetchRecipes({
+          page: currentPage,
+          pageSize: pageSize,
+          sortBy,
+          order,
+          tag: selectedTag ?? undefined,
+        }),
+    },
+    queryClient
+  );
 
-  const { data: tagsData } = useQuery<TagDto[]>({
-    queryKey: ["tags"],
-    queryFn: fetchUserTags,
-  }, queryClient);
+  const { data: tagsData } = useQuery<TagDto[]>(
+    {
+      queryKey: ["tags"],
+      queryFn: fetchUserTags,
+    },
+    queryClient
+  );
 
   const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
@@ -84,7 +83,7 @@ export function useRecipeListState() {
   }, []);
 
   const handleTagSelect = useCallback((tagName: string | null) => {
-    console.log("value", tagName)
+    console.log("value", tagName);
 
     setSelectedTag((prev) => (prev === tagName ? null : tagName));
     setCurrentPage(1);
@@ -135,5 +134,3 @@ export function useRecipeListState() {
     handleRetry: refetch,
   } as const;
 }
-
-

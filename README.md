@@ -28,21 +28,25 @@ Forkful solves the frustration of manually formatting recipes from various sourc
 ## Tech Stack
 
 ### Core Framework
+
 - **[Astro 5](https://astro.build)** - Modern web framework for content-focused websites
 - **[TypeScript 5](https://www.typescriptlang.org/)** - Type-safe JavaScript
 
 ### Frontend
+
 - **[React 19](https://react.dev)** - UI component library
 - **[Tailwind CSS 4](https://tailwindcss.com)** - Utility-first CSS framework
 - **[Radix UI](https://www.radix-ui.com/)** - Accessible component primitives
 - **[Lucide React](https://lucide.dev)** - Icon library
 
 ### State & Forms
+
 - **[TanStack Query](https://tanstack.com/query)** - Powerful data synchronization
 - **[React Hook Form](https://react-hook-form.com/)** - Performant form validation
 - **[Zod](https://zod.dev)** - TypeScript-first schema validation
 
 ### Development Tools
+
 - **ESLint** - Code linting
 - **Prettier** - Code formatting
 - **Husky** - Git hooks
@@ -58,49 +62,54 @@ Forkful solves the frustration of manually formatting recipes from various sourc
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd Forkful
    ```
 
 2. **Set Node version**
+
    ```bash
    nvm use
    ```
 
 3. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 4. **Set up environment variables**
-   
+
    Create a `.env` file in the root directory with necessary configuration:
+
    ```env
    # Add your environment variables here
    # Database, AI API keys, etc.
    ```
 
 5. **Run the development server**
+
    ```bash
    npm run dev
    ```
 
 6. **Open your browser**
-   
+
    Navigate to `http://localhost:3000`
 
 ## Available Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build locally |
-| `npm run astro` | Run Astro CLI commands |
-| `npm run lint` | Lint codebase |
-| `npm run lint:fix` | Lint and auto-fix issues |
-| `npm run format` | Format code with Prettier |
+| Script             | Description                      |
+| ------------------ | -------------------------------- |
+| `npm run dev`      | Start development server         |
+| `npm run build`    | Build for production             |
+| `npm run preview`  | Preview production build locally |
+| `npm run astro`    | Run Astro CLI commands           |
+| `npm run lint`     | Lint codebase                    |
+| `npm run lint:fix` | Lint and auto-fix issues         |
+| `npm run format`   | Format code with Prettier        |
 
 ## Project Scope
 
@@ -114,9 +123,7 @@ Forkful solves the frustration of manually formatting recipes from various sourc
 - Private recipe storage per user
 - Recipe generation statistics tracking
 
-
 ## Project Status
-
 
 ## Data Model
 

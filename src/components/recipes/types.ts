@@ -1,4 +1,4 @@
-import type { TagDto, RecipeListItemDto, PaginatedRecipesDto } from "@/types";
+import type { TagDto, RecipeListItemDto } from "@/types";
 
 export interface RecipeListHeaderProps {
   searchValue: string;
@@ -52,4 +52,43 @@ export interface ErrorStateProps {
   onRetry: () => void;
 }
 
+// ============================================================================
+// Recipe Detail View Types
+// ============================================================================
 
+export interface RecipeDetailViewProps {
+  recipeId: string;
+}
+
+export interface RecipeDetailHeaderProps {
+  name: string;
+  createdAt: string; // ISO date string
+  recipeId: string;
+  onDeleteClick: () => void;
+}
+
+export interface RecipeMetadataProps {
+  description?: string | null;
+  tags: string[];
+}
+
+export interface RecipeContentLayoutProps {
+  ingredients: import("@/types").RecipeIngredientDto[];
+  steps: import("@/types").RecipeStepDto[];
+}
+
+export interface RecipeIngredientsSectionProps {
+  ingredients: import("@/types").RecipeIngredientDto[];
+}
+
+export interface RecipeStepsSectionProps {
+  steps: import("@/types").RecipeStepDto[];
+}
+
+export interface DeleteRecipeDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => Promise<void>;
+  recipeName: string;
+  isDeleting: boolean;
+}

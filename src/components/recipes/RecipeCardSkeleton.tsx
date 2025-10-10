@@ -18,5 +18,3 @@ export const RecipeCardSkeleton = React.memo(function RecipeCardSkeleton(): Reac
     </Card>
   );
 });
-
-

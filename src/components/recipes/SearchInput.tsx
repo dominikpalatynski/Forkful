@@ -7,12 +7,7 @@ export function SearchInput({ value, onChange, placeholder }: SearchInputProps):
   return (
     <div className="relative">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-      <Input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="pl-9"
-      />
+      <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="pl-9" />
       {value && (
         <button
           type="button"
@@ -26,5 +21,3 @@ export function SearchInput({ value, onChange, placeholder }: SearchInputProps):
     </div>
   );
 }
-
-

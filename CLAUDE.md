@@ -48,9 +48,10 @@ public/               # Public static assets
 ### Path Aliases
 
 TypeScript is configured with `@/*` alias pointing to `./src/*`:
+
 ```typescript
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 ```
 
 ### Component Strategy
@@ -85,11 +86,11 @@ import { cn } from "@/lib/utils"
 
 ```typescript
 function processData(data: unknown) {
-  if (!data) return { error: "No data provided" }
-  if (!isValid(data)) return { error: "Invalid data" }
+  if (!data) return { error: "No data provided" };
+  if (!isValid(data)) return { error: "Invalid data" };
 
   // Happy path here
-  return { success: true, result: transform(data) }
+  return { success: true, result: transform(data) };
 }
 ```
 
@@ -126,6 +127,7 @@ function processData(data: unknown) {
 ## Shadcn/ui Components
 
 Components are installed in `src/components/ui/` with:
+
 - **Style**: new-york
 - **Base color**: neutral
 - **Icon library**: lucide-react
@@ -142,10 +144,10 @@ npx shadcn@latest add [component-name]
 ### Usage
 
 ```tsx
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-<Button variant="outline">Click me</Button>
+<Button variant="outline">Click me</Button>;
 ```
 
 ## Astro-Specific Features

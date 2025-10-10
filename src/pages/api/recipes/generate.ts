@@ -7,13 +7,13 @@ export const prerender = false;
 
 /**
  * POST /api/recipes/generate
- * 
+ *
  * Generates a recipe from input text using AI (currently mocked).
  * Creates a generation record in the database for tracking purposes.
- * 
+ *
  * Request Body:
  * - inputText: string (20-10,000 characters) - Text to process
- * 
+ *
  * Responses:
  * - 200: Generated recipe data with generationId
  * - 400: Invalid input data
@@ -34,11 +34,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return new Response(
         JSON.stringify({
           error: "Bad Request",
-          message: "Invalid JSON in request body"
+          message: "Invalid JSON in request body",
         }),
         {
           status: 400,
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
@@ -64,26 +64,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
       throw validationError;
     }
 
-
     const { inputText } = validatedData;
 
     // Step 4: Initialize generation service and generate recipe
     const generationService = new GenerationRecipeService(locals.supabase);
-    
+
     try {
-      const generatedRecipe = await generationService.generateRecipeFromText(
-        inputText,
-        defaultUserId
-      );
+      const generatedRecipe = await generationService.generateRecipeFromText(inputText, defaultUserId);
 
       // Step 5: Return successful response
-      return new Response(
-        JSON.stringify(generatedRecipe),
-        {
-          status: 200,
-          headers: { "Content-Type": "application/json" }
-        }
-      );
+      return new Response(JSON.stringify(generatedRecipe), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     } catch (serviceError) {
       // Step 6: Handle service-specific errors
       if (serviceError instanceof Error) {
@@ -92,11 +85,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
           return new Response(
             JSON.stringify({
               error: "Unprocessable Entity",
-              message: "The provided text could not be processed as a recipe. Please provide text that describes a recipe with ingredients and cooking steps."
+              message:
+                "The provided text could not be processed as a recipe. Please provide text that describes a recipe with ingredients and cooking steps.",
             }),
             {
               status: 422,
-              headers: { "Content-Type": "application/json" }
+              headers: { "Content-Type": "application/json" },
             }
           );
         }
@@ -107,11 +101,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return new Response(
         JSON.stringify({
           error: "Internal Server Error",
-          message: "Failed to generate recipe. Please try again later."
+          message: "Failed to generate recipe. Please try again later.",
         }),
         {
           status: 500,
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
@@ -121,11 +115,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(
       JSON.stringify({
         error: "Internal Server Error",
-        message: "An unexpected error occurred. Please try again later."
+        message: "An unexpected error occurred. Please try again later.",
       }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       }
     );
   }

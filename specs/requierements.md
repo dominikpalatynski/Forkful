@@ -1,7 +1,7 @@
- - storing recipies
- - tagging them into particular key words like asian, italian, sweet, salt, without gluten etc
- - macro of recipie
- - step by step guide
- - description
- - url to ig role or youtube shorts
- - ingredients
+- storing recipies
+- tagging them into particular key words like asian, italian, sweet, salt, without gluten etc
+- macro of recipie
+- step by step guide
+- description
+- url to ig role or youtube shorts
+- ingredients

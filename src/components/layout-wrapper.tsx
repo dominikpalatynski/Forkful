@@ -1,8 +1,8 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/ui/app-sidebar"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/ui/app-sidebar";
 
 interface LayoutWrapperProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function LayoutWrapper({ children }: LayoutWrapperProps) {
@@ -13,10 +13,8 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
         <header className="flex h-16 items-center gap-4 border-b px-6">
           <SidebarTrigger />
         </header>
-        <div className="p-6">
-          {children}
-        </div>
+        <div className="p-6">{children}</div>
       </main>
     </SidebarProvider>
-  )
+  );
 }

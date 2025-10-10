@@ -4,7 +4,7 @@ import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function ErrorState({ error, onRetry }: ErrorStateProps): React.ReactElement {
-  const message = typeof error === "string" ? error : error?.message ?? "Wystąpił błąd";
+  const message = typeof error === "string" ? error : (error?.message ?? "Wystąpił błąd");
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <AlertCircle className="w-16 h-16 text-destructive mb-4" />
@@ -14,5 +14,3 @@ export function ErrorState({ error, onRetry }: ErrorStateProps): React.ReactElem
     </div>
   );
 }
-
-

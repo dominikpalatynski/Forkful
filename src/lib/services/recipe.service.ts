@@ -4,15 +4,11 @@ import type {
   UpdateRecipeCommand,
   RecipeDetailDto,
   PaginatedRecipesDto,
-  RecipeListItemDto
+  RecipeListItemDto,
 } from "../../types";
 import type { GetRecipesSchemaType } from "../schemas/recipe.schema";
 
-
-import { 
-  SupabaseRecipeWithJoinsSchema, 
-  RecipeListResultSchema,
-} from "../schemas/recipe.schema";
+import { SupabaseRecipeWithJoinsSchema, RecipeListResultSchema } from "../schemas/recipe.schema";
 
 /**
  * Custom error classes for recipe service operations
@@ -40,16 +36,13 @@ export class RecipeService {
   /**
    * Creates a new recipe with ingredients, steps, and tags in a transactional manner.
    * If any operation fails, all changes are rolled back.
-   * 
+   *
    * @param data - The recipe data from CreateRecipeCommand
    * @param userId - The authenticated user's ID
    * @returns The newly created recipe with full details
    * @throws Error if any database operation fails
    */
-  async createRecipe(
-    data: CreateRecipeCommand,
-    userId: string
-  ): Promise<RecipeDetailDto> {
+  async createRecipe(data: CreateRecipeCommand, userId: string): Promise<RecipeDetailDto> {
     let recipeId: string | null = null;
 
     try {
@@ -79,9 +72,7 @@ export class RecipeService {
           position: ingredient.position,
         }));
 
-        const { error: ingredientsError } = await this.supabase
-          .from("ingredients")
-          .insert(ingredientsToInsert);
+        const { error: ingredientsError } = await this.supabase.from("ingredients").insert(ingredientsToInsert);
 
         if (ingredientsError) {
           throw new Error(`Failed to insert ingredients: ${ingredientsError.message}`);
@@ -96,9 +87,7 @@ export class RecipeService {
           position: step.position,
         }));
 
-        const { error: stepsError } = await this.supabase
-          .from("steps")
-          .insert(stepsToInsert);
+        const { error: stepsError } = await this.supabase.from("steps").insert(stepsToInsert);
 
         if (stepsError) {
           throw new Error(`Failed to insert steps: ${stepsError.message}`);
@@ -151,9 +140,7 @@ export class RecipeService {
             tag_id: tagId,
           }));
 
-          const { error: recipeTagsError } = await this.supabase
-            .from("recipe_tags")
-            .insert(recipeTagsToInsert);
+          const { error: recipeTagsError } = await this.supabase.from("recipe_tags").insert(recipeTagsToInsert);
 
           if (recipeTagsError) {
             throw new Error(`Failed to link tags to recipe: ${recipeTagsError.message}`);
@@ -190,7 +177,7 @@ export class RecipeService {
   /**
    * Rolls back a recipe creation by deleting all related data.
    * Used when an error occurs during recipe creation.
-   * 
+   *
    * @param recipeId - The recipe ID to rollback
    */
   private async rollbackRecipe(recipeId: string): Promise<void> {
@@ -209,7 +196,7 @@ export class RecipeService {
   /**
    * Retrieves a complete recipe by ID, including ingredients, steps, and tags using JOIN.
    * Implements proper authorization checking to differentiate between NotFound and Forbidden errors.
-   * 
+   *
    * @param recipeId - The recipe's UUID
    * @param userId - The authenticated user's ID (for authorization)
    * @returns The recipe details
@@ -217,10 +204,7 @@ export class RecipeService {
    * @throws ForbiddenError if user doesn't own the recipe
    * @throws Error for other database errors
    */
-  async getRecipeById(
-    recipeId: string,
-    userId: string
-  ): Promise<RecipeDetailDto> {
+  async getRecipeById(recipeId: string, userId: string): Promise<RecipeDetailDto> {
     // Step 1: First check if recipe exists (without user filter)
     const { data: recipeExists, error: existsError } = await this.supabase
       .from("recipes")
@@ -229,7 +213,7 @@ export class RecipeService {
       .single();
 
     if (existsError) {
-      if (existsError.code === 'PGRST116') {
+      if (existsError.code === "PGRST116") {
         // No rows returned - recipe doesn't exist
         throw new NotFoundError(`Recipe with ID '${recipeId}' not found`);
       }
@@ -249,10 +233,12 @@ export class RecipeService {
     // Step 3: Fetch recipe with all related data using JOIN
     const { data: recipe, error: recipeError } = await this.supabase
       .from("recipes")
-      .select(`
+      .select(
+        `
         id,
         name,
         description,
+        created_at,
         ingredients (
           id,
           content,
@@ -268,7 +254,8 @@ export class RecipeService {
             name
           )
         )
-      `)
+      `
+      )
       .eq("id", recipeId)
       .eq("user_id", userId)
       .single();
@@ -279,7 +266,7 @@ export class RecipeService {
 
     // Step 4: Validate and parse Supabase query result with runtime type checking
     const parseResult = SupabaseRecipeWithJoinsSchema.safeParse(recipe);
-    
+
     if (!parseResult.success) {
       throw new Error(`Invalid recipe data structure: ${parseResult.error.message}`);
     }
@@ -291,13 +278,10 @@ export class RecipeService {
       id: supabaseRecipe.id,
       name: supabaseRecipe.name,
       description: supabaseRecipe.description,
-      ingredients: (supabaseRecipe.ingredients ?? [])
-        .sort((a, b) => a.position - b.position),
-      steps: (supabaseRecipe.steps ?? [])
-        .sort((a, b) => a.position - b.position),
-      tags: (supabaseRecipe.recipe_tags ?? [])
-        .map((rt) => rt.tags?.name)
-        .filter((name): name is string => !!name),
+      created_at: supabaseRecipe.created_at,
+      ingredients: (supabaseRecipe.ingredients ?? []).sort((a, b) => a.position - b.position),
+      steps: (supabaseRecipe.steps ?? []).sort((a, b) => a.position - b.position),
+      tags: (supabaseRecipe.recipe_tags ?? []).map((rt) => rt.tags?.name).filter((name): name is string => !!name),
     };
 
     return recipeDetailDto;
@@ -312,10 +296,7 @@ export class RecipeService {
    * @returns Paginated list of recipes with metadata
    * @throws Error if database operations fail
    */
-  async getRecipesForUser(
-    userId: string,
-    options: GetRecipesSchemaType
-  ): Promise<PaginatedRecipesDto> {
+  async getRecipesForUser(userId: string, options: GetRecipesSchemaType): Promise<PaginatedRecipesDto> {
     const { page, pageSize, sortBy, order, tag } = options;
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
@@ -349,7 +330,7 @@ export class RecipeService {
 
       let query = this.supabase
         .from("recipes")
-        .select(tag ? tagFilteredSelect : baseSelect, { count: 'exact' })
+        .select(tag ? tagFilteredSelect : baseSelect, { count: "exact" })
         .eq("user_id", userId);
 
       // Apply tag filter if provided (scope the filter to the nested foreign table)
@@ -358,7 +339,7 @@ export class RecipeService {
       }
 
       // Apply sorting
-      const isAscending = order === 'asc';
+      const isAscending = order === "asc";
       query = query.order(sortBy, { ascending: isAscending });
 
       // Apply pagination
@@ -378,7 +359,7 @@ export class RecipeService {
       }
 
       const recipesWithTags = parseResult.data;
-            
+
       const recipeListItems: RecipeListItemDto[] = (recipesWithTags ?? []).map((recipe) => ({
         id: recipe.id,
         name: recipe.name,
@@ -391,7 +372,7 @@ export class RecipeService {
       // Calculate pagination metadata
       const totalItems = count ?? 0;
       const totalPages = Math.ceil(totalItems / pageSize);
-      console.log("recipeListItems", recipeListItems)
+      console.log("recipeListItems", recipeListItems);
       return {
         data: recipeListItems,
         pagination: {
@@ -414,7 +395,7 @@ export class RecipeService {
    * Updates an existing recipe with ingredients, steps, and tags in a transactional manner.
    * Handles creation, updating, and deletion of related resources.
    * If any operation fails, all changes are rolled back.
-   * 
+   *
    * @param recipeId - The ID of the recipe to update
    * @param data - The updated recipe data from UpdateRecipeCommand
    * @param userId - The authenticated user's ID
@@ -423,11 +404,7 @@ export class RecipeService {
    * @throws ForbiddenError if user doesn't own the recipe
    * @throws Error if any database operation fails
    */
-  async updateRecipe(
-    recipeId: string,
-    data: UpdateRecipeCommand,
-    userId: string
-  ): Promise<RecipeDetailDto> {
+  async updateRecipe(recipeId: string, data: UpdateRecipeCommand, userId: string): Promise<RecipeDetailDto> {
     let originalRecipe: any = null;
 
     try {
@@ -439,7 +416,7 @@ export class RecipeService {
         .single();
 
       if (existsError) {
-        if (existsError.code === 'PGRST116') {
+        if (existsError.code === "PGRST116") {
           throw new NotFoundError(`Recipe with ID '${recipeId}' not found`);
         }
         throw new Error(`Failed to check recipe existence: ${existsError.message}`);
@@ -493,18 +470,16 @@ export class RecipeService {
   /**
    * Updates ingredients for a recipe using separate insert/update logic.
    * Deletes ingredients not in the update list, updates existing ones, and inserts new ones.
-   * 
+   *
    * @param recipeId - The recipe ID
    * @param ingredients - Array of ingredients to update/create
    */
   private async updateRecipeIngredients(
     recipeId: string,
-    ingredients: UpdateRecipeCommand['ingredients']
+    ingredients: UpdateRecipeCommand["ingredients"]
   ): Promise<void> {
     // Get IDs of ingredients that should be kept (those with IDs in the request)
-    const ingredientIdsToKeep = ingredients
-      .filter(ingredient => ingredient.id)
-      .map(ingredient => ingredient.id!);
+    const ingredientIdsToKeep = ingredients.filter((ingredient) => ingredient.id).map((ingredient) => ingredient.id!);
 
     // Delete ingredients not in the keep list
     if (ingredientIdsToKeep.length > 0) {
@@ -512,17 +487,14 @@ export class RecipeService {
         .from("ingredients")
         .delete()
         .eq("recipe_id", recipeId)
-        .not("id", "in", `(${ingredientIdsToKeep.join(',')})`);
+        .not("id", "in", `(${ingredientIdsToKeep.join(",")})`);
 
       if (deleteError) {
         throw new Error(`Failed to delete old ingredients: ${deleteError.message}`);
       }
     } else {
       // If no ingredients to keep, delete all ingredients for this recipe
-      const { error: deleteAllError } = await this.supabase
-        .from("ingredients")
-        .delete()
-        .eq("recipe_id", recipeId);
+      const { error: deleteAllError } = await this.supabase.from("ingredients").delete().eq("recipe_id", recipeId);
 
       if (deleteAllError) {
         throw new Error(`Failed to delete all ingredients: ${deleteAllError.message}`);
@@ -530,8 +502,8 @@ export class RecipeService {
     }
 
     // Separate existing ingredients (with ID) from new ingredients (without ID)
-    const existingIngredients = ingredients.filter(ingredient => ingredient.id);
-    const newIngredients = ingredients.filter(ingredient => !ingredient.id);
+    const existingIngredients = ingredients.filter((ingredient) => ingredient.id);
+    const newIngredients = ingredients.filter((ingredient) => !ingredient.id);
 
     // Update existing ingredients
     for (const ingredient of existingIngredients) {
@@ -551,15 +523,13 @@ export class RecipeService {
 
     // Insert new ingredients
     if (newIngredients.length > 0) {
-      const ingredientsToInsert = newIngredients.map(ingredient => ({
+      const ingredientsToInsert = newIngredients.map((ingredient) => ({
         recipe_id: recipeId,
         content: ingredient.content,
         position: ingredient.position,
       }));
 
-      const { error: insertError } = await this.supabase
-        .from("ingredients")
-        .insert(ingredientsToInsert);
+      const { error: insertError } = await this.supabase.from("ingredients").insert(ingredientsToInsert);
 
       if (insertError) {
         throw new Error(`Failed to insert new ingredients: ${insertError.message}`);
@@ -570,18 +540,13 @@ export class RecipeService {
   /**
    * Updates steps for a recipe using separate insert/update logic.
    * Deletes steps not in the update list, updates existing ones, and inserts new ones.
-   * 
+   *
    * @param recipeId - The recipe ID
    * @param steps - Array of steps to update/create
    */
-  private async updateRecipeSteps(
-    recipeId: string,
-    steps: UpdateRecipeCommand['steps']
-  ): Promise<void> {
+  private async updateRecipeSteps(recipeId: string, steps: UpdateRecipeCommand["steps"]): Promise<void> {
     // Get IDs of steps that should be kept (those with IDs in the request)
-    const stepIdsToKeep = steps
-      .filter(step => step.id)
-      .map(step => step.id!);
+    const stepIdsToKeep = steps.filter((step) => step.id).map((step) => step.id!);
 
     // Delete steps not in the keep list
     if (stepIdsToKeep.length > 0) {
@@ -589,17 +554,14 @@ export class RecipeService {
         .from("steps")
         .delete()
         .eq("recipe_id", recipeId)
-        .not("id", "in", `(${stepIdsToKeep.join(',')})`);
+        .not("id", "in", `(${stepIdsToKeep.join(",")})`);
 
       if (deleteError) {
         throw new Error(`Failed to delete old steps: ${deleteError.message}`);
       }
     } else {
       // If no steps to keep, delete all steps for this recipe
-      const { error: deleteAllError } = await this.supabase
-        .from("steps")
-        .delete()
-        .eq("recipe_id", recipeId);
+      const { error: deleteAllError } = await this.supabase.from("steps").delete().eq("recipe_id", recipeId);
 
       if (deleteAllError) {
         throw new Error(`Failed to delete all steps: ${deleteAllError.message}`);
@@ -607,8 +569,8 @@ export class RecipeService {
     }
 
     // Separate existing steps (with ID) from new steps (without ID)
-    const existingSteps = steps.filter(step => step.id);
-    const newSteps = steps.filter(step => !step.id);
+    const existingSteps = steps.filter((step) => step.id);
+    const newSteps = steps.filter((step) => !step.id);
 
     // Update existing steps
     for (const step of existingSteps) {
@@ -628,15 +590,13 @@ export class RecipeService {
 
     // Insert new steps
     if (newSteps.length > 0) {
-      const stepsToInsert = newSteps.map(step => ({
+      const stepsToInsert = newSteps.map((step) => ({
         recipe_id: recipeId,
         content: step.content,
         position: step.position,
       }));
 
-      const { error: insertError } = await this.supabase
-        .from("steps")
-        .insert(stepsToInsert);
+      const { error: insertError } = await this.supabase.from("steps").insert(stepsToInsert);
 
       if (insertError) {
         throw new Error(`Failed to insert new steps: ${insertError.message}`);
@@ -647,16 +607,12 @@ export class RecipeService {
   /**
    * Updates tags for a recipe.
    * Creates new tags if they don't exist and updates recipe-tag associations.
-   * 
+   *
    * @param recipeId - The recipe ID
    * @param tagNames - Array of tag names
    * @param userId - The user ID
    */
-  private async updateRecipeTags(
-    recipeId: string,
-    tagNames: string[],
-    userId: string
-  ): Promise<void> {
+  private async updateRecipeTags(recipeId: string, tagNames: string[], userId: string): Promise<void> {
     // Step 1: Remove all existing recipe-tag associations
     const { error: deleteAssociationsError } = await this.supabase
       .from("recipe_tags")
@@ -713,9 +669,7 @@ export class RecipeService {
           tag_id: tagId,
         }));
 
-        const { error: recipeTagsError } = await this.supabase
-          .from("recipe_tags")
-          .insert(recipeTagsToInsert);
+        const { error: recipeTagsError } = await this.supabase.from("recipe_tags").insert(recipeTagsToInsert);
 
         if (recipeTagsError) {
           throw new Error(`Failed to link tags to recipe: ${recipeTagsError.message}`);
@@ -727,7 +681,7 @@ export class RecipeService {
   /**
    * Attempts to rollback recipe update by restoring original values.
    * Used when an error occurs during recipe update.
-   * 
+   *
    * @param recipeId - The recipe ID to rollback
    * @param originalRecipe - The original recipe data
    */
@@ -751,7 +705,7 @@ export class RecipeService {
    * Deletes a recipe and all its related data (ingredients, steps, recipe_tags).
    * Implements proper authorization checking to ensure only the owner can delete the recipe.
    * Uses database CASCADE constraints for automatic cleanup of related data.
-   * 
+   *
    * @param recipeId - The recipe's UUID to delete
    * @param userId - The authenticated user's ID (for authorization)
    * @throws NotFoundError if recipe doesn't exist
@@ -767,7 +721,7 @@ export class RecipeService {
       .single();
 
     if (existsError) {
-      if (existsError.code === 'PGRST116') {
+      if (existsError.code === "PGRST116") {
         // No rows returned - recipe doesn't exist
         throw new NotFoundError(`Recipe with ID '${recipeId}' not found`);
       }
@@ -796,4 +750,3 @@ export class RecipeService {
     }
   }
 }
-

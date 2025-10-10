@@ -22,7 +22,9 @@ export function PaginationControls({
         <Button variant="outline" size="sm" disabled={!canGoPrev} onClick={() => onPageChange(currentPage - 1)}>
           Poprzednia
         </Button>
-        <span className="text-sm">Strona {currentPage} z {totalPages}</span>
+        <span className="text-sm">
+          Strona {currentPage} z {totalPages}
+        </span>
         <Button variant="outline" size="sm" disabled={!canGoNext} onClick={() => onPageChange(currentPage + 1)}>
           Następna
         </Button>
@@ -44,5 +46,3 @@ export function PaginationControls({
     </div>
   );
 }
-
-

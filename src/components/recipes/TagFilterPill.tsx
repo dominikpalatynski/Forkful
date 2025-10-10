@@ -2,7 +2,11 @@ import React from "react";
 import type { TagFilterPillProps } from "./types";
 import { Button } from "@/components/ui/button";
 
-export const TagFilterPill = React.memo(function TagFilterPill({ name, isSelected, onClick }: TagFilterPillProps): React.ReactElement {
+export const TagFilterPill = React.memo(function TagFilterPill({
+  name,
+  isSelected,
+  onClick,
+}: TagFilterPillProps): React.ReactElement {
   return (
     <Button
       type="button"
@@ -19,5 +23,3 @@ export const TagFilterPill = React.memo(function TagFilterPill({ name, isSelecte
     </Button>
   );
 });
-
-
