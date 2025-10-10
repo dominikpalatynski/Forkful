@@ -19,7 +19,7 @@ import type { RecipeContentLayoutProps } from "./types";
  */
 export function RecipeContentLayout({ ingredients, steps }: RecipeContentLayoutProps) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="flex flex-col gap-8">
       <RecipeIngredientsSection ingredients={ingredients} />
       <RecipeStepsSection steps={steps} />
     </div>

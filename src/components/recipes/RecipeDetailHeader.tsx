@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import type { RecipeDetailHeaderProps } from "./types";
-
+import { Badge } from "@/components/ui/badge";
 /**
  * Formats an ISO date string to a localized readable format (DD.MM.YYYY).
  *
@@ -35,7 +35,7 @@ function formatDate(isoDate: string): string {
  * />
  * ```
  */
-export function RecipeDetailHeader({ name, createdAt, recipeId, onDeleteClick }: RecipeDetailHeaderProps) {
+export function RecipeDetailHeader({ name, createdAt, recipeId, tags, onDeleteClick }: RecipeDetailHeaderProps) {
   const handleBackClick = () => {
     window.location.href = "/recipes";
   };
@@ -47,7 +47,12 @@ export function RecipeDetailHeader({ name, createdAt, recipeId, onDeleteClick }:
   return (
     <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
       <div>
-        <h1 className="text-3xl font-bold">{name}</h1>
+        <div className="flex flex-row gap-2 items-center">
+          <h1 className="text-3xl font-bold">{name}</h1>
+          {tags.map((tag) => (
+            <Badge key={tag}>{tag}</Badge>
+          ))}
+        </div>
         <p className="text-sm text-muted-foreground">Utworzono: {formatDate(createdAt)}</p>
       </div>
       <div className="flex gap-2 flex-wrap">

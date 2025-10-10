@@ -82,10 +82,11 @@ export function RecipeDetailView({ recipeId }: RecipeDetailViewProps) {
         name={recipe.name}
         createdAt={recipe.created_at}
         recipeId={recipeId}
+        tags={recipe.tags}
         onDeleteClick={openDialog}
       />
 
-      <RecipeMetadata description={recipe.description} tags={recipe.tags} />
+      <RecipeMetadata description={recipe.description} />
 
       <RecipeContentLayout ingredients={recipe.ingredients} steps={recipe.steps} />
 

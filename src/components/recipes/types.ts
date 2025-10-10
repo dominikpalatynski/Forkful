@@ -64,12 +64,12 @@ export interface RecipeDetailHeaderProps {
   name: string;
   createdAt: string; // ISO date string
   recipeId: string;
+  tags: string[];
   onDeleteClick: () => void;
 }
 
 export interface RecipeMetadataProps {
   description?: string | null;
-  tags: string[];
 }
 
 export interface RecipeContentLayoutProps {

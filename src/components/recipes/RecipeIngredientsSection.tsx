@@ -1,5 +1,6 @@
+import { Card, CardContent } from "../ui/card";
 import type { RecipeIngredientsSectionProps } from "./types";
-
+import { SectionHeader } from "./SectionHeader";
 /**
  * RecipeIngredientsSection component displays a list of recipe ingredients
  * as bullet points. Shows a message if no ingredients are available.
@@ -19,17 +20,21 @@ import type { RecipeIngredientsSectionProps } from "./types";
 export function RecipeIngredientsSection({ ingredients }: RecipeIngredientsSectionProps) {
   return (
     <section>
-      <h2 className="text-2xl font-semibold mb-4">Składniki</h2>
+      <SectionHeader>Składniki</SectionHeader>
       {ingredients.length === 0 ? (
         <p className="text-muted-foreground">Brak składników</p>
       ) : (
-        <ul className="list-disc list-inside space-y-2">
-          {ingredients.map((ingredient) => (
-            <li key={ingredient.id} className="text-base">
-              {ingredient.content}
-            </li>
-          ))}
-        </ul>
+        <Card>
+          <CardContent>
+            <ul className="list-disc list-inside space-y-2">
+              {ingredients.map((ingredient) => (
+                <li key={ingredient.id} className="text-base">
+                  {ingredient.content}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
       )}
     </section>
   );

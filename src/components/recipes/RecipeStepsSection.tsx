@@ -1,3 +1,4 @@
+import { SectionHeader } from "./SectionHeader";
 import type { RecipeStepsSectionProps } from "./types";
 
 /**
@@ -16,20 +17,27 @@ import type { RecipeStepsSectionProps } from "./types";
  * />
  * ```
  */
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
 export function RecipeStepsSection({ steps }: RecipeStepsSectionProps) {
   return (
     <section>
-      <h2 className="text-2xl font-semibold mb-4">Kroki przygotowania</h2>
+      <SectionHeader>Kroki przygotowania</SectionHeader>
       {steps.length === 0 ? (
         <p className="text-muted-foreground">Brak kroków</p>
       ) : (
-        <ol className="list-decimal list-inside space-y-3">
-          {steps.map((step) => (
-            <li key={step.id} className="text-base">
-              {step.content}
-            </li>
+        <div className="space-y-3">
+          {steps.map((step, idx) => (
+            <Card key={step.id}>
+              <CardHeader className="text-xl flex flex-row items-center gap-2 py-2">
+                <span className="flex-shrink-0 font-bold text-primary w-6 text-right">{idx + 1}.</span>
+              </CardHeader>
+              <CardContent className="py-4">
+                <span>{step.content}</span>
+              </CardContent>
+            </Card>
           ))}
-        </ol>
+        </div>
       )}
     </section>
   );
