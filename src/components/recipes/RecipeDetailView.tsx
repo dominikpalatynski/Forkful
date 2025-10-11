@@ -46,17 +46,6 @@ export function RecipeDetailView({ recipeId }: RecipeDetailViewProps) {
   // Manage delete functionality
   const { deleteRecipe, isDialogOpen, openDialog, closeDialog, isDeleting, error: deleteError } = useDeleteRecipe();
 
-  // Handle delete confirmation
-  const handleConfirmDelete = async () => {
-    try {
-      await deleteRecipe(recipeId);
-      // Navigate to recipes list after successful deletion
-      window.location.href = "/recipes";
-    } catch (err) {
-      // Error is handled by the hook
-    }
-  };
-
   // Show loading state
   if (isLoading) {
     return (
@@ -93,7 +82,7 @@ export function RecipeDetailView({ recipeId }: RecipeDetailViewProps) {
       <DeleteRecipeDialog
         isOpen={isDialogOpen}
         onClose={closeDialog}
-        onConfirm={handleConfirmDelete}
+        onConfirm={() => deleteRecipe(recipeId)}
         recipeName={recipe.name}
         isDeleting={isDeleting}
       />

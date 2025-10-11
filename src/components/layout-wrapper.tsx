@@ -1,5 +1,6 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 interface LayoutWrapperProps {
   children: React.ReactNode;
@@ -15,6 +16,7 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
         </header>
         <div className="p-6">{children}</div>
       </main>
+      <Toaster />
     </SidebarProvider>
   );
 }

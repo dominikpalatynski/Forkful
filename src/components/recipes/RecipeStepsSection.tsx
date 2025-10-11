@@ -29,10 +29,13 @@ export function RecipeStepsSection({ steps }: RecipeStepsSectionProps) {
         <div className="space-y-3">
           {steps.map((step, idx) => (
             <Card key={step.id}>
-              <CardHeader className="text-xl flex flex-row items-center gap-2 py-2">
-                <span className="flex-shrink-0 font-bold text-primary w-6 text-right">{idx + 1}.</span>
+              <CardHeader className="text-xl  ">
+                <span className="font-bold text-primary">
+                  {`Krok ${idx + 1}`}
+                </span>
               </CardHeader>
               <CardContent className="py-4">
+                <h3 className="text-lg font-semibold mb-2">Opis</h3>
                 <span>{step.content}</span>
               </CardContent>
             </Card>

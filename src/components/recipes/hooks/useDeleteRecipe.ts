@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/store/query";
+import { toast } from "sonner";
 
 /**
  * Deletes a recipe by ID via the API.
@@ -59,9 +60,20 @@ export function useDeleteRecipe() {
     {
       mutationFn: deleteRecipe,
       onSuccess: () => {
-        // Invalidate recipe queries to refresh lists
         queryClient.invalidateQueries({ queryKey: ["recipes"] });
         queryClient.invalidateQueries({ queryKey: ["recipe"] });
+        queryClient.invalidateQueries({ queryKey: ["tags"] });
+
+        toast.success("Przepis został pomyślnie usunięty!", {
+          duration: 1500,
+          onAutoClose: () => {
+            closeDialog();
+            window.location.href = "/recipes";
+          },
+        });
+      },
+      onError: (error: Error) => {
+        toast.error(`Błąd podczas usuwania przepisu: ${error.message}`);
       },
     },
     queryClient
@@ -78,9 +90,8 @@ export function useDeleteRecipe() {
   const handleDelete = useCallback(
     async (recipeId: string) => {
       await mutation.mutateAsync(recipeId);
-      closeDialog();
     },
-    [mutation, closeDialog]
+    [mutation]
   );
 
   return {
