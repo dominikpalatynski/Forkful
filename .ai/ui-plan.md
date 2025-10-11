@@ -60,18 +60,31 @@ Główne założenia architektury:
   - **Dostępność**: Semantyczny kod HTML (`article`, `h1`, `ul`, `ol`) dla lepszej interpretacji przez czytniki ekranu.
   - **Bezpieczeństwo**: Użytkownik może wyświetlić tylko własne przepisy (zabezpieczenie na poziomie API).
  
-### Widok 5: Tworzenie Przepisu
- 
-- **Nazwa widoku**: Tworzenie Przepisu
+### Widok 5: Tworzenie Przepisu Ręcznie
+
+- **Nazwa widoku**: Tworzenie Przepisu Ręcznie
 - **Ścieżka**: `/recipes/new`
-- **Główny cel**: Umożliwienie użytkownikowi dodania nowego przepisu (manualnie lub za pomocą AI).
-- **Kluczowe informacje do wyświetlenia**: Formularz z polami na nazwę, opis, składniki, kroki i tagi. W trybie AI dodatkowe pole na wklejenie tekstu.
-- **Kluczowe komponenty**: `RecipeForm`, `AIGenerationForm` (warunkowo), `EditableList` (dla składników i kroków), `TagCombobox`, `AddItemModal`, `RestoreDraftModal`.
+- **Główny cel**: Umożliwienie użytkownikowi ręcznego dodania nowego przepisu poprzez wypełnienie wszystkich pól formularza.
+- **Kluczowe informacje do wyświetlenia**: Formularz z polami na nazwę, opis, składniki, kroki i tagi.
+- **Kluczowe komponenty**: `ManualRecipeForm`, `EditableList` (dla składników i kroków), `TagInput`, `RecipeBasicInfoSection`, `FormActionButtons`.
 - **UX, dostępność i bezpieczeństwo**:
-  - **UX**: Powiadomienia (toasty) informujące o sukcesie lub błędzie operacji. Walidacja w czasie rzeczywistym.
+  - **UX**: Powiadomienia (toasty) informujące o sukcesie lub błędzie operacji. Walidacja w czasie rzeczywistym. Automatyczne zapisywanie draftu w localStorage.
+  - **Dostępność**: Poprawne etykiety dla pól formularza, obsługa nawigacji klawiaturą. Walidacja pól w czasie rzeczywistym.
   - **Bezpieczeństwo**: Walidacja danych wejściowych po stronie klienta (Zod) i serwera.
- 
-### Widok 6: Edycja Przepisu
+
+### Widok 6: Tworzenie Przepisu z AI
+
+- **Nazwa widoku**: Tworzenie Przepisu z AI
+- **Ścieżka**: `/recipes/new-ai`
+- **Główny cel**: Umożliwienie użytkownikowi dodania nowego przepisu za pomocą sztucznej inteligencji poprzez wklejenie tekstu źródłowego.
+- **Kluczowe informacje do wyświetlenia**: Wieloetapowy formularz - najpierw pole na tekst źródłowy, potem edycja wygenerowanego przepisu (nazwa, opis, składniki, kroki, tagi).
+- **Kluczowe komponenty**: `AIRecipeForm`, `AIInputStep`, `AIGeneratedPreview`, `EditableList` (dla składników i kroków), `TagInput`, `RecipeBasicInfoSection`, `FormActionButtons`.
+- **UX, dostępność i bezpieczeństwo**:
+  - **UX**: Wieloetapowy proces z wizualną informacją zwrotną (ładowanie podczas generowania). Możliwość edycji wygenerowanych danych przed zapisem. Powiadomienia o sukcesie/błędzie.
+  - **Dostępność**: Jasne wskazówki dla każdego etapu, obsługa nawigacji klawiaturą. Walidacja minimalnej długości tekstu źródłowego.
+  - **Bezpieczeństwo**: Walidacja danych wejściowych po stronie klienta (Zod) i serwera. Logowanie błędów generowania dla analizy.
+
+### Widok 7: Edycja Przepisu
  
 - **Nazwa widoku**: Edycja Przepisu
 - **Ścieżka**: `/recipes/[id]/edit`
@@ -83,17 +96,25 @@ Główne założenia architektury:
   - **Bezpieczeństwo**: Walidacja danych wejściowych po stronie klienta (Zod) i serwera. Użytkownik może edytować tylko własne przepisy (zabezpieczenie na poziomie API).
  
 ## 3. Mapa podróży użytkownika
- 
- Główny przepływ użytkownika (generowanie przepisu za pomocą AI):
+
+### Główny przepływ użytkownika - tworzenie ręczne:
 
 1.  **Logowanie**: Użytkownik wchodzi na `/login`, wprowadza dane i zostaje przekierowany do `/recipes`.
-2.  **Inicjacja**: W widoku `/recipes`, użytkownik klika "Dodaj przepis" > "Generuj z AI".
-3.  **Generowanie**: Użytkownik jest na stronie `/recipes/new`, wkleja tekst przepisu do pola tekstowego i klika "Generuj".
-4.  **Weryfikacja i Edycja**: Aplikacja przetwarza tekst i wyświetla poniżej wypełniony formularz. Użytkownik weryfikuje dane, dokonuje niezbędnych korekt (np. edytuje składnik, dodaje tag).
+2.  **Inicjacja**: W widoku `/recipes`, użytkownik klika przycisk "Ręcznie".
+3.  **Wypełnianie formularza**: Użytkownik jest na stronie `/recipes/new` i wypełnia wszystkie pola formularza (nazwa, opis, składniki, kroki, tagi).
+4.  **Zapis**: Użytkownik klika "Zapisz". Dane są wysyłane do API.
+5.  **Sukces**: Po pomyślnym zapisie, użytkownik jest przekierowany do widoku szczegółowego nowo utworzonego przepisu (`/recipes/[id]`).
+
+### Główny przepływ użytkownika - generowanie z AI:
+
+1.  **Logowanie**: Użytkownik wchodzi na `/login`, wprowadza dane i zostaje przekierowany do `/recipes`.
+2.  **Inicjacja**: W widoku `/recipes`, użytkownik klika przycisk "Z AI".
+3.  **Wprowadzanie tekstu**: Użytkownik jest na stronie `/recipes/new-ai`, wkleja tekst przepisu do pola tekstowego i klika "Generuj".
+4.  **Weryfikacja i Edycja**: Aplikacja przetwarza tekst i wyświetla wypełniony formularz. Użytkownik weryfikuje dane, dokonuje niezbędnych korekt (np. edytuje składnik, dodaje tag).
 5.  **Zapis**: Użytkownik klika "Zapisz". Dane są wysyłane do API.
 6.  **Sukces**: Po pomyślnym zapisie, użytkownik jest przekierowany do widoku szczegółowego nowo utworzonego przepisu (`/recipes/[id]`).
 
-Inne kluczowe przepływy:
+### Inne kluczowe przepływy:
 
 - **Przeglądanie**: Użytkownik na `/recipes` używa wyszukiwania i filtrów, aby znaleźć przepis, a następnie klika na jego kartę, aby przejść do `/recipes/[id]`.
 - **Edycja**: Z widoku `/recipes/[id]` użytkownik klika "Edytuj", co przenosi go do `/recipes/[id]/edit`, gdzie może zmodyfikować przepis w tym samym formularzu co przy tworzeniu.
@@ -102,16 +123,19 @@ Inne kluczowe przepływy:
 ## 4. Układ i struktura nawigacji
 
 - **Główny układ**: Aplikacja wykorzystuje stały, globalny `TopBar` widoczny we wszystkich widokach po zalogowaniu. Poniżej `TopBar` renderowana jest treść właściwa dla danego widoku.
-- **Nawigacja na desktopie**: `TopBar` zawiera logo, centralne pole wyszukiwania oraz przyciski akcji ("Dodaj przepis") i menu użytkownika po prawej stronie. Jest to główny hub nawigacyjny.
+- **Nawigacja na desktopie**: `TopBar` zawiera logo, centralne pole wyszukiwania oraz przyciski akcji ("Ręcznie", "Z AI") i menu użytkownika po prawej stronie. Jest to główny hub nawigacyjny.
 - **Nawigacja na mobile**: `TopBar` jest uproszczony i zawiera logo oraz ikonę "hamburger menu". Kliknięcie ikony otwiera panel boczny (`Sheet`) z pełną nawigacją (linki do widoków, akcje).
 - **Nawigacja kontekstowa**: Przejścia między widokami są logiczne. Z listy przechodzimy do szczegółów, ze szczegółów do edycji. Przycisk "Wróć" w przeglądarce oraz linki "Anuluj" w formularzach pozwalają na cofanie się w hierarchii.
 
 ## 5. Kluczowe komponenty
 
-- **`TopBar`**: Globalny komponent nawigacyjny. Zawiera wyszukiwarkę, menu dodawania przepisu i menu użytkownika. Jest responsywny.
+- **`RecipeListHeader`**: Komponent nagłówka listy przepisów zawierający wyszukiwarkę i dwa przyciski tworzenia: "Ręcznie" oraz "Z AI".
 - **`RecipeCard`**: Komponent wyświetlający pojedynczy przepis na liście. Zawiera nazwę i tagi. Jest klikalny, prowadzi do widoku szczegółowego.
-- **`RecipeForm`**: Sercem aplikacji jest rozbudowany komponent formularza używany do tworzenia i edycji przepisów. Zarządza stanem nazwy, opisu, składników, kroków i tagów.
-- **`EditableList`**: Reużywalny komponent do zarządzania listą elementów (składników lub kroków) w `RecipeForm`. Umożliwia edycję i usuwanie poszczególnych pozycji.
-- **`TagCombobox`**: Zaawansowany komponent (oparty na shadcn/ui Command) do dodawania tagów. Umożliwia wyszukiwanie istniejących tagów (autocomplete) oraz tworzenie nowych "w locie".
+- **`ManualRecipeForm`**: Komponent formularza do ręcznego tworzenia przepisów. Zarządza stanem nazwy, opisu, składników, kroków i tagów dla nowych przepisów.
+- **`AIRecipeForm`**: Wieloetapowy komponent formularza do tworzenia przepisów z AI. Obsługuje wprowadzanie tekstu, generowanie oraz edycję wyników.
+- **`RecipeBasicInfoSection`**: Sekcja formularza zawierająca pola na nazwę i opis przepisu.
+- **`EditableIngredientsList`** / **`EditableStepsList`**: Reużywalne komponenty do zarządzania listami składników i kroków. Umożliwiają edycję i usuwanie poszczególnych pozycji.
+- **`TagInput`**: Zaawansowany komponent do dodawania tagów z funkcją autocomplete i możliwością tworzenia nowych tagów.
+- **`FormActionButtons`**: Komponent zawierający przyciski akcji formularza (Zapisz, Anuluj) z obsługą stanów ładowania.
 - **`EmptyState`**: Komponent wyświetlany, gdy brakuje danych do pokazania (np. brak przepisów, brak wyników wyszukiwania). Prowadzi użytkownika do następnej możliwej akcji.
-- **Modale (`DeleteConfirmModal`, `AddItemModal`, `RestoreDraftModal`)**: Komponenty modalne używane do potwierdzania krytycznych akcji (usunięcie), dodawania elementów bez przeładowania strony, oraz przywracania niezapisanej pracy.
+- **Modale (`CancelRecipeEditDialog`, `DeleteRecipeDialog`)**: Komponenty modalne używane do potwierdzania krytycznych akcji (anulowanie edycji, usunięcie przepisu).

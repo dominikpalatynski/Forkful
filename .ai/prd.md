@@ -61,38 +61,41 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
 
 - ID: US-003
 - Tytuł: Inicjowanie tworzenia przepisu za pomocą AI
-- Opis: Jako zalogowany użytkownik, chcę mieć możliwość wklejenia tekstu przepisu do przetworzenia przez AI, aby szybko rozpocząć proces dodawania nowego przepisu.
+- Opis: Jako zalogowany użytkownik, chcę mieć możliwość przejścia do dedykowanej strony tworzenia przepisów z AI poprzez przycisk na stronie głównej, aby następnie wkleić tekst przepisu do przetworzenia.
 - Kryteria akceptacji:
-  - Na stronie głównej znajduje się wyraźnie oznaczony przycisk/opcja "Generuj z AI".
-  - Po kliknięciu pojawia się pole tekstowe (`textarea`) na wklejenie tekstu.
-  - Pole tekstowe ma limit 10 000 znaków.
-  - Po wklejeniu tekstu i kliknięciu "Generuj", aplikacja wysyła tekst do przetworzenia.
+  - Na stronie głównej znajduje się przycisk "Z AI" obok przycisku "Ręcznie".
+  - Po kliknięciu przycisku "Z AI" jestem przekierowany na stronę `/recipes/new-ai`.
+  - Na stronie `/recipes/new-ai` znajduje się pole tekstowe (`textarea`) na wklejenie tekstu z limitem 10 000 znaków.
+  - Po wklejeniu tekstu i kliknięciu "Generuj przepis", aplikacja wysyła tekst do przetworzenia przez AI.
 
 - ID: US-004
 - Tytuł: Weryfikacja i edycja przepisu wygenerowanego przez AI (Happy Path)
-- Opis: Jako użytkownik, po pomyślnym przetworzeniu tekstu przez AI, chcę zobaczyć wypełniony formularz z nazwą, składnikami i krokami, abym mógł je zweryfikować i ewentualnie poprawić.
+- Opis: Jako użytkownik, po pomyślnym przetworzeniu tekstu przez AI na stronie `/recipes/new-ai`, chcę zobaczyć wypełniony formularz edycji z nazwą, składnikami i krokami, abym mógł je zweryfikować i ewentualnie poprawić.
 - Kryteria akceptacji:
-  - Po przetworzeniu przez AI, pod polem tekstowym pojawia się widoku formularza edycji.
+  - Po przetworzeniu przez AI, na stronie `/recipes/new-ai` zamiast pola tekstowego wyświetla się formularz edycji z wypełnionymi danymi.
   - Pola "Nazwa przepisu", "Składniki" i "Kroki" są wypełnione danymi wyodrębnionymi przez AI.
   - Każdy składnik i krok jest osobną, edytowalną pozycją na liście.
   - Mogę dowolnie edytować tekst w każdym polu.
   - Mogę usunąć poszczególne składniki lub kroki.
   - Mogę dodać nowe, puste pola na składniki lub kroki.
   - Mogę przestawiać kolejność kroków i składników.
+  - Przycisk "Wstecz do edycji tekstu" pozwala wrócić do modyfikacji oryginalnego tekstu źródłowego.
 
 - ID: US-005
 - Tytuł: Obsługa błędu generacji AI
-- Opis: Jako użytkownik, jeśli AI nie uda się przetworzyć mojego tekstu, chcę otrzymać jasną informację o błędzie i możliwość ręcznego dodania przepisu.
+- Opis: Jako użytkownik, jeśli AI nie uda się przetworzyć mojego tekstu na stronie `/recipes/new-ai`, chcę otrzymać jasną informację o błędzie i pozostać na stronie, aby móc ponowić próbę lub skorzystać z manualnego tworzenia.
 - Kryteria akceptacji:
   - W przypadku niepowodzenia generacji AI, na ekranie pojawia się nietrwałe powiadomienie (toast) z informacją o błędzie.
-  - Po wyświetleniu powiadomienia, pod polem tekstowym pojawia się widoku formularza edycji z pustymi polami.
+  - Po wyświetleniu powiadomienia, pozostaję na stronie `/recipes/new-ai` z polem tekstowym, gdzie mogę poprawić tekst i spróbować ponownie.
+  - Przycisk "Powrót" pozwala wrócić do strony głównej i skorzystać z opcji "Ręcznie".
 
 - ID: US-006
 - Tytuł: Inicjowanie manualnego tworzenia przepisu
-- Opis: Jako zalogowany użytkownik, chcę mieć możliwość ręcznego stworzenia przepisu od zera, jeśli nie mam tekstu do wklejenia lub AI zawiodło.
+- Opis: Jako zalogowany użytkownik, chcę mieć możliwość ręcznego stworzenia przepisu od zera poprzez przycisk na stronie głównej, jeśli nie mam tekstu do wklejenia lub chcę mieć pełną kontrolę nad tworzeniem.
 - Kryteria akceptacji:
-  - Na stronie głównej znajduje się przycisk/opcja "Stwórz manualnie".
-  - Po kliknięciu jestem przekierowywany do pustego formularza edycji przepisu z polami: "Nazwa przepisu", "Składniki", "Kroki" i "Tagi".
+  - Na stronie głównej znajduje się przycisk "Ręcznie" obok przycisku "Z AI".
+  - Po kliknięciu przycisku "Ręcznie" jestem przekierowany na stronę `/recipes/new`.
+  - Na stronie `/recipes/new` wyświetla się pusty formularz edycji przepisu z polami: "Nazwa przepisu", "Składniki", "Kroki" i "Tagi".
 
 - ID: US-007
 - Tytuł: Dodawanie i zarządzanie tagami
