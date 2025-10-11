@@ -154,6 +154,18 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
   - Kroki są ponumerowane; składniki wyświetlane jako lista punktowana.
   - Dostępne są akcje: „Wróć” (powrót do listy) oraz „Edytuj” (przejście do ekranu edycji przepisu). Oraz przycisk "Usuń" ktore po .
 
+- ID: US-013
+- Tytuł: Edycja istniejącego przepisu
+- Opis: Jako zalogowany użytkownik, chcę mieć możliwość edytowania istniejącego przepisu, aby poprawić błędy lub zaktualizować jego treść.
+- Kryteria akceptacji:
+  - W widoku szczegółowym przepisu (`/recipes/:id`) znajduje się przycisk "Edytuj".
+  - Po kliknięciu przycisku "Edytuj" następuje przekierowanie do formularza edycji (`/recipes/:id/edit`).
+  - Formularz edycji jest wstępnie wypełniony wszystkimi istniejącymi danymi przepisu.
+  - Użytkownik może modyfikować nazwę, składniki, kroki przygotowania oraz tagi.
+  - Po dokonaniu zmian i kliknięciu "Zapisz", przepis zostaje zaktualizowany w bazie danych.
+  - Po pomyślnym zapisaniu, użytkownik jest przekierowywany z powrotem do widoku szczegółowego zaktualizowanego przepisu (`/recipes/:id`).
+  - Formularz zawiera również przycisk "Anuluj", który odrzuca wprowadzone zmiany i przekierowuje użytkownika z powrotem do widoku szczegółowego (`/recipes/:id`).
+
 ## 6. Metryki sukcesu
 
 Głównym celem MVP jest weryfikacja kluczowej hipotezy: czy automatyczne przetwarzanie tekstu przepisu przez AI jest wartościowe dla użytkowników i ma akceptowalną jakość. W związku z tym, rezygnujemy z pierwotnych, sztywnych kryteriów (80% / 85%) na rzecz zbierania danych, które posłużą do oceny jakości i planowania dalszych iteracji.

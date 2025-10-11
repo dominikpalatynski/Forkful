@@ -59,22 +59,32 @@ Główne założenia architektury:
   - **UX**: Dwukolumnowy layout na desktopie (składniki | kroki) dla lepszej czytelności. Modal potwierdzający usunięcie, aby zapobiec przypadkowym akcjom.
   - **Dostępność**: Semantyczny kod HTML (`article`, `h1`, `ul`, `ol`) dla lepszej interpretacji przez czytniki ekranu.
   - **Bezpieczeństwo**: Użytkownik może wyświetlić tylko własne przepisy (zabezpieczenie na poziomie API).
-
-### Widok 5: Tworzenie / Edycja Przepisu
-
-- **Nazwa widoku**: Tworzenie / Edycja Przepisu
-- **Ścieżka**: `/recipes/new` (tworzenie) oraz `/recipes/[id]/edit` (edycja)
-- **Główny cel**: Umożliwienie użytkownikowi dodania nowego przepisu (manualnie lub za pomocą AI) lub zaktualizowania istniejącego.
+ 
+### Widok 5: Tworzenie Przepisu
+ 
+- **Nazwa widoku**: Tworzenie Przepisu
+- **Ścieżka**: `/recipes/new`
+- **Główny cel**: Umożliwienie użytkownikowi dodania nowego przepisu (manualnie lub za pomocą AI).
 - **Kluczowe informacje do wyświetlenia**: Formularz z polami na nazwę, opis, składniki, kroki i tagi. W trybie AI dodatkowe pole na wklejenie tekstu.
 - **Kluczowe komponenty**: `RecipeForm`, `AIGenerationForm` (warunkowo), `EditableList` (dla składników i kroków), `TagCombobox`, `AddItemModal`, `RestoreDraftModal`.
 - **UX, dostępność i bezpieczeństwo**:
-  - **UX**: Ujednolicony formularz dla wszystkich trybów. Automatyczne zapisywanie postępów w `localStorage`. Powiadomienia (toasty) informujące o sukcesie lub błędzie operacji. Walidacja w czasie rzeczywistym.
-  - **Dostępność**: Poprawne etykietowanie wszystkich pól formularza. Obsługa błędów walidacji w sposób dostępny (np. `aria-describedby`).
+  - **UX**: Powiadomienia (toasty) informujące o sukcesie lub błędzie operacji. Walidacja w czasie rzeczywistym.
   - **Bezpieczeństwo**: Walidacja danych wejściowych po stronie klienta (Zod) i serwera.
-
+ 
+### Widok 6: Edycja Przepisu
+ 
+- **Nazwa widoku**: Edycja Przepisu
+- **Ścieżka**: `/recipes/[id]/edit`
+- **Główny cel**: Umożliwienie użytkownikowi zaktualizowania istniejącego przepisu.
+- **Kluczowe informacje do wyświetlenia**: Wypełniony formularz z istniejącymi danymi przepisu (nazwa, tagi, opis, składniki, kroki).
+- **Kluczowe komponenty**: `RecipeForm`, `EditableList` (dla składników i kroków), `TagCombobox`.
+- **UX, dostępność i bezpieczeństwo**:
+  - **UX**: Powiadomienia (toasty) informujące o sukcesie lub błędzie operacji. Walidacja w czasie rzeczywistym.
+  - **Bezpieczeństwo**: Walidacja danych wejściowych po stronie klienta (Zod) i serwera. Użytkownik może edytować tylko własne przepisy (zabezpieczenie na poziomie API).
+ 
 ## 3. Mapa podróży użytkownika
-
-Główny przepływ użytkownika (generowanie przepisu za pomocą AI):
+ 
+ Główny przepływ użytkownika (generowanie przepisu za pomocą AI):
 
 1.  **Logowanie**: Użytkownik wchodzi na `/login`, wprowadza dane i zostaje przekierowany do `/recipes`.
 2.  **Inicjacja**: W widoku `/recipes`, użytkownik klika "Dodaj przepis" > "Generuj z AI".
