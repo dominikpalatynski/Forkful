@@ -1,18 +1,9 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import type { DeleteRecipeDialogProps } from "./types";
 
 /**
  * DeleteRecipeDialog component displays a confirmation modal for recipe deletion.
- * Uses shadcn/ui AlertDialog with warning message and action buttons.
+ * Uses the reusable ConfirmationDialog component with warning message and action buttons.
  *
  * @param isOpen - Controls dialog visibility
  * @param onClose - Callback to close the dialog without action
@@ -33,23 +24,23 @@ import type { DeleteRecipeDialogProps } from "./types";
  */
 export function DeleteRecipeDialog({ isOpen, onClose, onConfirm, recipeName, isDeleting }: DeleteRecipeDialogProps) {
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Potwierdź usunięcie</AlertDialogTitle>
-          <AlertDialogDescription>
-            Czy na pewno chcesz usunąć przepis &ldquo;{recipeName}&rdquo;? Ta akcja jest nieodwracalna.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose} disabled={isDeleting}>
-            Anuluj
-          </AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} disabled={isDeleting}>
-            {isDeleting ? "Usuwanie..." : "Usuń"}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmationDialog
+      isOpen={isOpen}
+      onOpenChange={onClose}
+      title="Potwierdź usunięcie"
+      description={`Czy na pewno chcesz usunąć przepis "${recipeName}"? Ta akcja jest nieodwracalna.`}
+      cancelButton={{
+        text: "Anuluj",
+        onClick: onClose,
+        disabled: isDeleting,
+      }}
+      actionButton={{
+        text: "Usuń",
+        loadingText: "Usuwanie...",
+        onClick: onConfirm,
+        disabled: isDeleting,
+        isLoading: isDeleting,
+      }}
+    />
   );
 }

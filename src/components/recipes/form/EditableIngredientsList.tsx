@@ -21,7 +21,7 @@ export function EditableIngredientsList({ control }: EditableIngredientsListProp
   });
 
   const handleAddIngredient = () => {
-    append({ content: "", position: 0 }); // Position will be recalculated on submit
+    append({ content: " ", position: fields.length + 1 });
   };
 
   const handleRemoveIngredient = (index: number) => {

@@ -1,15 +1,5 @@
 import { useState } from "react";
 import { Form } from "@/components/ui/form";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { useForm as useCustomForm } from "@/hooks/use-form";
 import { UpdateRecipeSchema } from "@/lib/schemas/recipe.schema";
 import type { UpdateRecipeCommand } from "@/types";
@@ -20,7 +10,8 @@ import { EditableStepsList } from "./EditableStepsList";
 import { TagInput } from "./TagInput";
 import { FormActionButtons } from "./FormActionButtons";
 import type { RecipeEditFormProps } from "../types";
-
+import { Separator } from "@/components/ui/separator";
+import { CancelRecipeEditDialog } from "./CancelRecipeEditDialog";
 /**
  * RecipeEditForm Component
  *
@@ -58,6 +49,7 @@ export function RecipeEditForm({ initialData, recipeId }: RecipeEditFormProps) {
 
   // Handle form submission
   const onSubmit = (data: UpdateRecipeCommand) => {
+    console.log("onSubmit", data);
     if (updateMutation.isPending) return;
 
     // Recalculate positions before sending to API
@@ -104,7 +96,11 @@ export function RecipeEditForm({ initialData, recipeId }: RecipeEditFormProps) {
 
           <TagInput control={form.control} suggestions={[]} />
 
+          <Separator />
+
           <EditableIngredientsList control={form.control} />
+          
+          <Separator />
 
           <EditableStepsList control={form.control} />
 
@@ -113,20 +109,11 @@ export function RecipeEditForm({ initialData, recipeId }: RecipeEditFormProps) {
       </Form>
 
       {/* Cancel confirmation dialog */}
-      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Odrzucić zmiany?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Masz niezapisane zmiany w przepisie. Czy na pewno chcesz wyjść bez zapisywania?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Powrót do edycji</AlertDialogCancel>
-            <AlertDialogAction onClick={handleCancelConfirm}>Odrzuć zmiany</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <CancelRecipeEditDialog
+        isOpen={showCancelDialog}
+        onOpenChange={setShowCancelDialog}
+        onConfirm={handleCancelConfirm}
+      />
     </>
   );
 }

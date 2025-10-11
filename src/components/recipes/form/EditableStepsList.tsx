@@ -22,7 +22,7 @@ export function EditableStepsList({ control }: EditableStepsListProps) {
   });
 
   const handleAddStep = () => {
-    append({ content: "", position: 0 }); // Position will be recalculated on submit
+    append({ content: " ", position: fields.length + 1 }); // Position will be recalculated on submit
   };
 
   const handleRemoveStep = (index: number) => {
