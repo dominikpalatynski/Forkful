@@ -1,17 +1,19 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import type { RecipeBasicInfoSectionProps } from "../types";
+import type { CreateRecipeBasicInfoSectionProps } from "../types";
 
 /**
- * RecipeBasicInfoSection Component
+ * CreateRecipeBasicInfoSection Component
  *
- * Renders the basic information fields for recipe editing: name and description.
+ * Renders the basic information fields for recipe creation: name and description.
  * Uses FormField components to integrate with react-hook-form and provide proper validation.
+ * This is a separate component from RecipeBasicInfoSection because it uses CreateRecipeCommand
+ * type instead of UpdateRecipeCommand.
  *
- * @param control - React Hook Form control object for managing form state
+ * @param control - React Hook Form control object for managing form state (CreateRecipeCommand)
  */
-export function RecipeBasicInfoSection({ control }: RecipeBasicInfoSectionProps) {
+export function CreateRecipeBasicInfoSection({ control }: CreateRecipeBasicInfoSectionProps) {
   return (
     <div className="space-y-6">
       {/* Recipe Name Field */}
@@ -43,7 +45,13 @@ export function RecipeBasicInfoSection({ control }: RecipeBasicInfoSectionProps)
           <FormItem>
             <FormLabel>Opis</FormLabel>
             <FormControl>
-              <Textarea placeholder="Dodaj opcjonalny opis przepisu" rows={4} className="resize-none" {...field} value={field.value ?? ""} />
+              <Textarea
+                placeholder="Dodaj opcjonalny opis przepisu"
+                rows={4}
+                className="resize-none"
+                {...field}
+                value={field.value ?? ""}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

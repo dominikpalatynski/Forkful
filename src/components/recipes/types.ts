@@ -132,4 +132,30 @@ export interface FormActionButtonsProps {
   onCancel: () => void;
   isSubmitting: boolean;
   isDirty: boolean;
+  submitButtonText?: string;
+}
+
+// ============================================================================
+// Manual Recipe Creation Form Types
+// ============================================================================
+
+
+export interface CreateRecipeBasicInfoSectionProps {
+  control: import("react-hook-form").Control<import("@/types").CreateRecipeCommand>;
+}
+
+
+export interface CreateRecipeIngredientsListProps {
+  control: import("react-hook-form").Control<import("@/types").CreateRecipeCommand>;
+}
+
+
+export interface CreateRecipeStepsListProps {
+  control: import("react-hook-form").Control<import("@/types").CreateRecipeCommand>;
+}
+
+
+export interface CreateRecipeTagInputProps {
+  control: import("react-hook-form").Control<import("@/types").CreateRecipeCommand>;
+  suggestions: string[];
 }

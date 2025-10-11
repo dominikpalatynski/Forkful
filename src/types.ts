@@ -32,8 +32,8 @@ export type RecipeStepCommand = Pick<TablesInsert<"steps">, "content" | "positio
  */
 export interface CreateRecipeCommand {
   name: Recipe["name"];
-  description?: Recipe["description"];
-  generationId?: Recipe["generation_id"];
+  description?: string;
+  generationId?: string;
   ingredients?: RecipeIngredientCommand[];
   steps?: RecipeStepCommand[];
   tags?: string[];
