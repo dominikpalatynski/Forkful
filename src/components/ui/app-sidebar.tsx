@@ -12,6 +12,7 @@ import {
 import { Utensils, Sparkles, Pencil} from "lucide-react";
 import { Button } from "./button";
 import { NavUser } from "@/components/NavUser";
+import { ModeToggle } from "@/components/ModeToggle";
 const items = [
   {
     title: "Przepisy",
@@ -80,6 +81,7 @@ export function AppSidebar() {
         <SidebarGroup />
       </SidebarContent>
       <SidebarFooter>
+        <ModeToggle />
         <NavUser user={mockUser} />
       </SidebarFooter>
     </Sidebar>
