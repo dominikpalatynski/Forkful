@@ -126,16 +126,6 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
   - Jeśli przepis był inicjowany przez AI, w tabeli analitycznej `generation` flaga `is_accepted` jest ustawiana na `false`.
   - Zapisany w `localStorage` stan formularza jest czyszczony.
 
-- ID: US-010
-- Tytuł: Ochrona przed utratą danych w formularzu
-- Opis: Jako użytkownik, chcę aby moje postępy w wypełnianiu formularza były automatycznie zapisywane, abym nie stracił danych w przypadku przypadkowego zamknięcia karty lub awarii przeglądarki.
-- Kryteria akceptacji:
-  - Po udanej generacji AI, cały stan formularza jest zapisywany w `localStorage`.
-  - Po każdej modyfikacji dowolnego pola w formularzu, stan jest aktualizowany w `localStorage` (z niewielkim opóźnieniem, np. 1 sekunda).
-  - Gdy ponownie otworzę stronę tworzenia przepisu, aplikacja wykryje niezapisany stan w `localStorage` i zaproponuje mi jego przywrócenie.
-  - Jeśli odrzucę przywrócenie `localStorage` ma zostać wyczyszczony oraz Jeśli przepis był inicjowany przez AI, w tabeli analitycznej `generation` flaga `is_accepted` jest ustawiana na `false`.
-  - Po odrzuceniu przywrócenie zostaję przekierowany do ekranu tworzenia przepisu.
-
 ### Przeglądanie Przepisów
 
 - ID: US-011

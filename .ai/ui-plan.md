@@ -76,13 +76,13 @@ Główne założenia architektury:
 
 - **Nazwa widoku**: Tworzenie Przepisu z AI
 - **Ścieżka**: `/recipes/new-ai`
-- **Główny cel**: Umożliwienie użytkownikowi dodania nowego przepisu za pomocą sztucznej inteligencji poprzez wklejenie tekstu źródłowego.
-- **Kluczowe informacje do wyświetlenia**: Wieloetapowy formularz - najpierw pole na tekst źródłowy, potem edycja wygenerowanego przepisu (nazwa, opis, składniki, kroki, tagi).
-- **Kluczowe komponenty**: `AIRecipeForm`, `AIInputStep`, `AIGeneratedPreview`, `EditableList` (dla składników i kroków), `TagInput`, `RecipeBasicInfoSection`, `FormActionButtons`.
+- **Główny cel**: Umożliwienie użytkownikowi dodania nowego przepisu za pomocą sztucznej inteligencji poprzez wklejenie tekstu źródłowego i jego przetworzenie na ustrukturyzowany przepis.
+- **Kluczowe informacje do wyświetlenia**: Dwufazowy interfejs - najpierw duże pole tekstowe na wklejenie tekstu źródłowego (z licznikiem znaków), potem formularz edycji z wygenerowanymi danymi przepisu.
+- **Kluczowe komponenty**: `AIRecipeForm` (główny komponent zarządzający fazami), `AIRecipeTextInput` (faza wprowadzania tekstu), `AIEditRecipeForm` (faza edycji z wygenerowanymi danymi), `CharacterCounter` (licznik znaków), `CreateRecipeBasicInfoSection`, `CreateRecipeTagInput`, `CreateRecipeIngredientsList`, `CreateRecipeStepsList`, `FormActionButtons` (rozszerzony o przycisk "Wstecz do edycji tekstu").
 - **UX, dostępność i bezpieczeństwo**:
-  - **UX**: Wieloetapowy proces z wizualną informacją zwrotną (ładowanie podczas generowania). Możliwość edycji wygenerowanych danych przed zapisem. Powiadomienia o sukcesie/błędzie.
-  - **Dostępność**: Jasne wskazówki dla każdego etapu, obsługa nawigacji klawiaturą. Walidacja minimalnej długości tekstu źródłowego.
-  - **Bezpieczeństwo**: Walidacja danych wejściowych po stronie klienta (Zod) i serwera. Logowanie błędów generowania dla analizy.
+  - **UX**: Dwufazowy proces z płynnymi przejściami między wprowadzaniem tekstu a edycją. Możliwość swobodnej edycji wszystkich wygenerowanych danych. Przycisk "Wstecz do edycji tekstu" pozwala wrócić do modyfikacji tekstu źródłowego. Walidacja w czasie rzeczywistym z jasnymi komunikatami błędów.
+  - **Dostępność**: Pełna obsługa nawigacji klawiaturą, odpowiednie etykiety ARIA dla pól formularza, semantyczny HTML. Licznik znaków z wizualną informacją zwrotną o limitach. Czytniki ekranu otrzymują kontekst o aktualnej fazie procesu.
+  - **Bezpieczeństwo**: Walidacja długości tekstu źródłowego (20-10,000 znaków) przy użyciu Zod. Wszystkie dane wejściowe walidowane po stronie klienta i serwera. Śledzenie generowania w tabeli `generation` z polem `is_accepted` do analizy wykorzystania funkcji AI.
 
 ### Widok 7: Edycja Przepisu
  
@@ -132,7 +132,7 @@ Główne założenia architektury:
 - **`RecipeListHeader`**: Komponent nagłówka listy przepisów zawierający wyszukiwarkę i dwa przyciski tworzenia: "Ręcznie" oraz "Z AI".
 - **`RecipeCard`**: Komponent wyświetlający pojedynczy przepis na liście. Zawiera nazwę i tagi. Jest klikalny, prowadzi do widoku szczegółowego.
 - **`ManualRecipeForm`**: Komponent formularza do ręcznego tworzenia przepisów. Zarządza stanem nazwy, opisu, składników, kroków i tagów dla nowych przepisów.
-- **`AIRecipeForm`**: Wieloetapowy komponent formularza do tworzenia przepisów z AI. Obsługuje wprowadzanie tekstu, generowanie oraz edycję wyników.
+- **`AIRecipeForm`**: Główny komponent zarządzający całym przepływem tworzenia przepisów z AI. Obsługuje przejścia między fazami wprowadzania tekstu i edycji wygenerowanych danych.
 - **`RecipeBasicInfoSection`**: Sekcja formularza zawierająca pola na nazwę i opis przepisu.
 - **`EditableIngredientsList`** / **`EditableStepsList`**: Reużywalne komponenty do zarządzania listami składników i kroków. Umożliwiają edycję i usuwanie poszczególnych pozycji.
 - **`TagInput`**: Zaawansowany komponent do dodawania tagów z funkcją autocomplete i możliwością tworzenia nowych tagów.

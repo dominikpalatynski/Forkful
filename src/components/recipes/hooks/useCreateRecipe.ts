@@ -3,8 +3,6 @@ import { toast } from "sonner";
 import type { CreateRecipeCommand, RecipeDetailDto } from "@/types";
 import { queryClient } from "@/store/query";
 
-const DRAFT_KEY = "forkful_recipe_draft";
-
 /**
  * Creates a new recipe by sending a POST request to the API.
  *
@@ -36,14 +34,32 @@ async function createRecipe(data: CreateRecipeCommand): Promise<RecipeDetailDto>
 }
 
 /**
+ * Options for the useCreateRecipe hook.
+ */
+interface UseCreateRecipeOptions {
+  /**
+   * Optional callback to execute after successful recipe creation,
+   * before navigation occurs. Useful for cleaning up form state.
+   */
+  onSuccessBeforeRedirect?: () => void;
+}
+
+/**
  * Custom hook for creating a new recipe using React Query mutation.
  * Handles the creation operation with toast notifications, cache invalidation, and navigation.
  *
+ * @param options - Optional configuration object
+ * @param options.onSuccessBeforeRedirect - Callback executed before redirect (e.g., for cleanup)
  * @returns Object containing mutation function, loading state, error state, and success state
  *
  * @example
  * ```tsx
- * const createMutation = useCreateRecipe();
+ * const createMutation = useCreateRecipe({
+ *   onSuccessBeforeRedirect: () => {
+ *     // Clean up form state before redirect
+ *     resetAIForm();
+ *   }
+ * });
  *
  * const onSubmit = (data: CreateRecipeCommand) => {
  *   createMutation.mutate(data);
@@ -52,7 +68,7 @@ async function createRecipe(data: CreateRecipeCommand): Promise<RecipeDetailDto>
  * if (createMutation.isPending) return <div>Creating...</div>;
  * ```
  */
-export function useCreateRecipe() {
+export function useCreateRecipe(options?: UseCreateRecipeOptions) {
   const mutation = useMutation({
     mutationFn: createRecipe,
     onSuccess: (createdRecipe: RecipeDetailDto) => {
@@ -64,14 +80,11 @@ export function useCreateRecipe() {
         queryKey: ["tags"],
       });
 
-      localStorage.removeItem(DRAFT_KEY);
-
-      toast.success("Przepis został pomyślnie utworzony!", {
-        duration: 1500,
-        onAutoClose: () => {
-          window.location.href = `/recipes/${createdRecipe.id}`;
-        },
-      });
+      // Execute optional cleanup callback before redirect
+      if (options?.onSuccessBeforeRedirect) {
+        options.onSuccessBeforeRedirect();
+      }
+      window.location.href = `/recipes/${createdRecipe.id}`;
     },
     onError: (error: Error) => {
       toast.error(`Błąd podczas tworzenia przepisu: ${error.message}`);

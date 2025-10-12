@@ -1,9 +1,8 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import DashboardLayout from "../layouts/DashboardLayout.astro";
-import { RecipiesList } from "../components/recipies/RecipiesList";
+import { RecipeListView } from "../components/recipes/RecipeListView";
 ---
 
 <DashboardLayout>
-  <RecipiesList client:load />
+  <RecipeListView client:load />
 </DashboardLayout>

@@ -1,13 +1,16 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { SearchInput } from "./SearchInput";
-3;
 import { Button } from "@/components/ui/button";
 import type { RecipeListHeaderProps } from "./types";
-import { Plus } from "lucide-react";
+import { Plus, Sparkles } from "lucide-react";
 
-export function RecipeListHeader({ searchValue, onSearchChange }: RecipeListHeaderProps): JSX.Element {
+export function RecipeListHeader({ searchValue, onSearchChange }: RecipeListHeaderProps) {
   const handleNew = useCallback(() => {
     window.location.href = "/recipes/new";
+  }, []);
+
+  const handleNewAI = useCallback(() => {
+    window.location.href = "/recipes/new-ai";
   }, []);
 
   return (
@@ -15,7 +18,10 @@ export function RecipeListHeader({ searchValue, onSearchChange }: RecipeListHead
       <div className="flex-1">
         <SearchInput value={searchValue} onChange={onSearchChange} placeholder="Szukaj przepisów..." />
       </div>
-      <div>
+      <div className="flex gap-2">
+        <Button variant="outline" onClick={handleNewAI}>
+          <Sparkles className="mr-2 h-4 w-4" /> Z AI
+        </Button>
         <Button onClick={handleNew}>
           <Plus className="mr-2 h-4 w-4" /> Nowy przepis
         </Button>
