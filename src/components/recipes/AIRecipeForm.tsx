@@ -48,6 +48,7 @@ export function AIRecipeForm() {
   } = useAIRecipeFormStore();
 
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = React.useState(false);
+  const [isBackToTextDialogOpen, setIsBackToTextDialogOpen] = React.useState(false);
 
   const generateMutation = useGenerateRecipe();
   const createMutation = useCreateRecipe({
@@ -126,12 +127,6 @@ export function AIRecipeForm() {
     window.location.href = "/";
   }, [reset]);
 
-  /**
-   * Handler dla powrotu do edycji tekstu z fazy 'edit'.
-   * Pokazuje dialog potwierdzenia, bo powrót oznacza porzucenie wygenerowanych danych.
-   */
-  const [isBackToTextDialogOpen, setIsBackToTextDialogOpen] = React.useState(false);
-
   const handleBackToTextEdit = React.useCallback(() => {
     setIsBackToTextDialogOpen(true);
   }, []);
@@ -141,18 +136,9 @@ export function AIRecipeForm() {
     setIsBackToTextDialogOpen(false);
   }, [goBackToInput]);
 
-  /**
-   * Handler dla submit formularza w fazie 'edit'.
-   * Wywołuje POST /api/recipes z CreateRecipeCommand.
-   * Po sukcesie: resetuje AI form store → redirect do /recipes/:id
-   */
   const handleSubmit = React.useCallback(
     (data: CreateRecipeCommand) => {
       createMutation.mutate(data);
-      // useCreateRecipe automatycznie:
-      // 1. Resetuje AI form store (via onSuccessBeforeRedirect callback)
-      // 2. Usuwa manual recipe draft z localStorage
-      // 3. Wykonuje redirect do /recipes/:id
     },
     [createMutation]
   );
