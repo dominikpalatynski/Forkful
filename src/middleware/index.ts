@@ -29,6 +29,7 @@ const validateRequest = defineMiddleware(
 
       // Always set user in locals if available, regardless of path
       if (user) {
+        console.log('User found:', user);
         locals.user = {
           email: user.email ?? null,
           id: user.id,
