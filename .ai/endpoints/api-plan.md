@@ -213,6 +213,108 @@
   - **Code**: `422 Unprocessable Entity` (e.g., input text is too short, or not related to food/recipes)
   - **Code**: `500 Internal Server Error` (AI model failed to process the text; an entry is logged in `generation_errors`)
 
+### Authentication Resource
+
+#### Login user
+
+- **Method**: `POST`
+- **URL**: `/api/auth/login`
+- **Description**: Authenticates a user with email and password credentials. Upon successful authentication, establishes a session and sets appropriate cookies.
+- **Request Body**:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "securepassword123"
+  }
+  ```
+- **Success Response**:
+  - **Code**: `200 OK`
+  - **Content**: Empty response body (session is managed via cookies)
+- **Error Responses**:
+  - **Code**: `400 Bad Request` (Validation error, e.g., invalid email format)
+  - **Code**: `401 Unauthorized` (Invalid credentials)
+
+#### Register user
+
+- **Method**: `POST`
+- **URL**: `/api/auth/register`
+- **Description**: Creates a new user account with email and password. Sends a verification email to confirm the account.
+- **Request Body**:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "securepassword123",
+    "confirmPassword": "securepassword123"
+  }
+  ```
+- **Success Response**:
+  - **Code**: `201 Created`
+  - **Content**: Empty response body (verification email sent)
+- **Error Responses**:
+  - **Code**: `400 Bad Request` (Validation error, e.g., password mismatch, weak password)
+  - **Code**: `409 Conflict` (User with this email already exists)
+
+#### Logout user
+
+- **Method**: `POST`
+- **URL**: `/api/auth/logout`
+- **Description**: Terminates the current user session and clears session cookies.
+- **Request Body**: None
+- **Success Response**:
+  - **Code**: `200 OK`
+  - **Content**: Empty response body
+- **Error Responses**: None (logout should always succeed for authenticated users)
+
+#### Initiate password reset
+
+- **Method**: `POST`
+- **URL**: `/api/auth/forgot-password`
+- **Description**: Initiates the password reset process by sending a reset link to the user's email address.
+- **Request Body**:
+  ```json
+  {
+    "email": "user@example.com"
+  }
+  ```
+- **Success Response**:
+  - **Code**: `200 OK`
+  - **Content**: Empty response body (email sent if account exists)
+- **Error Responses**:
+  - **Code**: `400 Bad Request` (Invalid email format)
+
+#### Handle auth callback
+
+- **Method**: `GET`
+- **URL**: `/api/auth/callback`
+- **Description**: Handles callbacks from Supabase authentication flows, such as email verification and password reset links. Exchanges authorization codes for session tokens.
+- **Query Parameters**:
+  - `code`: Authorization code from Supabase
+  - `type`: Type of callback (email_confirmation, password_recovery, etc.)
+- **Success Response**:
+  - **Code**: `302 Found` (Redirect)
+  - **Location**: Appropriate page based on callback type (e.g., `/` for email confirmation, `/auth/reset-password` for password recovery)
+- **Error Responses**:
+  - **Code**: `400 Bad Request` (Invalid or expired code)
+
+#### Reset password
+
+- **Method**: `POST`
+- **URL**: `/api/auth/reset-password`
+- **Description**: Updates the user's password using a valid reset token obtained through the password recovery flow.
+- **Request Body**:
+  ```json
+  {
+    "password": "newsecurepassword123",
+    "confirmPassword": "newsecurepassword123"
+  }
+  ```
+- **Success Response**:
+  - **Code**: `200 OK`
+  - **Content**: Empty response body
+- **Error Responses**:
+  - **Code**: `400 Bad Request` (Validation error, e.g., password mismatch, weak password)
+  - **Code**: `401 Unauthorized` (Invalid or expired reset token)
+
 ## 3. Authentication and Authorization
 
 - **Mechanism**: The API will use JSON Web Tokens (JWT) for authentication, provided by Supabase Auth.

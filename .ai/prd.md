@@ -38,24 +38,19 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
 
 ### Uwierzytelnianie i Zarządzanie Kontem
 
-- ID: US-001
-- Tytuł: Rejestracja nowego użytkownika
-- Opis: Jako nowy użytkownik, chcę móc założyć konto używając mojego adresu e-mail i hasła, aby móc zapisywać swoje prywatne przepisy.
-- Kryteria akceptacji:
-  - Formularz rejestracji zawiera pola na adres e-mail i hasło.
-  - Hasło jest maskowane podczas wpisywania.
-  - System waliduje poprawność formatu adresu e-mail.
-  - Wysłany zostaje email werycikacyjny.
-  - Po pomyśnej weryfikacji maila jestem automatycznie zalogowany i przekierowany do panelu głównego.
-  - W przypadku błędu (np. zajęty e-mail) wyświetlany jest czytelny komunikat.
+## US-001: Bezpieczny dostęp i uwierzytelnianie
 
-- ID: US-002
-- Tytuł: Logowanie użytkownika
-- Opis: Jako zarejestrowany użytkownik, chcę móc zalogować się na swoje konto, aby uzyskać dostęp do moich przepisów.
+- Tytuł: Bezpieczny dostęp
+- Opis: Jako użytkownik chcę mieć możliwość rejestracji i logowania się do systemu w sposób zapewniający bezpieczeństwo moich danych.
 - Kryteria akceptacji:
-  - Formularz logowania zawiera pola na adres e-mail i hasło.
-  - Po pomyślnym zalogowaniu jestem przekierowany do panelu głównego.
-  - W przypadku podania błędnych danych, wyświetlany jest odpowiedni komunikat.
+  - Logowanie i rejestracja odbywają się na dedykowanych stronach.
+  - Logowanie wymaga podania adresu email i hasła.
+  - Rejestracja wymaga podania adresu email, hasła i potwierdzenia hasła.
+  - Użytkownik NIE MOŻE korzystać z zadnych funkcji aplikacji bez logowania się do systemu (US-003).
+  - Użytkownik może logować się do systemu poprzez stronę /auth/login. Będzie na nią przekierownay za kadym razem gdy sie wyloguje
+  - Użytkownik może się wylogować z systemu poprzez przycisk w prawym górnym rogu w głównym @AppSidebar.tsx.
+  - Nie korzystamy z zewnętrznych serwisów logowania (np. Google, GitHub).
+  - Odzyskiwanie hasła powinno być możliwe.
 
 ### Tworzenie Przepisu
 
@@ -63,6 +58,7 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
 - Tytuł: Inicjowanie tworzenia przepisu za pomocą AI
 - Opis: Jako zalogowany użytkownik, chcę mieć możliwość przejścia do dedykowanej strony tworzenia przepisów z AI poprzez przycisk na stronie głównej, aby następnie wkleić tekst przepisu do przetworzenia.
 - Kryteria akceptacji:
+  - Uzytykownik NIE MOZE z tej funkcjonalności bez zalogowania się do aplikacji
   - Na stronie głównej znajduje się przycisk "Z AI" obok przycisku "Ręcznie".
   - Po kliknięciu przycisku "Z AI" jestem przekierowany na stronę `/recipes/new-ai`.
   - Na stronie `/recipes/new-ai` znajduje się pole tekstowe (`textarea`) na wklejenie tekstu z limitem 10 000 znaków.
@@ -72,6 +68,7 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
 - Tytuł: Weryfikacja i edycja przepisu wygenerowanego przez AI (Happy Path)
 - Opis: Jako użytkownik, po pomyślnym przetworzeniu tekstu przez AI na stronie `/recipes/new-ai`, chcę zobaczyć wypełniony formularz edycji z nazwą, składnikami i krokami, abym mógł je zweryfikować i ewentualnie poprawić.
 - Kryteria akceptacji:
+  - Uzytykownik NIE MOZE z tej funkcjonalności bez zalogowania się do aplikacji
   - Po przetworzeniu przez AI, na stronie `/recipes/new-ai` zamiast pola tekstowego wyświetla się formularz edycji z wypełnionymi danymi.
   - Pola "Nazwa przepisu", "Składniki" i "Kroki" są wypełnione danymi wyodrębnionymi przez AI.
   - Każdy składnik i krok jest osobną, edytowalną pozycją na liście.
@@ -93,6 +90,7 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
 - Tytuł: Inicjowanie manualnego tworzenia przepisu
 - Opis: Jako zalogowany użytkownik, chcę mieć możliwość ręcznego stworzenia przepisu od zera poprzez przycisk na stronie głównej, jeśli nie mam tekstu do wklejenia lub chcę mieć pełną kontrolę nad tworzeniem.
 - Kryteria akceptacji:
+  - Uzytykownik NIE MOZE z tej funkcjonalności bez zalogowania się do aplikacji
   - Na stronie głównej znajduje się przycisk "Ręcznie" obok przycisku "Z AI".
   - Po kliknięciu przycisku "Ręcznie" jestem przekierowany na stronę `/recipes/new`.
   - Na stronie `/recipes/new` wyświetla się pusty formularz edycji przepisu z polami: "Nazwa przepisu", "Składniki", "Kroki" i "Tagi".
@@ -101,6 +99,7 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
 - Tytuł: Dodawanie i zarządzanie tagami
 - Opis: Jako użytkownik, podczas edycji przepisu chcę móc dodawać tagi, aby kategoryzować i łatwiej odnajdywać moje przepisy w przyszłości.
 - Kryteria akceptacji:
+  - Uzytykownik NIE MOZE z tej funkcjonalności bez zalogowania się do aplikacji
   - W formularzu edycji znajduje się pole do wpisywania tagów.
   - Gdy zaczynam pisać, system podpowiada mi tagi, których już wcześniej użyłem.
   - Po wpisaniu nowego tagu i naciśnięciu "Enter", tag zostaje dodany jako "pigułka" (pill) pod polem tekstowym.
@@ -110,6 +109,7 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
 - Tytuł: Zapisywanie przepisu
 - Opis: Jako użytkownik, po zakończeniu edycji przepisu, chcę móc go zapisać w mojej prywatnej bazie.
 - Kryteria akceptacji:
+  - Uzytykownik NIE MOZE z tej funkcjonalności bez zalogowania się do aplikacji
   - Formularz zawiera przycisk "Zapisz".
   - Przed zapisem dane są walidowane (np. nazwa nie może być pusta).
   - Po pomyślnym zapisie jestem przekierowywany do widoku zapisanego przepisu lub listy przepisów.
@@ -120,6 +120,7 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
 - Tytuł: Anulowanie tworzenia przepisu
 - Opis: Jako użytkownik, chcę mieć możliwość porzucenia formularza tworzenia/edycji przepisu bez zapisywania zmian.
 - Kryteria akceptacji:
+  - Uzytykownik NIE MOZE z tej funkcjonalności bez zalogowania się do aplikacji
   - Formularz zawiera przycisk "Anuluj" lub "Odrzuć".
   - Po kliknięciu jestem pytany o potwierdzenie, aby uniknąć przypadkowej utraty danych.
   - Po potwierdzeniu, jestem przekierowywany do poprzedniego widoku (np. panelu głównego).
@@ -132,6 +133,7 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
 - Tytuł: Przeglądanie listy zapisanych przepisów
 - Opis: Jako zalogowany użytkownik, chcę widzieć listę wszystkich moich zapisanych przepisów, aby móc szybko je odnaleźć.
 - Kryteria akceptacji:
+  - Uzytykownik NIE MOZE z tej funkcjonalności bez zalogowania się do aplikacji
   - W panelu głównym wyświetlana jest lista moich przepisów.
   - Każdy element listy zawiera co najmniej nazwę przepisu.
   - Kliknięcie na element listy przenosi mnie do widoku szczegółowego danego przepisu.
@@ -142,6 +144,7 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
 - Tytuł: Wyświetlanie szczegółów przepisu
 - Opis: Jako zalogowany użytkownik, po wybraniu przepisu z listy chcę zobaczyć jego pełne szczegóły (nazwę, opcjonalny opis, składniki, kroki oraz tagi) w czytelnej formie.
 - Kryteria akceptacji:
+  - Uzytykownik NIE MOZE z tej funkcjonalności bez zalogowania się do aplikacji
   - Widok dostępny jest pod ścieżką `/recipes/:id` (lub równoważną) po kliknięciu elementu listy.
   - Wyświetlane elementy: nazwa, opis (jeśli istnieje), lista składników (w kolejności), lista kroków (ponumerowana, w kolejności), sekcja tagów.
   - Kroki są ponumerowane; składniki wyświetlane jako lista punktowana.
@@ -151,6 +154,7 @@ Ręczne przepisywanie i formatowanie skopiowanego z internetu lub notatek tekstu
 - Tytuł: Edycja istniejącego przepisu
 - Opis: Jako zalogowany użytkownik, chcę mieć możliwość edytowania istniejącego przepisu, aby poprawić błędy lub zaktualizować jego treść.
 - Kryteria akceptacji:
+  - Uzytykownik NIE MOZE z tej funkcjonalności bez zalogowania się do aplikacji
   - W widoku szczegółowym przepisu (`/recipes/:id`) znajduje się przycisk "Edytuj".
   - Po kliknięciu przycisku "Edytuj" następuje przekierowanie do formularza edycji (`/recipes/:id/edit`).
   - Formularz edycji jest wstępnie wypełniony wszystkimi istniejącymi danymi przepisu.
