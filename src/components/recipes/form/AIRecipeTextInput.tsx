@@ -9,7 +9,7 @@ import { CharacterCounter } from "./CharacterCounter";
 import type { AIRecipeTextInputProps } from "@/components/recipes/types";
 
 const MIN_CHARS = 100;
-const MAX_CHARS = 1000;
+const MAX_CHARS = 10000;
 
 /**
  * Schemat walidacji dla input text.

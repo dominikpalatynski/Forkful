@@ -1,5 +1,27 @@
 import type { SupabaseClientType } from "../../db/supabase.client";
 import type { GeneratedRecipeDto } from "../../types";
+import { z } from "zod";
+import { OpenRouterService } from "./openrouter.service";
+
+// Schema for AI-generated recipe
+const GeneratedRecipeSchema = z.object({
+  name: z.string().min(1, "Recipe name is required"),
+  description: z.string().min(1, "Recipe description is required"),
+  ingredients: z.array(
+    z.object({
+      content: z.string().min(1, "Ingredient content cannot be empty"),
+      position: z.number().int().positive("Position must be a positive integer"),
+    })
+  ).min(1, "Recipe must have at least one ingredient"),
+  steps: z.array(
+    z.object({
+      content: z.string().min(1, "Step content cannot be empty"),
+      position: z.number().int().positive("Position must be a positive integer"),
+    })
+  ).min(1, "Recipe must have at least one step"),
+});
+
+type GeneratedRecipe = z.infer<typeof GeneratedRecipeSchema>;
 
 /**
  * Service for handling AI-powered recipe generation from text input.
@@ -19,8 +41,8 @@ export class GenerationRecipeService {
    */
   async generateRecipeFromText(inputText: string, userId: string): Promise<GeneratedRecipeDto> {
     try {
-      // Step 1: Mock AI response (replace with real AI call in the future)
-      const mockGeneratedRecipe = await this.mockAIGeneration(inputText);
+      // Step 1: Generate recipe using AI
+      const generatedRecipe = await this.generateRecipeWithAI(inputText);
 
       // Step 2: Create generation record in database
       const { data: generationData, error: generationError } = await this.supabase
@@ -28,7 +50,7 @@ export class GenerationRecipeService {
         .insert({
           user_id: userId,
           input_text: inputText,
-          generated_output: mockGeneratedRecipe,
+          generated_output: generatedRecipe,
           is_accepted: false,
         })
         .select("id")
@@ -41,10 +63,10 @@ export class GenerationRecipeService {
       // Step 3: Return the generated recipe with generation ID
       const result: GeneratedRecipeDto = {
         generationId: generationData.id,
-        name: mockGeneratedRecipe.name,
-        description: mockGeneratedRecipe.description,
-        ingredients: mockGeneratedRecipe.ingredients,
-        steps: mockGeneratedRecipe.steps,
+        name: generatedRecipe.name,
+        description: generatedRecipe.description,
+        ingredients: generatedRecipe.ingredients,
+        steps: generatedRecipe.steps,
       };
 
       return result;
@@ -58,58 +80,78 @@ export class GenerationRecipeService {
   }
 
   /**
-   * Mock AI generation method that simulates AI processing.
-   * This will be replaced with real AI integration in the future.
+   * Generates a recipe using OpenRouter AI service.
+   * Uses structured prompting to extract recipe components from text.
    *
    * @param inputText - The input text to process
-   * @returns Mock generated recipe data
+   * @returns AI-generated recipe data validated with Zod schema
    */
-  private async mockAIGeneration(inputText: string) {
-    // Simulate AI processing delay
-    await new Promise((resolve) => setTimeout(resolve, 100));
+  private async generateRecipeWithAI(inputText: string): Promise<GeneratedRecipe> {
+    const openRouterService = new OpenRouterService({
+      apiKey: import.meta.env.OPENROUTER_API_KEY,
+    });
 
-    // Simple logic to vary the response based on input
-    const isSimpleRecipe = inputText.toLowerCase().includes("pancake") || inputText.toLowerCase().includes("naleśnik");
+    const systemPrompt = `Jesteś ekspertem kucharzem i analitykiem przepisów. Twoim zadaniem jest wyciągnięcie i utworzenie ustrukturyzowanego przepisu z podanego tekstu wejściowego.
 
-    if (isSimpleRecipe) {
-      return {
-        name: "Delicious Pancakes",
-        description: "Fluffy and delicious pancakes perfect for breakfast",
-        ingredients: [
-          { content: "1 cup all-purpose flour", position: 1 },
-          { content: "2 tablespoons sugar", position: 2 },
-          { content: "2 teaspoons baking powder", position: 3 },
-          { content: "1/2 teaspoon salt", position: 4 },
-          { content: "1 cup milk", position: 5 },
-          { content: "2 large eggs", position: 6 },
-          { content: "2 tablespoons melted butter", position: 7 },
-        ],
-        steps: [
-          { content: "In a large bowl, whisk together flour, sugar, baking powder, and salt.", position: 1 },
-          { content: "In another bowl, whisk together milk, eggs, and melted butter.", position: 2 },
-          { content: "Pour the wet ingredients into the dry ingredients and stir until just combined.", position: 3 },
-          { content: "Heat a non-stick pan over medium heat.", position: 4 },
-          { content: "Pour 1/4 cup of batter for each pancake and cook until bubbles form on surface.", position: 5 },
-          { content: "Flip and cook until golden brown on the other side.", position: 6 },
-        ],
-      };
+Przeanalizuj podany tekst i wyciągnij następujące składniki przepisu:
+- Nazwa przepisu: Utwórz chwytliwą, opisową nazwę dla dania
+- Opis: Napisz krótki, apetyczny opis dania
+- Składniki: Wyciągnij wszystkie wymienione składniki z ich ilościami, wymienione w kolejności pojawiania się lub logicznego przygotowania
+- Kroki: Utwórz jasne, numerowane instrukcje gotowania na podstawie opisanego sposobu
+
+Wytyczne:
+- Skup się tylko na treściach związanych z jedzeniem i ignoruj elementy niebędące przepisami
+- Jeśli tekst nie jest przepisem, utwórz rozsądny przepis na podstawie wymienionych produktów spożywczych
+- Zapewnij składnikom realistyczne ilości i miary
+- Kroki powinny być jasne, wykonalne i w logicznej kolejności gotowania
+- Zachowaj przepis praktyczny i osiągalny dla domowych kucharzy
+- Używaj właściwej terminologii kulinarnej, ale zachowaj dostępność
+
+WAŻNE: Zwróć WYŁĄCZNIE prawidłowy obiekt JSON o dokładnie określonej strukturze. Nie dołączaj żadnego innego tekstu, wyjaśnień ani formatowania.
+
+PRZYKŁAD struktury JSON:
+{
+  "name": "Spaghetti Bolognese",
+  "description": "Klasyczne włoskie danie z mięsem i sosem pomidorowym",
+  "ingredients": [
+    {"content": "500g mielonego mięsa wołowego", "position": 1},
+    {"content": "1 cebula, posiekana", "position": 2}
+  ],
+  "steps": [
+    {"content": "Podsmaż mięso na patelni", "position": 1},
+    {"content": "Dodaj cebulę i smaż przez 5 minut", "position": 2}
+  ]
+}
+
+Zwróć tylko sam obiekt JSON, bez żadnego dodatkowego tekstu.`;
+
+    const userPrompt = `Wyciągnij przepis z tego tekstu:
+
+${inputText}
+
+Utwórz kompletny, ustrukturyzowany przepis z nazwą, opisem, składnikami i krokami.`;
+
+    try {
+      const result = await openRouterService.generate({
+        systemPrompt,
+        userPrompt,
+        jsonSchema: GeneratedRecipeSchema,
+        model: "anthropic/claude-3-haiku",
+        params: {
+          temperature: 0.3, // Lower temperature for more consistent recipe extraction
+          max_tokens: 2048,
+        },
+      });
+
+      console.log("AI Response:", JSON.stringify(result, null, 2)); // Debug log
+
+      // Result is already validated by Zod schema in OpenRouterService
+      return result as GeneratedRecipe;
+    } catch (error) {
+      // If AI generation fails, provide a fallback recipe
+      console.error("AI recipe generation failed:", error);
+      throw error;
     }
-
-    // Default generic recipe for other inputs
-    return {
-      name: "Generated Recipe",
-      description: "A recipe generated from your input text",
-      ingredients: [
-        { content: "Main ingredient from your text", position: 1 },
-        { content: "Supporting ingredient", position: 2 },
-        { content: "Seasoning or spice", position: 3 },
-      ],
-      steps: [
-        { content: "Prepare all ingredients as described in your text.", position: 1 },
-        { content: "Follow the cooking method mentioned in your input.", position: 2 },
-        { content: "Serve and enjoy your dish.", position: 3 },
-      ],
-    };
   }
 
   /**
@@ -136,44 +178,4 @@ export class GenerationRecipeService {
     }
   }
 
-  /**
-   * Future method for real AI integration with OpenRouter.
-   * This will replace the mock generation when ready.
-   *
-   * @param inputText - The input text to process
-   * @returns Promise with AI-generated recipe data
-   */
-  private async callOpenRouterAI(inputText: string): Promise<any> {
-    // TODO: Implement real AI integration
-    // const apiKey = import.meta.env.OPENROUTER_API_KEY;
-    // const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Authorization': `Bearer ${apiKey}`,
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     model: 'anthropic/claude-3-haiku',
-    //     messages: [
-    //       {
-    //         role: 'system',
-    //         content: 'You are a recipe extraction AI. Parse the given text and return a structured recipe with name, description, ingredients, and steps.'
-    //       },
-    //       {
-    //         role: 'user',
-    //         content: inputText
-    //       }
-    //     ]
-    //   })
-    // });
-    //
-    // if (!response.ok) {
-    //   throw new Error(`AI API error: ${response.statusText}`);
-    // }
-    //
-    // const data = await response.json();
-    // return this.parseAIResponse(data);
-
-    throw new Error("Real AI integration not implemented yet");
-  }
 }
