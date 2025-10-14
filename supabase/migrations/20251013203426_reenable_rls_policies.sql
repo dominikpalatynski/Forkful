@@ -34,3 +34,4 @@ create policy "users can delete recipe_tags for their own recipes" on recipe_tag
 -- allow users to view their own generation errors for debugging purposes
 create policy "users can view their own generation errors" on generation_errors for select using (auth.uid() = user_id);
 create policy "users can insert their own generation errors" on generation_errors for insert with check (auth.uid() = user_id);
+

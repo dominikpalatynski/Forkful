@@ -21,7 +21,7 @@ export function LoginForm() {
     },
   });
 
-  const { mutate: login, isPending } = useLogin();
+  const { mutate: login, isPending, error, isError } = useLogin();
 
   const onSubmit = (data: LoginSchemaType) => {
     if (isPending) return;
@@ -38,6 +38,15 @@ export function LoginForm() {
       </CardHeader>
 
       <CardContent>
+        {isError && error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="text-sm">
+              <p className="font-medium text-red-800">Login failed</p>
+              <p className="text-red-700 mt-1">{error.message}</p>
+            </div>
+          </div>
+        )}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <LoginEmailField control={form.control} />
