@@ -6,11 +6,11 @@ import { supabaseClient } from "../db/supabase.client.ts";
 const PUBLIC_PATHS = [
   '/',
   '/auth/login',
-  '/auth/signup',
+  '/auth/register',
   '/auth/reset-password',
   '/auth/update-password',
   '/api/auth/login',
-  '/api/auth/signup',
+  '/api/auth/register',
   '/api/auth/reset-password',
 ];
 

@@ -29,6 +29,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { useLogout } from '@/components/auth/hooks/useLogout'
 
 export function NavUser({
   user,
@@ -40,6 +41,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const logoutMutation = useLogout()
 
   return (
     <SidebarMenu>
@@ -74,9 +76,12 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => logoutMutation.mutate()}
+              disabled={logoutMutation.isPending}
+            >
               <LogOut />
-              Log out
+              {logoutMutation.isPending ? "Ładowanie..." : "Wyloguj"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
