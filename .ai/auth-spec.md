@@ -109,10 +109,10 @@ Endpointy będą pośredniczyć między frontendem a Supabase Auth. Zapewnią wa
     -   Wywołuje `supabase.auth.resetPasswordForEmail()`.
     -   Zawsze zwraca status 200, aby nie ujawniać, czy dany e-mail istnieje w bazie.
 
--   **`src/pages/api/auth/callback.ts` (GET)**
-    -   Endpoint wymagany przez Supabase do sfinalizowania procesów opartych na linkach z e-maili (potwierdzenie rejestracji, reset hasła).
-    -   Wywołuje `supabase.auth.exchangeCodeForSession()` z kodem otrzymanym w URL.
-    -   Przekierowuje użytkownika do odpowiedniej strony (np. do `/` po potwierdzeniu e-maila, lub do `/reset-password` po kliknięciu w link do resetu).
+-   **`src/pages/api/auth/verify-reset-token.ts` (POST)**
+    -   Endpoint do weryfikacji tokenu resetowania hasła otrzymanego w linku e-mail.
+    -   Przyjmuje `token_hash` w ciele żądania i wywołuje `supabase.auth.verifyOtp()` z typem 'recovery'.
+    -   Zwraca dane użytkownika w przypadku sukcesu, umożliwiając zmianę hasła.
 
 -   **`src/pages/api/auth/reset-password.ts` (POST)**
     -   Przyjmuje nowe hasło i token dostępowy (uzyskany na kliencie po przejściu przez `callback`).

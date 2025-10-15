@@ -282,19 +282,32 @@
 - **Error Responses**:
   - **Code**: `400 Bad Request` (Invalid email format)
 
-#### Handle auth callback
+#### Verify password reset token
 
-- **Method**: `GET`
-- **URL**: `/api/auth/callback`
-- **Description**: Handles callbacks from Supabase authentication flows, such as email verification and password reset links. Exchanges authorization codes for session tokens.
-- **Query Parameters**:
-  - `code`: Authorization code from Supabase
-  - `type`: Type of callback (email_confirmation, password_recovery, etc.)
+- **Method**: `POST`
+- **URL**: `/api/auth/verify-reset-token`
+- **Description**: Verifies a password reset token hash sent via email link. Used in the password recovery flow to validate the reset token before allowing password change.
+- **Request Body**:
+  ```json
+  {
+    "token_hash": "hash-from-email-link"
+  }
+  ```
 - **Success Response**:
-  - **Code**: `302 Found` (Redirect)
-  - **Location**: Appropriate page based on callback type (e.g., `/` for email confirmation, `/auth/reset-password` for password recovery)
+  - **Code**: `200 OK`
+  - **Content**:
+    ```json
+    {
+      "user": {
+        "id": "user-uuid",
+        "email": "user@example.com"
+      }
+    }
+    ```
 - **Error Responses**:
-  - **Code**: `400 Bad Request` (Invalid or expired code)
+  - **Code**: `400 Bad Request` (Missing token_hash, invalid or expired token)
+  - **Code**: `400 Bad Request` (Invalid request body)
+  - **Code**: `500 Internal Server Error` (Unexpected server error)
 
 #### Reset password
 

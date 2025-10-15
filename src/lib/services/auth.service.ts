@@ -1,5 +1,5 @@
 import type { SupabaseClientType } from "../../db/supabase.client";
-import type { LoginSchemaType, RegisterSchemaType, ForgotPasswordSchemaType, ResetPasswordSchemaType } from "../schemas/auth.schema";
+import type { LoginSchemaType, RegisterSchemaType, ForgotPasswordSchemaType, ResetPasswordSchemaType, UpdatePasswordSchemaType, VerifyResetTokenSchemaType } from "../schemas/auth.schema";
 
 /**
  * Custom error classes for authentication service operations
@@ -157,12 +157,12 @@ export class AuthService {
    * @throws ValidationError when input validation fails
    * @throws Error for other unexpected password reset errors
    */
-  async forgotPassword(emailData: ForgotPasswordSchemaType): Promise<void> {
+  async forgotPassword(emailData: ForgotPasswordSchemaType, url: string): Promise<void> {
     try {
       const { error } = await this.supabase.auth.resetPasswordForEmail(
         emailData.email,
         {
-          redirectTo: `${process.env.PUBLIC_APP_URL || 'http://localhost:4321'}/auth/reset-password`,
+          redirectTo: `${url}/auth/reset-password`,
         }
       );
 
@@ -241,6 +241,77 @@ export class AuthService {
       // Handle unexpected errors
       console.error("Unexpected error during password reset:", error);
       throw new Error("An unexpected error occurred while updating your password. Please try again.");
+    }
+  }
+
+  /**
+   * Updates the user's password using a valid reset token obtained through the password recovery flow.
+   * Calls Supabase Auth to update the user's password with the new value.
+   *
+   * @param passwordData - The new password and confirmation
+   * @returns Promise that resolves on successful password update
+   * @throws ValidationError when input validation fails
+   * @throws AuthenticationError when reset token is invalid or expired
+   * @throws Error for other unexpected password update errors
+   */
+  async updatePassword(passwordData: UpdatePasswordSchemaType): Promise<void> {
+    // For now, delegate to resetPassword method since they use the same logic
+    // This provides a clear API distinction for the update password flow
+    return this.resetPassword(passwordData as ResetPasswordSchemaType);
+  }
+
+  /**
+   * Verifies a password reset token hash received via email link.
+   * Calls Supabase Auth to verify the OTP token and establish a session for password reset.
+   *
+   * @param tokenData - The token hash from the email link
+   * @returns Promise that resolves with user data on successful verification
+   * @throws ValidationError when input validation fails
+   * @throws AuthenticationError when token is invalid or expired
+   * @throws Error for other unexpected verification errors
+   */
+  async verifyResetToken(tokenData: VerifyResetTokenSchemaType): Promise<{ id: string; email: string }> {
+    try {
+      const { data, error } = await this.supabase.auth.verifyOtp({
+        token_hash: tokenData.token_hash,
+        type: 'recovery',
+      });
+
+      if (error) {
+        // Handle different types of token verification errors
+        if (error.message.includes("Token has expired") ||
+            error.message.includes("JWT expired") ||
+            error.message.includes("Invalid token")) {
+          throw new AuthenticationError("Your password reset link has expired or is invalid. Please request a new one.");
+        }
+
+        if (error.message.includes("Invalid refresh token")) {
+          throw new AuthenticationError("Invalid password reset token. Please request a new one.");
+        }
+
+        // For other Supabase auth errors, throw a generic authentication error
+        throw new AuthenticationError("Unable to verify password reset token. Please try again.");
+      }
+
+      // Success - return user data
+      if (data.user) {
+        return {
+          id: data.user.id,
+          email: data.user.email || '',
+        };
+      }
+
+      // If no user data returned, something went wrong
+      throw new AuthenticationError("Unable to verify password reset token. Please try again.");
+    } catch (error) {
+      // Re-throw our custom errors
+      if (error instanceof AuthenticationError || error instanceof ValidationError) {
+        throw error;
+      }
+
+      // Handle unexpected errors
+      console.error("Unexpected error during token verification:", error);
+      throw new Error("An unexpected error occurred while verifying your password reset token. Please try again.");
     }
   }
 }

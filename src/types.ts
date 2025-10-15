@@ -124,3 +124,12 @@ export type RecipeDetailDto = Pick<Recipe, "id" | "name" | "description" | "crea
  * Based on `GET /api/tags`.
  */
 export type TagDto = Pick<Tag, "id" | "name">;
+
+/**
+ * DTO for verified reset token user data.
+ * Based on POST /api/auth/verify-reset-token response.
+ */
+export interface VerifiedUserDto {
+  id: string;
+  email: string;
+}

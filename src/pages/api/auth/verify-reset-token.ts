@@ -1,22 +1,24 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
-import { ForgotPasswordSchema } from "../../../lib/schemas/auth.schema";
-import { AuthService, ValidationError } from "../../../lib/services/auth.service";
+import { VerifyResetTokenSchema } from "../../../lib/schemas/auth.schema";
+import { AuthService, AuthenticationError, ValidationError } from "../../../lib/services/auth.service";
 
 // Disable prerendering for this API endpoint
 export const prerender = false;
 
 /**
- * POST /api/auth/forgot-password
- * Initiates the password reset process by sending a reset link to the user's email address.
+ * POST /api/auth/verify-reset-token
+ * Verifies a password reset token hash sent via email link. Used in the password recovery flow
+ * to validate the reset token before allowing password change.
  *
  * Request body:
  * {
- *   "email": "user@example.com"
+ *   "token_hash": "hash-from-email-link"
  * }
  *
- * Returns 200 OK on success (email sent if account exists).
- * Returns 400 Bad Request for validation errors.
+ * Returns 200 OK with user data on successful verification.
+ * Returns 400 Bad Request for missing token_hash, invalid or expired token.
+ * Returns 500 Internal Server Error for unexpected server errors.
  */
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -42,7 +44,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Validate request body against schema
     let validatedData;
     try {
-      validatedData = ForgotPasswordSchema.parse(requestBody);
+      validatedData = VerifyResetTokenSchema.parse(requestBody);
     } catch (validationError) {
       if (validationError instanceof z.ZodError) {
         return new Response(
@@ -64,10 +66,27 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Initialize auth service
     const authService = new AuthService(locals.supabase);
 
-    // Attempt to initiate password reset
+    // Attempt to verify the reset token
+    let userData;
     try {
-      await authService.forgotPassword(validatedData, request.url);
+      userData = await authService.verifyResetToken(validatedData);
     } catch (authError) {
+      // Handle authentication errors (invalid/expired tokens)
+      if (authError instanceof AuthenticationError) {
+        return new Response(
+          JSON.stringify({
+            error: "Token verification failed",
+            message: authError.message,
+          }),
+          {
+            status: 400,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+
       // Handle validation errors
       if (authError instanceof ValidationError) {
         return new Response(
@@ -85,10 +104,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
 
       // Handle other service errors
-      console.error("Failed to initiate password reset:", authError);
+      console.error("Failed to verify reset token:", authError);
       return new Response(
         JSON.stringify({
-          error: "Password reset failed",
+          error: "Token verification failed",
           message: authError instanceof Error ? authError.message : "An unexpected error occurred",
         }),
         {
@@ -100,17 +119,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    // Return success response - empty body as per requirements
-    // We always return 200 to avoid revealing whether an email exists
-    return new Response(null, {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    // Return success response with user data
+    return new Response(
+      JSON.stringify({
+        user: userData,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   } catch (error) {
     // Catch-all for unexpected errors
-    console.error("Unexpected error in POST /api/auth/forgot-password:", error);
+    console.error("Unexpected error in POST /api/auth/verify-reset-token:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",

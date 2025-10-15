@@ -7,11 +7,15 @@ const PUBLIC_PATHS = [
   '/',
   '/auth/login',
   '/auth/register',
+  '/auth/forgot-password',
+  '/auth/verify-reset-token',
   '/auth/reset-password',
   '/auth/update-password',
   '/api/auth/login',
   '/api/auth/register',
   '/api/auth/reset-password',
+  '/api/auth/forgot-password',
+  '/api/auth/verify-reset-token',
 ];
 
 const validateRequest = defineMiddleware(
