@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 import { CreateRecipeSchema, GetRecipesSchema } from "../../../lib/schemas/recipe.schema";
 import { RecipeService } from "../../../lib/services/recipe.service";
+import { getAuthenticatedUserId } from "../../../lib/utils";
 
 // Disable prerendering for this API endpoint
 export const prerender = false;
@@ -21,10 +22,7 @@ export const prerender = false;
  */
 export const GET: APIRoute = async ({ request, locals }) => {
   try {
-    // TODO: In production, get userId from authenticated session
-    // For development, use a default user ID
-    const DEFAULT_DEV_USER_ID = "ba120fed-a207-4eb6-85ec-934467468eaf";
-    const userId = DEFAULT_DEV_USER_ID;
+    const userId = getAuthenticatedUserId(locals);
 
     // Parse and validate query parameters
     const url = new URL(request.url);
@@ -108,10 +106,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
  */
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
-    // TODO: In production, get userId from authenticated session
-    // For development, use a default user ID
-    const DEFAULT_DEV_USER_ID = "ba120fed-a207-4eb6-85ec-934467468eaf";
-    const userId = DEFAULT_DEV_USER_ID;
+    const userId = getAuthenticatedUserId(locals);
 
     // Parse request body
     let requestBody: unknown;
