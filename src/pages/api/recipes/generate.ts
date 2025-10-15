@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { GenerationRecipeService } from "../../../lib/services/generation-recipe.service";
 import { GenerateRecipeSchema } from "../../../lib/schemas/recipe.schema";
+import { getAuthenticatedUserId } from "../../../lib/utils";
 import z from "zod";
 
 export const prerender = false;
@@ -23,8 +24,7 @@ export const prerender = false;
  */
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
-    const DEFAULT_DEV_USER_ID = "ba120fed-a207-4eb6-85ec-934467468eaf";
-    const defaultUserId = DEFAULT_DEV_USER_ID;
+    const userId = getAuthenticatedUserId(locals);
 
     // Step 2: Parse and validate request body
     let requestBody;
@@ -70,7 +70,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const generationService = new GenerationRecipeService(locals.supabase);
 
     try {
-      const generatedRecipe = await generationService.generateRecipeFromText(inputText, defaultUserId);
+      const generatedRecipe = await generationService.generateRecipeFromText(inputText, userId);
 
       // Step 5: Return successful response
       return new Response(JSON.stringify(generatedRecipe), {

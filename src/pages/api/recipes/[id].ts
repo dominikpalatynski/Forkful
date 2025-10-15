@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 import { RecipeIdParamsSchema, UpdateRecipeSchema } from "../../../lib/schemas/recipe.schema";
 import { RecipeService, NotFoundError, ForbiddenError } from "../../../lib/services/recipe.service";
+import { getAuthenticatedUserId } from "../../../lib/utils";
 
 // Disable prerendering for this API endpoint
 export const prerender = false;
@@ -22,10 +23,7 @@ export const prerender = false;
  */
 export const GET: APIRoute = async ({ params, locals }) => {
   try {
-    // TODO: In production, get userId from authenticated session
-    // For development, use a default user ID
-    const DEFAULT_DEV_USER_ID = "ba120fed-a207-4eb6-85ec-934467468eaf";
-    const userId = DEFAULT_DEV_USER_ID;
+    const userId = getAuthenticatedUserId(locals);
 
     // Validate the recipe ID parameter
     let validatedParams;
@@ -148,10 +146,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
  */
 export const PUT: APIRoute = async ({ params, request, locals }) => {
   try {
-    // TODO: In production, get userId from authenticated session
-    // For development, use a default user ID
-    const DEFAULT_DEV_USER_ID = "ba120fed-a207-4eb6-85ec-934467468eaf";
-    const userId = DEFAULT_DEV_USER_ID;
+    const userId = getAuthenticatedUserId(locals);
 
     // Step 1: Validate the recipe ID parameter
     let validatedParams;
@@ -311,10 +306,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
  */
 export const DELETE: APIRoute = async ({ params, locals }) => {
   try {
-    // TODO: In production, get userId from authenticated session
-    // For development, use a default user ID
-    const DEFAULT_DEV_USER_ID = "ba120fed-a207-4eb6-85ec-934467468eaf";
-    const userId = DEFAULT_DEV_USER_ID;
+    const userId = getAuthenticatedUserId(locals);
 
     // Step 1: Validate the recipe ID parameter
     let validatedParams;
