@@ -1,0 +1,50 @@
+---
+alwaysApply: false
+---
+
+# Vitest Supabase Chaining Mock Rule
+
+## When to Use
+Use manual `vi.fn()` mocks for services that receive Supabase client via constructor injection (dependency injection pattern).
+
+## How to Create Chaining Mock
+```typescript
+const createMockSupabaseClient = () => {
+  const mockSingle = vi.fn();
+  const mockEq = vi.fn(() => ({ eq: mockEq, single: mockSingle })); // KEY: Returns self for chaining
+  const mockSelect = vi.fn(() => ({ eq: mockEq, single: mockSingle }));
+  const mockFrom = vi.fn(() => ({ select: mockSelect }));
+
+  return {
+    client: { from: mockFrom } as SupabaseClientType,
+    mocks: { from: mockFrom, select: mockSelect, eq: mockEq, single: mockSingle }
+  };
+};
+```
+
+## Key Insights
+- Each method returns object with remaining chain methods
+- `eq()` returns `{eq: eq, single: single}` to allow multiple `.eq()` calls
+- Use `mockResolvedValueOnce()` to control sequential call returns
+- Use `toHaveBeenNthCalledWith()` to verify call order and arguments
+
+## Usage Pattern
+```typescript
+const mockSupabase = createMockSupabaseClient();
+// Configure responses
+mockSupabase.mocks.single.mockResolvedValueOnce(successResponse);
+// Inject into service
+const service = new RecipeService(mockSupabase.client);
+```
+
+## Verification Patterns
+```typescript
+// Verify specific call with arguments
+expect(mockSupabase.mocks.select).toHaveBeenNthCalledWith(1, 'id, user_id');
+expect(mockSupabase.mocks.eq).toHaveBeenNthCalledWith(2, 'id', recipeId);
+
+// Verify total call counts
+expect(mockSupabase.mocks.from).toHaveBeenCalledTimes(2); // 2 queries made
+expect(mockSupabase.mocks.eq).toHaveBeenCalledTimes(3);   // 3 eq() calls total
+expect(mockSupabase.mocks.single).toHaveBeenCalledTimes(2); // 2 single() calls
+```
