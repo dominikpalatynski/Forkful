@@ -1,5 +1,8 @@
 import type { APIRoute } from "astro";
 import { GenerationRecipeService } from "../../../lib/services/generation-recipe.service";
+import { OpenRouterService } from "../../../lib/services/openrouter.service";
+import { systemPrompt, getUserPrompt } from "../../../lib/services/prompt";
+import { GeneratedRecipeJsonSchemaFull } from "../../../lib/services/generation-recipe.service";
 import { GenerateRecipeSchema } from "../../../lib/schemas/recipe.schema";
 import { getAuthenticatedUserId } from "../../../lib/utils";
 import z from "zod";
@@ -67,7 +70,20 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const { inputText } = validatedData;
 
     // Step 4: Initialize generation service and generate recipe
-    const generationService = new GenerationRecipeService(locals.supabase);
+    const openRouterService = new OpenRouterService({
+      apiKey: import.meta.env.OPENROUTER_API_KEY!,
+      model: "anthropic/claude-3-haiku",
+      systemPrompt: systemPrompt,
+      jsonSchema: {
+        name: "RecipeResponse",
+        schema: GeneratedRecipeJsonSchemaFull,
+        strict: true,
+      },
+      modelParameters: { temperature: 0.3,
+        max_tokens: 10000, },
+    });
+
+    const generationService = new GenerationRecipeService(locals.supabase, openRouterService);
 
     try {
       const generatedRecipe = await generationService.generateRecipeFromText(inputText, userId);

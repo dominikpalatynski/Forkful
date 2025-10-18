@@ -3,9 +3,9 @@ import type { GeneratedRecipeDto } from "../../types";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { OpenRouterService } from "./openrouter.service";
-import { systemPrompt, getUserPrompt } from "./prompt";
+import { getUserPrompt } from "./prompt";
 // Schema for AI-generated recipe
-const GeneratedRecipeSchema = z.object({
+export const GeneratedRecipeSchema = z.object({
   name: z.string().min(1, "Recipe name is required"),
   description: z.string().min(1, "Recipe description is required"),
   ingredients: z.array(
@@ -23,38 +23,19 @@ const GeneratedRecipeSchema = z.object({
 });
 
 // Convert Zod schema to JSON Schema for OpenRouter
-const GeneratedRecipeJsonSchemaFull = zodToJsonSchema(GeneratedRecipeSchema, {
+export const GeneratedRecipeJsonSchemaFull = zodToJsonSchema(GeneratedRecipeSchema, {
   name: "RecipeResponse",
 });
-
-// Extract the actual schema from definitions (OpenAI requires type: "object" at root level)
-const GeneratedRecipeJsonSchema = GeneratedRecipeJsonSchemaFull.definitions?.RecipeResponse as Record<string, unknown>;
-
-if (!GeneratedRecipeJsonSchema || typeof GeneratedRecipeJsonSchema !== "object") {
-  throw new Error("Failed to generate JSON schema for recipe generation");
-}
 
 /**
  * Service for handling AI-powered recipe generation from text input.
  * Manages the generation process, database logging, and error handling.
  */
 export class GenerationRecipeService {
-  private openRouterService: OpenRouterService;
-
-  constructor(private supabase: SupabaseClientType) {
-    this.openRouterService = new OpenRouterService({
-      apiKey: import.meta.env.OPENROUTER_API_KEY!,
-      model: "anthropic/claude-3-haiku",
-      systemPrompt: systemPrompt,
-      jsonSchema: {
-        name: "RecipeResponse",
-        schema: GeneratedRecipeJsonSchema,
-        strict: true,
-      },
-      modelParameters: { temperature: 0.3,
-        max_tokens: 10000, },
-    });
-  }
+  constructor(
+    private supabase: SupabaseClientType,
+    private openRouterService: OpenRouterService
+  ) {}
 
   /**
    * Generates a recipe from input text using AI.
