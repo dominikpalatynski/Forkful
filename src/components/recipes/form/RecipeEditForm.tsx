@@ -49,7 +49,6 @@ export function RecipeEditForm({ initialData, recipeId }: RecipeEditFormProps) {
 
   // Handle form submission
   const onSubmit = (data: UpdateRecipeCommand) => {
-    console.log("onSubmit", data);
     if (updateMutation.isPending) return;
 
     // Recalculate positions before sending to API

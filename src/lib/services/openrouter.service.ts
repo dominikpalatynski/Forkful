@@ -119,13 +119,11 @@ export class OpenRouterService {
     if (!responseJson || !Array.isArray(responseJson.choices) || !responseJson.choices[0]) {
       throw new OpenRouterError("OpenRouterService: invalid response shape (missing choices)", { responseJson });
     }
-    console.log(responseJson);
     const message = responseJson.choices[0]?.message;
     const content = message?.content;
     if (content == null) {
       throw new OpenRouterError("OpenRouterService: invalid response shape (missing content)", { responseJson });
     }
-    console.log(content);
     // Expect JSON content. Parse and validate.
     let parsed: unknown;
     try {

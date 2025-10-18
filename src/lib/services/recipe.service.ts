@@ -372,7 +372,6 @@ export class RecipeService {
       // Calculate pagination metadata
       const totalItems = count ?? 0;
       const totalPages = Math.ceil(totalItems / pageSize);
-      console.log("recipeListItems", recipeListItems);
       return {
         data: recipeListItems,
         pagination: {

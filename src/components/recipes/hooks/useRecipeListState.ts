@@ -83,7 +83,6 @@ export function useRecipeListState() {
   }, []);
 
   const handleTagSelect = useCallback((tagName: string | null) => {
-    console.log("value", tagName);
 
     setSelectedTag((prev) => (prev === tagName ? null : tagName));
     setCurrentPage(1);
