@@ -143,6 +143,12 @@ export class AuthService {
 
       // Success - session is cleared
     } catch (error) {
+      // Re-throw intentional errors
+      if (error instanceof Error && error.message.startsWith('Logout failed:')) {
+        throw error;
+      }
+
+      // Handle unexpected errors
       console.error("Unexpected error during logout:", error);
       throw new Error("An unexpected error occurred during logout. Please try again.");
     }
