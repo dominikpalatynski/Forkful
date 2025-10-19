@@ -1,37 +1,42 @@
 import React from "react";
-import { AIRecipeTextInput } from "./form/AIRecipeTextInput";
-import { AIEditRecipeForm } from "./form/AIEditRecipeForm";
-import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { useAIRecipeFormStore } from "@/store/ai-recipe-form.store";
 import { useGenerateRecipe } from "./hooks/useGenerateRecipe";
 import { useCreateRecipe } from "./hooks/useCreateRecipe";
+import {
+  useConfirmationDialogs
+} from "./AIRecipeForm/useConfirmationDialogs";
+import { InputPhase } from "./AIRecipeForm/InputPhase";
+import { EditPhase } from "./AIRecipeForm/EditPhase";
+import { ConfirmationDialogs } from "./AIRecipeForm/ConfirmationDialogs";
 import type { CreateRecipeCommand } from "@/types";
 
 /**
  * AIRecipeForm Component
  *
- * Główny komponent zarządzający przepływem tworzenia przepisu z AI.
- * Orchestruje dwie fazy procesu:
+ * Main orchestrator for AI-powered recipe creation flow.
+ * Manages two distinct phases:
  *
- * Faza 1 - 'input':
- * - Wyświetla AIRecipeTextInput
- * - Użytkownik wprowadza tekst (100-1000 znaków)
- * - Po kliknięciu "Generuj przepis" wywołuje API /api/recipes/generate
- * - W przypadku sukcesu przechodzi do fazy 'edit'
+ * Phase 1 - 'input':
+ * - User enters text description (100-1000 characters)
+ * - Generates recipe via POST /api/recipes/generate
+ * - Transitions to 'edit' phase on success
  *
- * Faza 2 - 'edit':
- * - Wyświetla AIEditRecipeForm
- * - Użytkownik może edytować wygenerowane dane
- * - Trzy akcje:
- *   1. "Zapisz przepis" → POST /api/recipes → redirect do /recipes/:id
- *   2. "Wróć do edycji tekstu" → powrót do fazy 'input' (zachowuje inputText)
- *   3. "Anuluj" → redirect do /
+ * Phase 2 - 'edit':
+ * - User reviews and edits generated recipe data
+ * - Three actions available:
+ *   1. "Save recipe" → POST /api/recipes → redirect to /recipes/:id
+ *   2. "Back to text edit" → return to 'input' phase (preserves text)
+ *   3. "Cancel" → redirect to /
  *
- * Stan zarządzany przez Zustand store z persistence w localStorage.
+ * Architecture:
+ * - State managed by Zustand store with localStorage persistence
+ * - State machine pattern via useAIRecipeFormMachine hook
+ * - Separated concerns: InputPhase, EditPhase, ConfirmationDialogs
+ * - Dialog management via useConfirmationDialogs hook
  *
  * @example
  * ```tsx
- * // W stronie Astro:
+ * // In Astro page:
  * <AIRecipeForm client:load />
  * ```
  */
@@ -47,9 +52,7 @@ export function AIRecipeForm() {
     reset,
   } = useAIRecipeFormStore();
 
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = React.useState(false);
-  const [isBackToTextDialogOpen, setIsBackToTextDialogOpen] = React.useState(false);
-
+  const dialogs = useConfirmationDialogs();
   const generateMutation = useGenerateRecipe();
   const createMutation = useCreateRecipe({
     onSuccessBeforeRedirect: () => {
@@ -58,15 +61,14 @@ export function AIRecipeForm() {
   });
 
   /**
-   * Sprawdza czy użytkownik ma wprowadzone dane (input text lub generated data).
+   * Derived state: Check if user has any data entered
    */
   const hasData = React.useMemo(() => {
     return inputText.trim().length > 0 || generatedData !== null;
   }, [inputText, generatedData]);
 
   /**
-   * Handler dla generowania przepisu z AI.
-   * Wywołuje POST /api/recipes/generate z inputText.
+   * Handler for AI recipe generation
    */
   const handleGenerate = React.useCallback(
     (text: string) => {
@@ -83,7 +85,7 @@ export function AIRecipeForm() {
   );
 
   /**
-   * Handler dla zmiany tekstu w fazie 'input'.
+   * Handler for input text changes
    */
   const handleInputChange = React.useCallback(
     (text: string) => {
@@ -93,49 +95,16 @@ export function AIRecipeForm() {
   );
 
   /**
-   * Handler dla powrotu do strony głównej.
-   * Pokazuje dialog potwierdzenia jeśli użytkownik ma wprowadzone dane.
+   * Handler for navigating back to home
    */
   const handleBack = React.useCallback(() => {
-    if (hasData) {
-      setIsConfirmDialogOpen(true);
-    } else {
-      reset();
-      window.location.href = "/";
-    }
-  }, [hasData, reset]);
-
-  /**
-   * Handler dla anulowania w fazie 'edit'.
-   * Pokazuje dialog potwierdzenia jeśli użytkownik ma wprowadzone dane.
-   */
-  const handleCancel = React.useCallback(() => {
-    if (hasData) {
-      setIsConfirmDialogOpen(true);
-    } else {
-      reset();
-      window.location.href = "/";
-    }
-  }, [hasData, reset]);
-
-  /**
-   * Handler potwierdzenia anulowania z dialogu.
-   * Resetuje store i nawiguje do /.
-   */
-  const handleConfirmCancel = React.useCallback(() => {
     reset();
     window.location.href = "/";
   }, [reset]);
 
-  const handleBackToTextEdit = React.useCallback(() => {
-    setIsBackToTextDialogOpen(true);
-  }, []);
-
-  const handleConfirmBackToText = React.useCallback(() => {
-    goBackToInput();
-    setIsBackToTextDialogOpen(false);
-  }, [goBackToInput]);
-
+  /**
+   * Handler for recipe submission
+   */
   const handleSubmit = React.useCallback(
     (data: CreateRecipeCommand) => {
       createMutation.mutate(data);
@@ -144,119 +113,94 @@ export function AIRecipeForm() {
   );
 
   /**
-   * Renderowanie komponentu w zależności od aktualnej fazy.
+   * Handler for cancel confirmation
    */
-  if (phase === 'input') {
+  const handleConfirmCancel = React.useCallback(() => {
+    reset();
+    window.location.href = "/";
+  }, [reset]);
+
+  /**
+   * Handler for back to text confirmation
+   */
+  const handleConfirmBackToText = React.useCallback(() => {
+    goBackToInput();
+    dialogs.backToText.close();
+  }, [goBackToInput, dialogs.backToText]);
+
+  /**
+   * Render Input Phase
+   */
+  if (phase === "input") {
     return (
       <>
-        <AIRecipeTextInput
-          value={inputText}
-          onChange={handleInputChange}
+        <InputPhase
+          inputText={inputText}
+          onInputChange={handleInputChange}
           onGenerate={handleGenerate}
           isGenerating={generateMutation.isPending}
+          hasData={hasData}
           onBack={handleBack}
+          confirmCancelDialog={dialogs.confirmCancel}
         />
 
-        {/* Dialog potwierdzenia anulowania */}
-        <ConfirmationDialog
-          isOpen={isConfirmDialogOpen}
-          onOpenChange={setIsConfirmDialogOpen}
-          title="Odrzucić wprowadzone dane?"
-          description="Masz wprowadzony tekst. Czy na pewno chcesz wyjść bez generowania przepisu?"
-          cancelButton={{
-            text: "Powrót",
-          }}
-          actionButton={{
-            text: "Odrzuć dane",
-            onClick: handleConfirmCancel,
-          }}
+        <ConfirmationDialogs
+          phase="input"
+          confirmCancelDialog={dialogs.confirmCancel}
+          backToTextDialog={dialogs.backToText}
+          onConfirmCancel={handleConfirmCancel}
+          onConfirmBackToText={handleConfirmBackToText}
         />
       </>
     );
   }
 
   /**
-   * Faza 'edit' - renderuje formularz edycji.
-   * Sprawdza czy generatedData i generationId są dostępne.
+   * Render Edit Phase
+   * Validates that generatedData and generationId are available
    */
-  if (phase === 'edit' && generatedData && generationId) {
+  if (phase === "edit" && generatedData && generationId) {
     return (
       <>
-        <AIEditRecipeForm
-          initialData={generatedData}
+        <EditPhase
+          generatedData={generatedData}
           generationId={generationId}
           onSubmit={handleSubmit}
-          onBackToTextEdit={handleBackToTextEdit}
-          onCancel={handleCancel}
+          onBackToTextEdit={dialogs.backToText.open}
+          hasData={hasData}
+          onCancel={handleBack}
           isSubmitting={createMutation.isPending}
+          confirmCancelDialog={dialogs.confirmCancel}
+          backToTextDialog={dialogs.backToText}
         />
 
-        {/* Dialog potwierdzenia anulowania (przycisk "Anuluj") */}
-        <ConfirmationDialog
-          isOpen={isConfirmDialogOpen}
-          onOpenChange={setIsConfirmDialogOpen}
-          title="Odrzucić wprowadzone dane?"
-          description="Masz wygenerowany przepis. Czy na pewno chcesz wyjść bez zapisywania?"
-          cancelButton={{
-            text: "Powrót",
-          }}
-          actionButton={{
-            text: "Odrzuć dane",
-            onClick: handleConfirmCancel,
-          }}
-        />
-
-        {/* Dialog potwierdzenia powrotu do edycji tekstu (przycisk "Wróć do edycji tekstu") */}
-        <ConfirmationDialog
-          isOpen={isBackToTextDialogOpen}
-          onOpenChange={setIsBackToTextDialogOpen}
-          title="Wrócić do edycji tekstu?"
-          description="Powrót do edycji tekstu spowoduje porzucenie wygenerowanego przepisu. Będziesz musiał wygenerować przepis ponownie."
-          cancelButton={{
-            text: "Anuluj",
-          }}
-          actionButton={{
-            text: "Wróć do tekstu",
-            onClick: handleConfirmBackToText,
-          }}
+        <ConfirmationDialogs
+          phase="edit"
+          confirmCancelDialog={dialogs.confirmCancel}
+          backToTextDialog={dialogs.backToText}
+          onConfirmCancel={handleConfirmCancel}
+          onConfirmBackToText={handleConfirmBackToText}
         />
       </>
     );
   }
 
   /**
-   * Fallback - nie powinno się zdarzyć.
-   * W przypadku niespójnego stanu pokazuje komunikat i przycisk do resetu.
+   * Fallback for inconsistent state
+   * Should not occur in normal operation
    */
   return (
-    <>
-      <div className="space-y-4">
-        <p className="text-muted-foreground">
-          Wystąpił błąd w przepływie tworzenia przepisu. Spróbuj ponownie.
-        </p>
-        <button
-          type="button"
-          onClick={handleBack}
-          className="text-primary hover:underline"
-        >
-          Wróć do strony głównej
-        </button>
-      </div>
-
-      {/* Dialog potwierdzenia anulowania */}
-      <ConfirmationDialog
-        isOpen={isConfirmDialogOpen}
-        onOpenChange={setIsConfirmDialogOpen}
-        title="Odrzucić wprowadzone dane?"
-        description="Masz wprowadzony tekst lub wygenerowane dane. Czy na pewno chcesz wyjść bez zapisywania?"
-        cancelButton={{
-          text: "Powrót",
-        }}
-        actionButton={{
-          text: "Odrzuć dane",
-          onClick: handleConfirmCancel,
-        }}
-      />
-    </>
+    <div className="space-y-4">
+      <p className="text-muted-foreground">
+        Wystąpił błąd w przepływie tworzenia przepisu. Spróbuj ponownie.
+      </p>
+      <button
+        type="button"
+        onClick={handleBack}
+        className="text-primary hover:underline"
+      >
+        Wróć do strony głównej
+      </button>
+    </div>
   );
 }
