@@ -1,32 +1,96 @@
+import { useCallback, useMemo } from "react";
 import { useFieldArray } from "react-hook-form";
-import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { EditableSectionHeader } from "./EditableSectionHeader";
-import { Trash2, Plus } from "lucide-react";
+import { DraggableIngredientItem } from "./DraggableIngredientItem";
 import type { EditableIngredientsListProps } from "../types";
 
 /**
  * EditableIngredientsList Component
  *
- * Manages a dynamic list of recipe ingredients with add/remove functionality.
- * Uses useFieldArray from react-hook-form to handle array operations.
+ * Manages a dynamic list of recipe ingredients with add/remove and drag-to-reorder functionality.
+ * Uses useFieldArray from react-hook-form to handle array operations and dnd-kit for drag-and-drop.
  *
  * @param control - React Hook Form control object for managing form state
  */
 export function EditableIngredientsList({ control }: EditableIngredientsListProps) {
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control,
     name: "ingredients",
   });
 
-  const handleAddIngredient = () => {
-    append({ content: " ", position: fields.length + 1 });
-  };
+  // Configure sensors for drag interactions (mouse + keyboard)
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Minimum distance before drag is triggered
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
-  const handleRemoveIngredient = (index: number) => {
-    remove(index);
-  };
+  // Memoize the ingredient IDs for the SortableContext
+  const ingredientIds = useMemo(() => fields.map((f) => f.id), [fields]);
+
+  /**
+   * Handles the end of a drag operation.
+   * Reorders the ingredients in the form state and recalculates positions.
+   */
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+
+      // If dropped over nothing or same position, do nothing
+      if (!over || active.id === over.id) {
+        return;
+      }
+
+      // Find the indices of the active and over items
+      const activeIndex = fields.findIndex((f) => f.id === active.id);
+      const overIndex = fields.findIndex((f) => f.id === over.id);
+
+      if (activeIndex === -1 || overIndex === -1) {
+        return;
+      }
+
+      // Reorder the fields in the form state
+      move(activeIndex, overIndex);
+
+      // Note: Positions will be recalculated on form submit based on new order
+      // This ensures consistency with the server-side validation
+    },
+    [fields, move]
+  );
+
+  const handleAddIngredient = useCallback(() => {
+    append({ content: "", position: fields.length + 1 });
+  }, [fields.length, append]);
+
+  const handleRemoveIngredient = useCallback(
+    (index: number) => {
+      remove(index);
+    },
+    [remove]
+  );
+
+  const isRemoveDisabled = fields.length === 1;
 
   return (
     <div className="space-y-4">
@@ -46,42 +110,34 @@ export function EditableIngredientsList({ control }: EditableIngredientsListProp
         }
       />
 
-      <div className="space-y-3">
-        {fields.map((field, index) => (
-          <div key={field.id} className="flex items-start gap-3">
-            <div className="flex-1">
-              <FormField
-                control={control}
-                name={`ingredients.${index}.content`}
-                render={({ field: inputField }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input type="text" placeholder={`Składnik ${index + 1}`} autoComplete="off" {...inputField} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => handleRemoveIngredient(index)}
-              className="flex items-center gap-2 text-destructive hover:text-destructive"
-              disabled={fields.length === 1}
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
-        ))}
-      </div>
-
-      {fields.length === 0 && (
+      {fields.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <p>Brak składników. Dodaj pierwszy składnik, aby rozpocząć.</p>
         </div>
+      ) : (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={ingredientIds}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-3">
+              {fields.map((field, index) => (
+                <DraggableIngredientItem
+                  key={field.id}
+                  field={field}
+                  index={index}
+                  control={control}
+                  onRemove={() => handleRemoveIngredient(index)}
+                  isDisabledRemove={isRemoveDisabled}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
     </div>
   );

@@ -1,7 +1,6 @@
 ---
-alwaysApply: true
+alwaysApply: false
 ---
-
 # Fetch Mocking: Best Practices & Scenarios
 
 ## Quick Reference

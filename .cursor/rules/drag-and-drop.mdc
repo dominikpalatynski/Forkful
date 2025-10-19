@@ -1,0 +1,161 @@
+---
+alwaysApply: false
+---
+# Drag-and-Drop Implementation Rules
+
+## Core Concepts
+
+**Drag-and-Drop Components:**
+- **Source**: Item being dragged
+- **Target**: Drop destination
+- **Sensor**: Input detection (mouse, keyboard, touch)
+- **Collision**: Algorithm detecting which target is under source
+- **Transform**: Visual position during drag
+
+## Architecture Pattern
+
+Use **library-based approach** (dnd-kit) over custom:
+1. **DndContext** - Wraps draggable environment
+2. **SortableContext** - Enables list sorting
+3. **useSortable Hook** - Individual item state
+4. **Sensors** - Mouse and keyboard input handling
+
+```tsx
+<DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+  <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+    {items.map(item => <DraggableItem key={item.id} id={item.id} />)}
+  </SortableContext>
+</DndContext>
+```
+
+## Event Handling Pattern
+
+**Key Events in Sequence:**
+1. **Activation**: Pointer/keyboard input detected (after 8px threshold)
+2. **Drag**: Continuous position updates via `transform`
+3. **Collision**: Check closest item via `closestCenter`
+4. **Drop**: `onDragEnd(event)` fires with `active` and `over`
+
+**Essential Handler:**
+```tsx
+const handleDragEnd = (event) => {
+  const { active, over } = event;
+  if (!over || active.id === over.id) return;
+  
+  const activeIdx = items.findIndex(i => i.id === active.id);
+  const overIdx = items.findIndex(i => i.id === over.id);
+  move(activeIdx, overIdx); // Use form library's move()
+};
+```
+
+## Implementation Checklist
+
+- [ ] Install library: `@dnd-kit/core`, `@dnd-kit/sortable`
+- [ ] Configure sensors (PointerSensor + KeyboardSensor)
+- [ ] Set activation constraint (8px distance minimum)
+- [ ] Implement drag handle component
+- [ ] Add visual feedback (opacity, background highlight)
+- [ ] Wire `handleDragEnd` to reorder logic
+- [ ] Memoize IDs and attributes with useMemo
+- [ ] Use useCallback for event handlers
+- [ ] Add keyboard support via sortableKeyboardCoordinates
+
+## UX Best Practices
+
+**Visual Feedback:**
+- Show item as semi-transparent during drag (opacity: 0.5)
+- Highlight drop zone with accent background color
+- Display smooth CSS transitions (250ms)
+- Use cursor changes: `cursor-grab` → `cursor-grabbing`
+
+**Interaction Design:**
+- Require 8px movement before activation (prevent accidental drags)
+- Disable interactions while dragging (disable input fields)
+- Provide empty state message when list is empty
+- Prevent removing last item (disabled button state)
+
+## Accessibility Requirements
+
+**ARIA & Keyboard:**
+- Add `aria-label` to drag handles: `"Drag to reorder item X"`
+- Support Arrow Keys (↑↓) for keyboard reordering
+- Support Space to activate/deactivate drag
+- Support Escape to cancel drag operation
+- Use semantic HTML (don't use divs for buttons)
+
+**Screen Readers:**
+- Label indicates draggable state
+- Number shows current position
+- Instructions text explains interactions
+
+## State Management Integration
+
+**With React Hook Form:**
+```tsx
+const { fields, move } = useFieldArray({ control, name: "items" });
+
+// On drag end:
+move(fromIndex, toIndex); // Reorders array in form state
+
+// On submit: Positions auto-recalculated server-side
+// Ensures data consistency despite UI changes
+```
+
+**State Flow:**
+1. Drag triggers `handleDragEnd`
+2. `move()` updates form state
+3. React re-renders with new order
+4. User sees instant visual change
+
+## Performance Optimization
+
+- Use `useMemo` for item IDs: `useMemo(() => items.map(i => i.id), [items])`
+- Use `useCallback` for event handlers to prevent re-renders
+- Use CSS transforms (GPU-accelerated) not position changes
+- Memoize drag handle attributes separately
+- Avoid inline object creation in JSX
+
+**Bundle Impact:**
+- dnd-kit: ~12KB gzipped (acceptable for list reordering)
+- Scales smoothly with 50+ items
+
+## Common Patterns
+
+**Pattern 1: Simple List Reorder**
+- Single level, linear items
+- Use `verticalListSortingStrategy`
+- Perfect for ingredients/steps in forms
+
+**Pattern 2: Conditional Disable**
+- Disable drag if list has 1 item
+- Disable if user lacks permission
+- Check before `useSortable` hook
+
+**Pattern 3: Form Integration**
+- Use same component for create/edit forms
+- Position values recalculated on submit
+- Maintains form validation flow
+
+**Pattern 4: Keyboard Alternative**
+- Arrow keys move item one position
+- Space activates drag on focused item
+- Escape cancels drag
+- Provides complete keyboard-only workflow
+
+## Anti-Patterns to Avoid
+
+❌ Don't mock drag-drop in tests without library
+❌ Don't use position changes (use CSS transform)
+❌ Don't create new sensor objects in render
+❌ Don't forget DndContext wrapper
+❌ Don't skip 8px distance threshold
+❌ Don't update positions before form submission
+❌ Don't forget ARIA labels on drag handles
+
+## Debugging Checklist
+
+- **Drag not working**: Verify DndContext wraps SortableContext
+- **Wrong order**: Check `active.id` and `over.id` match correctly
+- **Visual jank**: Ensure `transform: CSS.Transform.toString(transform)`
+- **Keyboard fails**: Verify KeyboardSensor registered with `sortableKeyboardCoordinates`
+- **Accessibility issues**: Test with screen reader, keyboard only
