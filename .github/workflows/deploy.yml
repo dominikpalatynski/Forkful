@@ -46,7 +46,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    environment: 
+    environment:
       name: production
       url: https://forkful.pages.dev
     needs: [lint, unit-tests]

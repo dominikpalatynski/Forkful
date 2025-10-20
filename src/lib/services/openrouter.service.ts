@@ -85,7 +85,7 @@ export class OpenRouterService {
     const { apiKey } = this.config;
 
     // Create AbortController if available (not available in all Cloudflare Workers environments)
-    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
     const timeoutId = controller ? setTimeout(() => controller.abort(), 30_000) : null;
 
     try {
