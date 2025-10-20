@@ -28,10 +28,7 @@ export const prerender = false;
  */
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
-    console.log("Generate endpoint called");
-
     const userId = getAuthenticatedUserId(locals);
-    console.log("User authenticated:", userId);
 
     // Step 2: Parse and validate request body
     let requestBody;
@@ -72,11 +69,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     const { inputText } = validatedData;
-    console.log("Input text length:", inputText.length);
-    console.log("OPENROUTER_API_KEY exists:", !!OPENROUTER_API_KEY);
 
     // Step 4: Initialize generation service and generate recipe
-    console.log("Initializing OpenRouter service");
     const openRouterService = new OpenRouterService({
       apiKey: OPENROUTER_API_KEY,
       model: "anthropic/claude-3-haiku",
@@ -91,10 +85,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     const generationService = new GenerationRecipeService(locals.supabase, openRouterService);
 
-    console.log("Calling generation service");
     try {
       const generatedRecipe = await generationService.generateRecipeFromText(inputText, userId);
-      console.log("Generation successful");
 
       // Step 5: Return successful response
       return new Response(JSON.stringify(generatedRecipe), {
@@ -102,10 +94,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
         headers: { "Content-Type": "application/json" },
       });
     } catch (serviceError) {
-      console.error("Service error:", serviceError);
       // Step 6: Handle service-specific errors
       if (serviceError instanceof Error) {
-        console.log("Error message:", serviceError.message);
         // Check if it's a "not a recipe" error (would be implemented in real AI integration)
         if (serviceError.message.includes("not a recipe") || serviceError.message.includes("unprocessable")) {
           return new Response(

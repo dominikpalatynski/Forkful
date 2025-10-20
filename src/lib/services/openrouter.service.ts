@@ -32,7 +32,7 @@ export class OpenRouterService {
 
   constructor(
     private readonly config: OpenRouterServiceConfig,
-    private readonly fetchImpl: typeof fetch = fetch
+    private readonly fetchImpl: typeof fetch = globalThis.fetch?.bind(globalThis) || fetch
   ) {
     if (!config?.apiKey) {
       throw new OpenRouterError("OpenRouterService: apiKey is required");
@@ -83,19 +83,27 @@ export class OpenRouterService {
 
   private async send(payload: Record<string, unknown>): Promise<unknown> {
     const { apiKey } = this.config;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30_000);
+
+    // Create AbortController if available (not available in all Cloudflare Workers environments)
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 30_000) : null;
 
     try {
-      const res = await this.fetchImpl(`${this.baseUrl}/chat/completions`, {
+      const fetchOptions: RequestInit = {
         method: "POST",
         headers: {
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-        signal: controller.signal,
-      });
+      };
+
+      // Only add signal if AbortController is available
+      if (controller) {
+        fetchOptions.signal = controller.signal;
+      }
+
+      const res = await this.fetchImpl(`${this.baseUrl}/chat/completions`, fetchOptions);
 
       if (!res.ok) {
         const body = await res.text().catch(() => "");
@@ -114,7 +122,9 @@ export class OpenRouterService {
       }
       throw e;
     } finally {
-      clearTimeout(timeoutId);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
     }
   }
 
