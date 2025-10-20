@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { OPENROUTER_API_KEY } from "astro:env/server";
 import { GenerationRecipeService } from "../../../lib/services/generation-recipe.service";
 import { OpenRouterService } from "../../../lib/services/openrouter.service";
 import { systemPrompt } from "../../../lib/services/prompt";
@@ -71,7 +72,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Step 4: Initialize generation service and generate recipe
     const openRouterService = new OpenRouterService({
-      apiKey: import.meta.env.OPENROUTER_API_KEY as string,
+      apiKey: OPENROUTER_API_KEY,
       model: "anthropic/claude-3-haiku",
       systemPrompt: systemPrompt,
       jsonSchema: {
