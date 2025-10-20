@@ -1,5 +1,4 @@
 import Ajv from "ajv";
-
 export interface OpenRouterServiceConfig {
   model: string;
   systemPrompt: string;
@@ -28,7 +27,6 @@ export class OpenRouterError extends Error {
 
 export class OpenRouterService {
   private readonly baseUrl: string;
-  private readonly validator: Ajv;
 
   constructor(
     private readonly config: OpenRouterServiceConfig,
@@ -45,7 +43,6 @@ export class OpenRouterService {
     }
 
     this.baseUrl = (config.baseUrl ?? "https://openrouter.ai/api/v1").replace(/\/$/, "");
-    this.validator = new Ajv({ allErrors: true });
   }
 
   async generate(args: { userMessage: string }): Promise<{ raw: unknown; json: unknown }> {
@@ -146,12 +143,14 @@ export class OpenRouterService {
     }
 
     // Validate against the provided JSON schema
-    const validate = this.validator.compile(this.config.jsonSchema.schema);
+    const ajv = new Ajv();
+    const validate = ajv.compile(this.config.jsonSchema.schema);
     const isValid = validate(parsed);
 
     if (!isValid) {
       const errors =
-        validate.errors?.map((err) => `${err.instancePath}: ${err.message}`).join(", ") ?? "Unknown validation error";
+        validate.errors?.map((err: any) => `${err.instancePath}: ${err.message}`).join(", ") ??
+        "Unknown validation error";
       throw new OpenRouterError(`OpenRouterService: response does not match schema: ${errors}`, {
         parsed,
         schema: this.config.jsonSchema.schema,
