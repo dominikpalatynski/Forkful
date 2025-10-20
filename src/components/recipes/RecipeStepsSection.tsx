@@ -30,9 +30,7 @@ export function RecipeStepsSection({ steps }: RecipeStepsSectionProps) {
           {steps.map((step, idx) => (
             <Card key={step.id}>
               <CardHeader className="text-xl  ">
-                <span className="font-bold text-primary">
-                  {`Krok ${idx + 1}`}
-                </span>
+                <span className="font-bold text-primary">{`Krok ${idx + 1}`}</span>
               </CardHeader>
               <CardContent className="py-4">
                 <h3 className="text-lg font-semibold mb-2">Opis</h3>

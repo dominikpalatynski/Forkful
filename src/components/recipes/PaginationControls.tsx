@@ -6,15 +6,12 @@ import { Label } from "@/components/ui/label";
 export function PaginationControls({
   currentPage,
   totalPages,
-  totalItems,
   pageSize,
   onPageChange,
   onPageSizeChange,
 }: PaginationControlsProps): React.ReactElement {
   const canGoPrev = currentPage > 1;
   const canGoNext = currentPage < totalPages;
-  const start = (currentPage - 1) * pageSize + 1;
-  const end = Math.min(currentPage * pageSize, totalItems);
 
   return (
     <div className="flex flex-col sm:flex-row justify-start items-center gap-4">

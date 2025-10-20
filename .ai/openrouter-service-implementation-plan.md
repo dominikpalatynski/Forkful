@@ -52,16 +52,16 @@ Główna metoda publiczna usługi. Generuje odpowiedź od modelu LLM. Może zwr�
 
 #### Parametry (`GenerateOptions<T>`):
 
--   `systemPrompt` (string, opcjonalny): Instrukcja systemowa, która definiuje rolę i zachowanie modelu.
--   `userPrompt` (string, wymagany): Zapytanie użytkownika, na które model ma odpowiedzieć.
--   `jsonSchema` (z.ZodTypeAny, opcjonalny): Schemat Zod definiujący oczekiwaną strukturę odpowiedzi JSON. Jeśli zostanie podany, usługa zażąda od modelu odpowiedzi w formacie JSON i zweryfikuje ją.
--   `model` (string, opcjonalny): Nazwa modelu do użycia, np. `google/gemini-1.5-flash`. Zastępuje domyślny model.
--   `params` (Partial<ModelParams>, opcjonalny): Parametry generowania, takie jak `temperature` czy `top_p`. Zastępują domyślne parametry.
+- `systemPrompt` (string, opcjonalny): Instrukcja systemowa, która definiuje rolę i zachowanie modelu.
+- `userPrompt` (string, wymagany): Zapytanie użytkownika, na które model ma odpowiedzieć.
+- `jsonSchema` (z.ZodTypeAny, opcjonalny): Schemat Zod definiujący oczekiwaną strukturę odpowiedzi JSON. Jeśli zostanie podany, usługa zażąda od modelu odpowiedzi w formacie JSON i zweryfikuje ją.
+- `model` (string, opcjonalny): Nazwa modelu do użycia, np. `google/gemini-1.5-flash`. Zastępuje domyślny model.
+- `params` (Partial<ModelParams>, opcjonalny): Parametry generowania, takie jak `temperature` czy `top_p`. Zastępują domyślne parametry.
 
 #### Zwraca:
 
--   `Promise<string>`: Jeśli `jsonSchema` nie jest podany.
--   `Promise<z.infer<T>>`: Jeśli `jsonSchema` jest podany, zwraca obiekt, którego typ jest wyinferowany ze schematu.
+- `Promise<string>`: Jeśli `jsonSchema` nie jest podany.
+- `Promise<z.infer<T>>`: Jeśli `jsonSchema` jest podany, zwraca obiekt, którego typ jest wyinferowany ze schematu.
 
 ## 4. Prywatne Metody i Pola
 
@@ -81,11 +81,11 @@ Metoda do parsowania odpowiedzi z API. Jeśli oczekiwano schematu JSON, ekstrahu
 
 Usługa będzie rzucać niestandardowe, typowane błędy, aby ułatwić ich obsługę w wyższych warstwach aplikacji.
 
--   **`OpenRouterConfigurationError`**: Rzucany, gdy brakuje klucza API podczas inicjalizacji.
--   **`OpenRouterAPIError`**: Rzucany w przypadku błędów zwróconych przez API OpenRouter (np. status 4xx, 5xx). Zawiera oryginalny status i komunikat błędu z API.
--   **`OpenRouterRequestError`**: Rzucany w przypadku problemów z siecią lub niemożności wysłania żądania.
--   **`OpenRouterResponseError`**: Rzucany, gdy odpowiedź API jest niekompletna lub ma nieprawidłowy format.
--   **`OpenRouterValidationError`**: Rzucany, gdy odpowiedź JSON od modelu nie przejdzie walidacji względem podanego schematu Zod.
+- **`OpenRouterConfigurationError`**: Rzucany, gdy brakuje klucza API podczas inicjalizacji.
+- **`OpenRouterAPIError`**: Rzucany w przypadku błędów zwróconych przez API OpenRouter (np. status 4xx, 5xx). Zawiera oryginalny status i komunikat błędu z API.
+- **`OpenRouterRequestError`**: Rzucany w przypadku problemów z siecią lub niemożności wysłania żądania.
+- **`OpenRouterResponseError`**: Rzucany, gdy odpowiedź API jest niekompletna lub ma nieprawidłowy format.
+- **`OpenRouterValidationError`**: Rzucany, gdy odpowiedź JSON od modelu nie przejdzie walidacji względem podanego schematu Zod.
 
 ## 6. Kwestie Bezpieczeństwa
 
@@ -161,7 +161,11 @@ const DEFAULT_PARAMS: Partial<ModelParams> = {
 
 // Definicje klas błędów (przykładowa)
 export class OpenRouterAPIError extends Error {
-  constructor(message: string, public status: number, public details?: any) {
+  constructor(
+    message: string,
+    public status: number,
+    public details?: any
+  ) {
     super(message);
     this.name = "OpenRouterAPIError";
   }
@@ -342,4 +346,3 @@ async function generateRecipeObject(topic: string) {
   return result; // Typ będzie automatycznie wyinferowany jako { title, ingredients, prep_time_minutes }
 }
 ```
-

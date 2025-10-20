@@ -7,6 +7,7 @@ This document outlines comprehensive unit test scenarios for the `TagService` cl
 ## Service Methods
 
 The TagService has 1 public method to test:
+
 1. `getTags()` - Retrieve all tags for a user with optional search filtering
 
 ---
@@ -18,15 +19,16 @@ The TagService has 1 public method to test:
 #### 1.1 Success Scenarios - No Search Query
 
 **1.1.1 Retrieve All Tags for User (Multiple Tags)**
+
 - **Scenario Name**: Successfully retrieve all tags for a user when no search query is provided
 - **Prerequisites**:
   - Mock Supabase `from()`, `select()`, `eq()`, `order()` chain
   - Return 5 tags: [
-      { id: "tag-1", name: "Vegetarian" },
-      { id: "tag-2", name: "Vegan" },
-      { id: "tag-3", name: "Gluten-Free" },
-      { id: "tag-4", name: "Quick" },
-      { id: "tag-5", name: "Dessert" }
+    { id: "tag-1", name: "Vegetarian" },
+    { id: "tag-2", name: "Vegan" },
+    { id: "tag-3", name: "Gluten-Free" },
+    { id: "tag-4", name: "Quick" },
+    { id: "tag-5", name: "Dessert" }
     ]
   - User ID: "user-123"
   - No query parameter
@@ -37,6 +39,7 @@ The TagService has 1 public method to test:
   - `ilike()` filter NOT called (no search query)
 
 **1.1.2 Retrieve Single Tag for User**
+
 - **Scenario Name**: Successfully retrieve a single tag for a user
 - **Prerequisites**:
   - Mock Supabase to return 1 tag: { id: "tag-1", name: "Italian" }
@@ -47,6 +50,7 @@ The TagService has 1 public method to test:
   - Tag correctly mapped with id and name
 
 **1.1.3 Retrieve No Tags for User (Empty Result)**
+
 - **Scenario Name**: Return empty array when user has no tags
 - **Prerequisites**:
   - Mock Supabase to return null data
@@ -58,13 +62,14 @@ The TagService has 1 public method to test:
   - Data mapping handles null gracefully
 
 **1.1.4 Retrieve Tags Ordered Alphabetically**
+
 - **Scenario Name**: Verify tags are returned in alphabetical order by name
 - **Prerequisites**:
   - Mock Supabase to return tags not in alphabetical order initially
   - Return: [
-      { id: "tag-1", name: "Zebra" },
-      { id: "tag-2", name: "Apple" },
-      { id: "tag-3", name: "Mango" }
+    { id: "tag-1", name: "Zebra" },
+    { id: "tag-2", name: "Apple" },
+    { id: "tag-3", name: "Mango" }
     ]
   - User ID: "user-123"
 - **Expected Output**:
@@ -74,12 +79,13 @@ The TagService has 1 public method to test:
 #### 1.2 Success Scenarios - With Search Query
 
 **1.2.1 Search Tags with Matching Results**
+
 - **Scenario Name**: Successfully search tags and return filtered results
 - **Prerequisites**:
   - Mock Supabase to return 2 matching tags for "Pasta" query
   - Return: [
-      { id: "tag-1", name: "Pasta Primavera" },
-      { id: "tag-2", name: "Pasta Carbonara" }
+    { id: "tag-1", name: "Pasta Primavera" },
+    { id: "tag-2", name: "Pasta Carbonara" }
     ]
   - User ID: "user-123"
   - Query: "Pasta"
@@ -89,6 +95,7 @@ The TagService has 1 public method to test:
   - Only tags matching search query returned
 
 **1.2.2 Search Tags Case-Insensitive**
+
 - **Scenario Name**: Verify search is case-insensitive
 - **Prerequisites**:
   - Mock Supabase with ilike query to match "pasta", "PASTA", "Pasta"
@@ -99,6 +106,7 @@ The TagService has 1 public method to test:
   - Verify ilike() is used (not exact match)
 
 **1.2.3 Search Tags with Partial Match (Prefix)**
+
 - **Scenario Name**: Search returns only tags that start with the query (prefix match)
 - **Prerequisites**:
   - Tags exist: "Italian", "Italy", "Intelligent"
@@ -111,6 +119,7 @@ The TagService has 1 public method to test:
   - Verify query string is trimmed and "%" appended: `${query.trim()}%`
 
 **1.2.4 Search Tags No Matching Results**
+
 - **Scenario Name**: Return empty array when search query matches no tags
 - **Prerequisites**:
   - Mock Supabase to return empty array
@@ -121,6 +130,7 @@ The TagService has 1 public method to test:
   - No errors thrown
 
 **1.2.5 Search with Special Characters in Query**
+
 - **Scenario Name**: Handle special characters in search query
 - **Prerequisites**:
   - Query: "Spicy & Hot"
@@ -133,6 +143,7 @@ The TagService has 1 public method to test:
 #### 1.3 Edge Cases - Query Handling
 
 **1.3.1 Search Query is Empty String**
+
 - **Scenario Name**: Treat empty string query as no query
 - **Prerequisites**:
   - Query: ""
@@ -144,9 +155,10 @@ The TagService has 1 public method to test:
   - Empty string check handled: `if (query && query.trim())`
 
 **1.3.2 Search Query is Whitespace Only**
+
 - **Scenario Name**: Treat whitespace-only query as no query
 - **Prerequisites**:
-  - Query: "   " (spaces only)
+  - Query: " " (spaces only)
   - Mock Supabase to return all tags
 - **Expected Output**:
   - `ilike()` filter NOT called
@@ -154,9 +166,10 @@ The TagService has 1 public method to test:
   - Whitespace check handled correctly
 
 **1.3.3 Search Query with Leading and Trailing Whitespace**
+
 - **Scenario Name**: Trim leading and trailing whitespace from query
 - **Prerequisites**:
-  - Query: "  Vegetarian  " (with spaces)
+  - Query: " Vegetarian " (with spaces)
   - Mock Supabase with ilike("name", "Vegetarian%")
 - **Expected Output**:
   - Query trimmed before database query
@@ -164,6 +177,7 @@ The TagService has 1 public method to test:
   - Spaces not included in search
 
 **1.3.4 Search Query with Single Character**
+
 - **Scenario Name**: Successfully search with single character query
 - **Prerequisites**:
   - Query: "A"
@@ -173,6 +187,7 @@ The TagService has 1 public method to test:
   - Single character queries work correctly
 
 **1.3.5 Search Query with Very Long String**
+
 - **Scenario Name**: Handle very long query strings
 - **Prerequisites**:
   - Query: "A very long search query with many words that is unusually long"
@@ -185,6 +200,7 @@ The TagService has 1 public method to test:
 #### 1.4 Error Scenarios - Supabase Failures
 
 **1.4.1 Database Query Fails - Supabase Error Returned**
+
 - **Scenario Name**: Handle Supabase database error gracefully
 - **Prerequisites**:
   - Mock Supabase to return error: { message: "Connection timeout" }
@@ -196,6 +212,7 @@ The TagService has 1 public method to test:
   - Service catches and re-throws with context
 
 **1.4.2 Database Query Fails - Permission Denied**
+
 - **Scenario Name**: Handle permission/authorization errors
 - **Prerequisites**:
   - Mock Supabase to return error: { message: "row level security violation" }
@@ -205,6 +222,7 @@ The TagService has 1 public method to test:
   - Proper error message for debugging
 
 **1.4.3 Database Query Fails - Record Not Found**
+
 - **Scenario Name**: Handle case when query succeeds but returns null
 - **Prerequisites**:
   - Mock Supabase to return null data (error is null, data is null)
@@ -214,6 +232,7 @@ The TagService has 1 public method to test:
   - Handles null data gracefully: `(data || [])`
 
 **1.4.4 Unexpected Error During Query Execution**
+
 - **Scenario Name**: Handle unexpected non-database errors
 - **Prerequisites**:
   - Mock Supabase to throw unexpected error: new Error("Out of memory")
@@ -223,6 +242,7 @@ The TagService has 1 public method to test:
   - Distinguishes from database errors (not "Failed to fetch tags:" prefix)
 
 **1.4.5 Unexpected Error with Non-Error Object**
+
 - **Scenario Name**: Handle unexpected errors that are not Error instances
 - **Prerequisites**:
   - Mock Supabase to throw non-Error object: { code: 500, message: "Server error" }
@@ -235,6 +255,7 @@ The TagService has 1 public method to test:
 #### 1.5 Integration and Dependency Tests
 
 **1.5.1 Supabase Query Builder Chaining**
+
 - **Scenario Name**: Verify correct Supabase query builder method chaining
 - **Prerequisites**:
   - Create spy/mock for each Supabase method
@@ -249,6 +270,7 @@ The TagService has 1 public method to test:
     - order("name", {ascending: true})
 
 **1.5.2 Supabase Query Builder with Search Filter**
+
 - **Scenario Name**: Verify ilike method is called correctly when query provided
 - **Prerequisites**:
   - Create spy for ilike method
@@ -259,6 +281,7 @@ The TagService has 1 public method to test:
   - ilike called after order() for consistency
 
 **1.5.3 Supabase Client Dependency Injection**
+
 - **Scenario Name**: Verify service correctly uses injected Supabase client
 - **Prerequisites**:
   - Create mock Supabase client
@@ -271,6 +294,7 @@ The TagService has 1 public method to test:
 #### 1.6 Data Transformation Tests
 
 **1.6.1 Data Correctly Mapped to TagDto**
+
 - **Scenario Name**: Verify database records are correctly transformed to TagDto
 - **Prerequisites**:
   - Mock Supabase to return raw database records:
@@ -284,6 +308,7 @@ The TagService has 1 public method to test:
   - Mapping correctly picks only needed fields
 
 **1.6.2 Preserve Tag Order After Mapping**
+
 - **Scenario Name**: Verify tag order is preserved during transformation
 - **Prerequisites**:
   - Database returns ordered tags: ["Apple", "Mango", "Zebra"]
@@ -333,6 +358,7 @@ The TagService has 1 public method to test:
 ### Code Coverage Goals
 
 Ensure all execution paths are covered:
+
 - ✅ Success path with no query
 - ✅ Success path with query
 - ✅ Error path with database error

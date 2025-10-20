@@ -14,11 +14,7 @@ export interface CancelRecipeEditDialogProps {
  * @param onOpenChange - Callback when dialog open state changes
  * @param onConfirm - Callback when user confirms cancellation
  */
-export function CancelRecipeEditDialog({
-  isOpen,
-  onOpenChange,
-  onConfirm,
-}: CancelRecipeEditDialogProps) {
+export function CancelRecipeEditDialog({ isOpen, onOpenChange, onConfirm }: CancelRecipeEditDialogProps) {
   return (
     <ConfirmationDialog
       isOpen={isOpen}

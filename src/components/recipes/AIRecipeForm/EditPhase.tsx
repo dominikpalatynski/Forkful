@@ -26,7 +26,6 @@ export function EditPhase({
   generatedData,
   generationId,
   onSubmit,
-  onBackToTextEdit,
   hasData,
   onCancel,
   isSubmitting,

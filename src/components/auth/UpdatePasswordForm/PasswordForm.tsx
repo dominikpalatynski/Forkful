@@ -46,9 +46,7 @@ export function PasswordForm({ onSubmit, isPending }: PasswordFormProps) {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Update your password</CardTitle>
-        <CardDescription>
-          Enter your new password below
-        </CardDescription>
+        <CardDescription>Enter your new password below</CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -57,11 +55,7 @@ export function PasswordForm({ onSubmit, isPending }: PasswordFormProps) {
             <UpdatePasswordField control={form.control} />
             <ConfirmPasswordField control={form.control} />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={!form.formState.isDirty || isPending}
-            >
+            <Button type="submit" className="w-full" disabled={!form.formState.isDirty || isPending}>
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -77,10 +71,7 @@ export function PasswordForm({ onSubmit, isPending }: PasswordFormProps) {
         <div className="text-center space-y-2 mt-6">
           <p className="text-sm text-muted-foreground">
             Remember your password?{" "}
-            <a
-              href="/auth/login"
-              className="text-primary hover:underline font-medium"
-            >
+            <a href="/auth/login" className="text-primary hover:underline font-medium">
               Sign in
             </a>
           </p>

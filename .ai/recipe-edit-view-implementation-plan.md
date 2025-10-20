@@ -13,6 +13,7 @@ Widok edycji przepisu umożliwia zalogowanym użytkownikom aktualizację istniej
 **Punkt wejścia**: Przycisk "Edytuj" w widoku szczegółowym przepisu (`/recipes/[id]`)
 
 **Przekierowania**:
+
 - Po zapisaniu: `/recipes/[id]` (widok szczegółowy)
 - Po anulowaniu: `/recipes/[id]` (widok szczegółowy)
 - Po błędzie 403/404: `/recipes` (lista przepisów)
@@ -45,6 +46,7 @@ RecipeEditPage (Astro)
 ```
 
 **Lokalizacja plików komponentów**:
+
 - `src/pages/recipes/[id]/edit.astro` - strona Astro
 - `src/components/recipes/form/RecipeEditFormContainer.tsx` - kontener z React Query
 - `src/components/recipes/form/RecipeEditForm.tsx` - główny formularz
@@ -59,6 +61,7 @@ RecipeEditPage (Astro)
 ## 4. Szczegóły komponentów
 
 ### RecipeEditPage (Astro)
+
 - **Opis**: Główny komponent strony, renderuje layout i mountuje komponent React z React Query client provider.
 - **Główne elementy**:
   - Layout wrapper
@@ -69,6 +72,7 @@ RecipeEditPage (Astro)
 - **Propsy**: Brak (przekazuje ID z params do React component)
 
 ### RecipeEditFormContainer (React)
+
 **Lokalizacja**: `src/components/recipes/form/RecipeEditFormContainer.tsx`
 
 - **Opis**: Kontener React, który używa `useRecipeDetail` do pobrania danych przepisu i obsługuje stany ładowania/błędów. Po pobraniu danych renderuje `RecipeEditForm`.
@@ -87,6 +91,7 @@ RecipeEditPage (Astro)
   ```
 
 ### RecipeEditForm (React)
+
 **Lokalizacja**: `src/components/recipes/form/RecipeEditForm.tsx`
 
 - **Opis**: Główny kontener formularza edycji. Używa hooka `useForm` (`react-hook-form` z `zodResolver`) do zarządzania stanem formularza, walidacją i submisją. Koordynuje wszystkie podkomponenty i obsługuje logikę zapisu/anulowania.
@@ -111,6 +116,7 @@ RecipeEditPage (Astro)
   ```
 
 ### RecipeBasicInfoSection (React)
+
 **Lokalizacja**: `src/components/recipes/form/RecipeBasicInfoSection.tsx`
 
 - **Opis**: Sekcja formularza odpowiedzialna za edycję podstawowych informacji. Używa komponentów `FormField` do integracji z `react-hook-form`.
@@ -120,9 +126,10 @@ RecipeEditPage (Astro)
 - **Obsługiwana walidacja**: Automatyczna przez `react-hook-form` i `zodResolver`.
 - **Typy**: RecipeBasicInfoSectionProps
 - **Propsy**:
+
   ```typescript
-  import { Control } from 'react-hook-form';
-  import { UpdateRecipeCommand } from '@/lib/schemas/recipe.schema';
+  import { Control } from "react-hook-form";
+  import { UpdateRecipeCommand } from "@/lib/schemas/recipe.schema";
 
   interface RecipeBasicInfoSectionProps {
     control: Control<UpdateRecipeCommand>;
@@ -130,6 +137,7 @@ RecipeEditPage (Astro)
   ```
 
 ### EditableIngredientsList (React)
+
 **Lokalizacja**: `src/components/recipes/form/EditableIngredientsList.tsx`
 
 - **Opis**: Komponent zarządzający listą składników. Używa hooka `useFieldArray` z `react-hook-form` do dodawania, edycji i usuwania składników.
@@ -140,9 +148,10 @@ RecipeEditPage (Astro)
 - **Obsługiwana walidacja**: Automatyczna przez `react-hook-form` dla każdego pola w liście.
 - **Typy**: EditableIngredientsListProps
 - **Propsy**:
+
   ```typescript
-  import { Control } from 'react-hook-form';
-  import { UpdateRecipeCommand } from '@/lib/schemas/recipe.schema';
+  import { Control } from "react-hook-form";
+  import { UpdateRecipeCommand } from "@/lib/schemas/recipe.schema";
 
   interface EditableIngredientsListProps {
     control: Control<UpdateRecipeCommand>;
@@ -150,14 +159,16 @@ RecipeEditPage (Astro)
   ```
 
 ### EditableStepsList (React)
+
 **Lokalizacja**: `src/components/recipes/form/EditableStepsList.tsx`
 
 - **Opis**: Komponent zarządzający listą kroków przygotowania. Funkcjonalność analogiczna do `EditableIngredientsList`, używa `useFieldArray`.
 - **Typy**: EditableStepsListProps
 - **Propsy**:
+
   ```typescript
-  import { Control } from 'react-hook-form';
-  import { UpdateRecipeCommand } from '@/lib/schemas/recipe.schema';
+  import { Control } from "react-hook-form";
+  import { UpdateRecipeCommand } from "@/lib/schemas/recipe.schema";
 
   interface EditableStepsListProps {
     control: Control<UpdateRecipeCommand>;
@@ -165,6 +176,7 @@ RecipeEditPage (Astro)
   ```
 
 ### TagInput (React)
+
 **Lokalizacja**: `src/components/recipes/form/TagInput.tsx`
 
 - **Opis**: Komponent do zarządzania tagami, zintegrowany z `react-hook-form` przez `FormField`.
@@ -174,9 +186,10 @@ RecipeEditPage (Astro)
   - Lista `TagPill` dla wybranych tagów
 - **Typy**: TagInputProps
 - **Propsy**:
+
   ```typescript
-  import { Control } from 'react-hook-form';
-  import { UpdateRecipeCommand } from '@/lib/schemas/recipe.schema';
+  import { Control } from "react-hook-form";
+  import { UpdateRecipeCommand } from "@/lib/schemas/recipe.schema";
 
   interface TagInputProps {
     control: Control<UpdateRecipeCommand>;
@@ -185,6 +198,7 @@ RecipeEditPage (Astro)
   ```
 
 ### TagPill (React)
+
 **Lokalizacja**: `src/components/recipes/form/TagPill.tsx`
 
 - **Opis**: Komponent reprezentujący pojedynczy wybrany tag z przyciskiem do usunięcia.
@@ -198,6 +212,7 @@ RecipeEditPage (Astro)
   ```
 
 ### FormActionButtons (React)
+
 **Lokalizacja**: `src/components/recipes/form/FormActionButtons.tsx`
 
 - **Opis**: Sekcja z przyciskami akcji. Przycisk "Zapisz" jest typu `submit`.
@@ -217,6 +232,7 @@ RecipeEditPage (Astro)
 ## 5. Typy
 
 ### Istniejące typy
+
 ```typescript
 // src/types.ts - DTOs
 interface RecipeDetailDto {
@@ -253,17 +269,25 @@ interface RecipeStepDto {
 const UpdateRecipeSchema = z.object({
   name: z.string().min(1, "Nazwa jest wymagana").max(200),
   description: z.string().max(1000).nullable().optional(),
-  ingredients: z.array(z.object({
-    id: z.string().uuid().optional(),
-    content: z.string().min(1, "Składnik nie może być pusty").max(500),
-    position: z.number().int()
-  })).min(1, "Dodaj przynajmniej jeden składnik"),
-  steps: z.array(z.object({
-    id: z.string().uuid().optional(),
-    content: z.string().min(1, "Krok nie może być pusty").max(2000),
-    position: z.number().int()
-  })).min(1, "Dodaj przynajmniej jeden krok"),
-  tags: z.array(z.string().max(50))
+  ingredients: z
+    .array(
+      z.object({
+        id: z.string().uuid().optional(),
+        content: z.string().min(1, "Składnik nie może być pusty").max(500),
+        position: z.number().int(),
+      })
+    )
+    .min(1, "Dodaj przynajmniej jeden składnik"),
+  steps: z
+    .array(
+      z.object({
+        id: z.string().uuid().optional(),
+        content: z.string().min(1, "Krok nie może być pusty").max(2000),
+        position: z.number().int(),
+      })
+    )
+    .min(1, "Dodaj przynajmniej jeden krok"),
+  tags: z.array(z.string().max(50)),
 });
 
 type UpdateRecipeCommand = z.infer<typeof UpdateRecipeSchema>;
@@ -321,6 +345,7 @@ Stan formularza będzie zarządzany przy użyciu biblioteki `react-hook-form` za
 - **Aktualizacja danych (PUT)**: `useUpdateRecipe(recipeId)` - bez zmian, ale będzie wywoływany z `form.handleSubmit`.
 
 ### Custom Hook: useUpdateRecipe
+
 - Implementacja pozostaje **bez zmian**.
 
 ### Integracja z React Hook Form w `RecipeEditForm`
@@ -330,6 +355,7 @@ Główna logika formularza znajdzie się w komponencie `RecipeEditForm.tsx`.
 1.  **Inicjalizacja formularza**:
     - Użycie hooka `useForm` z `UpdateRecipeSchema` do walidacji.
     - `defaultValues` zostaną zmapowane z `initialData` (`RecipeDetailDto`).
+
     ```typescript
     // w RecipeEditForm.tsx
     import { useForm } from "@/hooks/use-form";
@@ -340,9 +366,13 @@ Główna logika formularza znajdzie się w komponencie `RecipeEditForm.tsx`.
       schema: UpdateRecipeSchema,
       defaultValues: {
         name: initialData.name,
-        description: initialData.description || '',
-        ingredients: initialData.ingredients.map(ing => ({ id: ing.id, content: ing.content, position: ing.position })),
-        steps: initialData.steps.map(step => ({ id: step.id, content: step.content, position: step.position })),
+        description: initialData.description || "",
+        ingredients: initialData.ingredients.map((ing) => ({
+          id: ing.id,
+          content: ing.content,
+          position: ing.position,
+        })),
+        steps: initialData.steps.map((step) => ({ id: step.id, content: step.content, position: step.position })),
         tags: initialData.tags,
       },
     });
@@ -350,16 +380,25 @@ Główna logika formularza znajdzie się w komponencie `RecipeEditForm.tsx`.
 
 2.  **Zarządzanie dynamicznymi listami (składniki i kroki)**:
     - Użycie hooka `useFieldArray` z `react-hook-form` do zarządzania listami.
+
     ```typescript
     // w RecipeEditForm.tsx
     import { useFieldArray } from "react-hook-form";
 
-    const { fields: ingredientFields, append: appendIngredient, remove: removeIngredient } = useFieldArray({
+    const {
+      fields: ingredientFields,
+      append: appendIngredient,
+      remove: removeIngredient,
+    } = useFieldArray({
       control: form.control,
       name: "ingredients",
     });
 
-    const { fields: stepFields, append: appendStep, remove: removeStep } = useFieldArray({
+    const {
+      fields: stepFields,
+      append: appendStep,
+      remove: removeStep,
+    } = useFieldArray({
       control: form.control,
       name: "steps",
     });
@@ -368,6 +407,7 @@ Główna logika formularza znajdzie się w komponencie `RecipeEditForm.tsx`.
 3.  **Obsługa submisji**:
     - Formularz będzie owinięty w komponent `<Form>` z `shadcn/ui`.
     - Użycie `form.handleSubmit` do owinięcia funkcji `onSubmit`, co zapewni, że `onSubmit` zostanie wywołany tylko z poprawnie zwalidowanymi danymi.
+
     ```typescript
     // w RecipeEditForm.tsx
     const updateMutation = useUpdateRecipe(recipeId);
@@ -399,41 +439,50 @@ Główna logika formularza znajdzie się w komponencie `RecipeEditForm.tsx`.
     - Błędy walidacji będą dostępne w `form.formState.errors` i automatycznie wyświetlane przez komponenty `<FormMessage>`.
 
 ## 7. Integracja API
+
 - Bez większych zmian, `useUpdateRecipe` będzie wywoływane w `onSubmit` z `form.handleSubmit`.
 
 ## 8. Interakcje użytkownika
 
 ### 1-2. Edycja nazwy i opisu
+
 - **Trigger**: Użytkownik wpisuje tekst w polu.
 - **Akcja**: Obsługiwane automatycznie przez `react-hook-form` (`{...field}`).
 - **Efekt**: Stan formularza zaktualizowany, `isDirty` = `true`.
 
 ### 3. Dodanie składnika
+
 - **Trigger**: Kliknięcie "Dodaj składnik".
 - **Akcja**: `appendIngredient({ content: '', position: 0 })`. Pozycja zostanie przeliczona przy submisji.
 - **Efekt**: Nowe, puste pole na końcu listy.
 
 ### 4. Edycja składnika
+
 - **Trigger**: Użytkownik wpisuje w polu składnika.
 - **Akcja**: Obsługiwane automatycznie przez `react-hook-form`.
 
 ### 5. Usunięcie składnika
+
 - **Trigger**: Kliknięcie ikony kosza.
 - **Akcja**: `removeIngredient(index)`.
 - **Efekt**: Składnik usunięty z listy.
 
 ### 6-8. Zarządzanie krokami
+
 - **Analogicznie do składników (3-5)** używając `appendStep` i `removeStep`.
 
 ### 9-10. Zarządzanie tagami
+
 - Logika pozostaje podobna, ale będzie zintegrowana z `FormField` i `setValue` z `react-hook-form`.
 
 ### 11. Zapisanie zmian
+
 - **Trigger**: Kliknięcie przycisku "Zapisz" (`type="submit"`).
 - **Akcja**: `form.handleSubmit(onSubmit)` jest wywoływane.
 - **Przepływ**: `react-hook-form` uruchamia walidację. Jeśli jest poprawna, wywołuje `onSubmit` z danymi. `onSubmit` wywołuje `updateMutation.mutate`.
 
 ### 12. Anulowanie edycji
+
 - **Trigger**: Kliknięcie przycisku "Anuluj".
 - **Akcja**: `onCancel()`.
 - **Przepływ**: Sprawdzenie `form.formState.isDirty`. Jeśli `true`, pokazanie dialogu.
@@ -447,18 +496,22 @@ Walidacja jest w całości obsługiwana przez `react-hook-form` i `zodResolver` 
 - **Blokada zapisu**: `form.handleSubmit` nie wywoła `onSubmit` jeśli formularz jest niepoprawny.
 
 ## 10. Obsługa błędów
+
 - Bez zmian. Błędy z API (400, 403, 404, 500) będą obsługiwane w `onError` callbacku mutacji.
 
 ## 11. Kroki implementacji
 
 ### Krok 1: Przygotowanie typów i schematów
+
 1.  Upewnij się, że `UpdateRecipeSchema` i `UpdateRecipeCommand` są zdefiniowane w `src/lib/schemas/recipe.schema.ts` i odzwierciedlają logikę walidacji.
 2.  Zaktualizuj interfejsy Propsów w `src/components/recipes/types.ts` zgodnie z sekcją 5.
 
 ### Krok 2: Implementacja `useUpdateRecipe`
+
 1.  Bez zmian, upewnij się, że hook istnieje i działa poprawnie.
 
 ### Krok 3: Implementacja komponentów formularza
+
 1.  **RecipeBasicInfoSection**: Zaimplementuj używając dwóch komponentów `FormField` dla pól `name` i `description`. Przekaż `control` z propsów.
 2.  **EditableIngredientsList**: Użyj `useFieldArray` z `name: "ingredients"`. W pętli po `fields` renderuj `FormField` dla `ingredients.${index}.content`. Dodaj przycisk wywołujący `remove(index)`. Przycisk "Dodaj" powinien wywoływać `append({ content: '', position: 0 })`.
 3.  **EditableStepsList**: Analogicznie do składników, dla `name: "steps"`.
@@ -467,6 +520,7 @@ Walidacja jest w całości obsługiwana przez `react-hook-form` i `zodResolver` 
 6.  **FormActionButtons**: Przycisk "Zapisz" musi mieć `type="submit"`. Jego stan `disabled` powinien zależeć od `isSubmitting`. Przekaż `isDirty` do logiki anulowania.
 
 ### Krok 4: Implementacja głównego komponentu formularza (`RecipeEditForm`)
+
 1.  Użyj hooka `useForm` z `UpdateRecipeSchema` i `defaultValues` zmapowanymi z `initialData`.
 2.  Użyj `useFieldArray` dla składników i kroków.
 3.  Złóż wszystkie sekcje formularza, przekazując `form.control`.
@@ -475,10 +529,12 @@ Walidacja jest w całości obsługiwana przez `react-hook-form` i `zodResolver` 
 6.  Dodaj `AlertDialog` dla potwierdzenia anulowania, który będzie sprawdzany na podstawie `form.formState.isDirty`.
 
 ### Krok 5: Implementacja kontenera i strony Astro
+
 1.  **RecipeEditFormContainer**: Bez zmian, logika pobierania danych pozostaje ta sama.
 2.  **Strona Astro**: Bez zmian.
 
 ### Krok 6: Testowanie i debugowanie
+
 1.  Przetestuj wszystkie interakcje, w tym dodawanie/usuwanie elementów z list.
 2.  Sprawdź, czy walidacja Zod działa dla wszystkich pól i reguł.
 3.  Sprawdź, czy stan `isDirty` poprawnie się aktualizuje.

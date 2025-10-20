@@ -2,9 +2,11 @@ import React from "react";
 import { AIRecipeTextInput } from "../form/AIRecipeTextInput";
 import { AIEditRecipeForm } from "../form/AIEditRecipeForm";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import type { GeneratedRecipeDto, CreateRecipeCommand } from "@/types";
-import type { DialogState } from "./useConfirmationDialogs";
-import type { AIRecipeFormInputPhaseProps, AIRecipeFormEditPhaseProps, AIRecipeFormConfirmationDialogsProps } from "../types/ai.types";
+import type {
+  AIRecipeFormInputPhaseProps,
+  AIRecipeFormEditPhaseProps,
+  AIRecipeFormConfirmationDialogsProps,
+} from "../types/ai.types";
 
 /**
  * AIRecipeFormInputPhase Component
@@ -54,7 +56,6 @@ export function AIRecipeFormEditPhase({
   generatedData,
   generationId,
   onSubmit,
-  onBackToTextEdit,
   hasData,
   onCancel,
   isSubmitting,

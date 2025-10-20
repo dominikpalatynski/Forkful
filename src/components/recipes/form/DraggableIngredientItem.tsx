@@ -35,15 +35,9 @@ export function DraggableIngredientItem({
   onRemove,
   isDisabledRemove,
 }: DraggableIngredientItemProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-    isOver,
-  } = useSortable({ id: field.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } = useSortable({
+    id: field.id,
+  });
 
   // Compute the transform style for smooth animations
   const style = useMemo(

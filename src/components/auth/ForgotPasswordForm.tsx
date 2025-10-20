@@ -31,7 +31,7 @@ export function ForgotPasswordForm() {
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Reset your password</CardTitle>
         <CardDescription>
-          Enter your email address and we'll send you a link to reset your password
+          Enter your email address and we&apos;ll send you a link to reset your password
         </CardDescription>
       </CardHeader>
 
@@ -49,11 +49,7 @@ export function ForgotPasswordForm() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <ForgotPasswordEmailField control={form.control} />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={!form.formState.isDirty || isPending}
-            >
+            <Button type="submit" className="w-full" disabled={!form.formState.isDirty || isPending}>
               {isPending ? "Sending reset link..." : "Send reset link"}
             </Button>
           </form>
@@ -62,19 +58,13 @@ export function ForgotPasswordForm() {
         <div className="text-center space-y-2 mt-6">
           <p className="text-sm text-muted-foreground">
             Remember your password?{" "}
-            <a
-              href="/auth/login"
-              className="text-primary hover:underline font-medium"
-            >
+            <a href="/auth/login" className="text-primary hover:underline font-medium">
               Sign in
             </a>
           </p>
           <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <a
-              href="/auth/register"
-              className="text-primary hover:underline font-medium"
-            >
+            Don&apos;t have an account?{" "}
+            <a href="/auth/register" className="text-primary hover:underline font-medium">
               Sign up
             </a>
           </p>

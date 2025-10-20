@@ -24,18 +24,12 @@ import { useVerifyResetToken } from "./useVerifyResetToken";
  * ```
  */
 export function usePasswordResetToken() {
-  const {
-    mutate: verifyToken,
-    isPending,
-    isSuccess,
-    isError,
-    error
-  } = useVerifyResetToken();
+  const { mutate: verifyToken, isPending, isSuccess, isError, error } = useVerifyResetToken();
 
   // Extract token from URL and verify it on component mount
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const tokenHash = urlParams.get('token_hash');
+    const tokenHash = urlParams.get("token_hash");
 
     // Only verify if we have a token and haven't already started/completed verification
     if (tokenHash && !isPending && !isSuccess && !isError) {

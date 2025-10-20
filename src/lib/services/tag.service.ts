@@ -1,5 +1,5 @@
 import type { SupabaseClientType } from "../../db/supabase.client";
-import type { Tag, TagDto } from "../../types";
+import type { TagDto } from "../../types";
 
 /**
  * Service class for handling tag-related operations.

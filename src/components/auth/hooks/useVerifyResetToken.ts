@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 import type { VerifiedUserDto } from "@/types";
 import { queryClient } from "@/store/query";
 
@@ -64,9 +63,12 @@ async function verifyResetToken(tokenHash: string): Promise<VerifiedUserDto> {
  * ```
  */
 export function useVerifyResetToken() {
-  const mutation = useMutation({
-    mutationFn: verifyResetToken,
-  }, queryClient);
+  const mutation = useMutation(
+    {
+      mutationFn: verifyResetToken,
+    },
+    queryClient
+  );
 
   return {
     mutate: mutation.mutate,
@@ -79,4 +81,3 @@ export function useVerifyResetToken() {
     reset: mutation.reset,
   } as const;
 }
-

@@ -56,28 +56,31 @@ async function updateRecipe(recipeId: string, data: UpdateRecipeCommand): Promis
  * ```
  */
 export function useUpdateRecipe(recipeId: string) {
-  const mutation = useMutation({
-    mutationFn: (data: UpdateRecipeCommand) => updateRecipe(recipeId, data),
-    onSuccess: (updatedRecipe: RecipeDetailDto) => {
-      queryClient.invalidateQueries({
-        queryKey: ["recipe", updatedRecipe.id],
-      });
+  const mutation = useMutation(
+    {
+      mutationFn: (data: UpdateRecipeCommand) => updateRecipe(recipeId, data),
+      onSuccess: (updatedRecipe: RecipeDetailDto) => {
+        queryClient.invalidateQueries({
+          queryKey: ["recipe", updatedRecipe.id],
+        });
 
-      queryClient.invalidateQueries({
-        queryKey: ["recipes"],
-      });
+        queryClient.invalidateQueries({
+          queryKey: ["recipes"],
+        });
 
-      toast.success("Przepis został pomyślnie zaktualizowany!", {
-        duration: 1500,
-        onAutoClose: () => {
-          window.location.href = `/recipes/${updatedRecipe.id}`;
-        },
-      });
+        toast.success("Przepis został pomyślnie zaktualizowany!", {
+          duration: 1500,
+          onAutoClose: () => {
+            window.location.href = `/recipes/${updatedRecipe.id}`;
+          },
+        });
+      },
+      onError: (error: Error) => {
+        toast.error(`Błąd podczas aktualizacji przepisu: ${error.message}`);
+      },
     },
-    onError: (error: Error) => {
-      toast.error(`Błąd podczas aktualizacji przepisu: ${error.message}`);
-    },
-  }, queryClient);
+    queryClient
+  );
 
   return {
     mutate: mutation.mutate,

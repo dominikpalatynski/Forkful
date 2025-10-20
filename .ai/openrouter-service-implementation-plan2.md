@@ -2,7 +2,6 @@
 
 This guide describes how to design and implement an `OpenRouterService` that interacts with the OpenRouter Chat Completions API to perform LLM-based chats in a robust, testable, and secure manner. It follows the Service Class Guidelines and clean-code practices used in this project.
 
-
 ## 1. Service description
 
 - **Purpose**: Provide a single-responsibility class `OpenRouterService` that wraps OpenRouter's Chat Completions endpoint and exposes a minimal, well-typed API for generating LLM responses.
@@ -13,31 +12,24 @@ This guide describes how to design and implement an `OpenRouterService` that int
   - Provide a single public method `generate` that builds the request payload, sends it to OpenRouter, and validates the response.
   - Enforce strong typing and runtime validation to improve reliability and debuggability.
 
-
 ## 2. Constructor description
 
 - **Class**: `OpenRouterService`
 - **Config Type**: `OpenRouterServiceConfig`
-  - **Fields**:
-    - `model: string` — OpenRouter model identifier (e.g., `openai/gpt-4.1-mini`, `anthropic/claude-3.5-sonnet`, etc.).
-    - `systemPrompt: string` — System instruction injected as the first message.
-    - `jsonSchema: { name: string; schema: Record<string, unknown>; strict?: boolean }` JSON Schema to request structured output (`response_format` with `type: "json_schema"`).
-    - `modelParameters?: {
-        temperature?: number;
-        top_p?: number;
-        max_tokens?: number;
-        presence_penalty?: number;
-        frequency_penalty?: number;
-        seed?: number;
-      }` — Optional model tuning parameters.
-    - `apiKey: string` — OpenRouter API key. Must come from server-only environment variable.
-    - `baseUrl?: string` — Base API URL. Default: `https://openrouter.ai/api/v1`.
-    
+  - **Fields**: - `model: string` — OpenRouter model identifier (e.g., `openai/gpt-4.1-mini`, `anthropic/claude-3.5-sonnet`, etc.). - `systemPrompt: string` — System instruction injected as the first message. - `jsonSchema: { name: string; schema: Record<string, unknown>; strict?: boolean }` JSON Schema to request structured output (`response_format` with `type: "json_schema"`). - `modelParameters?: {
+  temperature?: number;
+  top_p?: number;
+  max_tokens?: number;
+  presence_penalty?: number;
+  frequency_penalty?: number;
+  seed?: number;
+}` — Optional model tuning parameters. - `apiKey: string` — OpenRouter API key. Must come from server-only environment variable. - `baseUrl?: string` — Base API URL. Default: `https://openrouter.ai/api/v1`.
 - **Behavior**:
   - Store the validated config in `readonly` properties.
   - Fail fast in the constructor if critical fields are missing/invalid (e.g., apiKey, model, systemPrompt).
 
 ### Example (1): Constructor + config type
+
 ```ts
 export type OpenRouterServiceConfig = {
   model: string;
@@ -59,7 +51,7 @@ export class OpenRouterService {
   private readonly baseUrl: string;
   constructor(
     private readonly config: OpenRouterServiceConfig,
-    private readonly fetchImpl: typeof fetch = fetch,
+    private readonly fetchImpl: typeof fetch = fetch
   ) {
     if (!config?.apiKey) throw new Error("OpenRouterService: apiKey is required");
     if (!config?.model) throw new Error("OpenRouterService: model is required");
@@ -70,7 +62,6 @@ export class OpenRouterService {
 }
 ```
 
-
 ## 3. Public methods and fields
 
 - **Public API**: Keep minimal and action-oriented.
@@ -80,6 +71,7 @@ export class OpenRouterService {
     - Returns the raw response and the parsed JSON result.
 
 ### Example (2): `generate` public method
+
 ```ts
 export class OpenRouterService {
   // ... constructor as above
@@ -91,7 +83,6 @@ export class OpenRouterService {
   }
 }
 ```
-
 
 ## 4. Private methods and fields
 
@@ -111,6 +102,7 @@ export class OpenRouterService {
   - Otherwise, return `{ text }`.
 
 ### Example (3): `buildPayload`
+
 ```ts
 private buildPayload(userMessage: string) {
   const { model, systemPrompt, jsonSchema, modelParameters } = this.config;
@@ -141,6 +133,7 @@ private buildPayload(userMessage: string) {
 ```
 
 ### Example (4): `send`
+
 ```ts
 private async send(payload: Record<string, unknown>) {
   const { apiKey } = this.config;
@@ -183,6 +176,7 @@ private async send(payload: Record<string, unknown>) {
 ```
 
 ### Example (5): `validateResponse`
+
 ```ts
 private validateResponse(responseJson: any): {
   raw: unknown; json: unknown;
@@ -212,7 +206,6 @@ private validateResponse(responseJson: any): {
   return { raw: responseJson, json: parsed };
 }
 ```
-
 
 ## 5. Error handling
 
@@ -244,15 +237,18 @@ List of potential error scenarios and recommended handling:
    - Surface provider errors with enough context but do not log sensitive prompt/user content verbatim in production logs.
 
 For consistency, you may introduce a small error helper:
+
 ```ts
 export class OpenRouterError extends Error {
-  constructor(message: string, public readonly context?: Record<string, unknown>) {
+  constructor(
+    message: string,
+    public readonly context?: Record<string, unknown>
+  ) {
     super(message);
     this.name = "OpenRouterError";
   }
 }
 ```
-
 
 ## 6. Security considerations
 
@@ -263,7 +259,6 @@ export class OpenRouterError extends Error {
 - **Rate limiting**: Consider applying IP/user-based rate limiting on the API route that uses this service.
 - **Validation**: Prefer strict schema validation and reject malformed responses to avoid downstream failures.
 
-
 ## 7. Step-by-step implementation plan
 
 1. **Environment and configuration**
@@ -273,6 +268,7 @@ export class OpenRouterError extends Error {
 2. **Zod → JSON Schema (zod-to-json-schema)**
    - Install: `npm install zod zod-to-json-schema`
    - Define your Zod schema (e.g., a recipe shape) and convert to JSON Schema:
+
 ```ts
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
@@ -280,12 +276,8 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 export const RecipeZodSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
-  ingredients: z.array(
-    z.object({ content: z.string().min(1), position: z.number().int().positive() })
-  ).min(1),
-  steps: z.array(
-    z.object({ content: z.string().min(1), position: z.number().int().positive() })
-  ).min(1),
+  ingredients: z.array(z.object({ content: z.string().min(1), position: z.number().int().positive() })).min(1),
+  steps: z.array(z.object({ content: z.string().min(1), position: z.number().int().positive() })).min(1),
 });
 
 export const RecipeJsonSchema = zodToJsonSchema(RecipeZodSchema, {
@@ -293,7 +285,8 @@ export const RecipeJsonSchema = zodToJsonSchema(RecipeZodSchema, {
   $refStrategy: "none",
 });
 ```
-   - Because `$refStrategy: "none"` produces a flat schema with no `$defs`/`definitions`, pass `RecipeJsonSchema` directly as `jsonSchema.schema`.
+
+- Because `$refStrategy: "none"` produces a flat schema with no `$defs`/`definitions`, pass `RecipeJsonSchema` directly as `jsonSchema.schema`.
 
 3. **Create the service** (`src/lib/services/openrouter.service.ts`)
    - Define `OpenRouterServiceConfig`.
@@ -307,6 +300,7 @@ export const RecipeJsonSchema = zodToJsonSchema(RecipeZodSchema, {
 
 5. **Model parameters**
    - When constructing the service, pass model and parameters:
+
 ```ts
 const openrouter = new OpenRouterService({
   apiKey: import.meta.env.OPENROUTER_API_KEY!,
@@ -314,7 +308,9 @@ const openrouter = new OpenRouterService({
   systemPrompt: "You are a helpful assistant.",
   jsonSchema: {
     name: "RecipeResponse",
-    schema: {/* JSON Schema object here */},
+    schema: {
+      /* JSON Schema object here */
+    },
     strict: true,
   },
   modelParameters: { temperature: 0.3, max_tokens: 800 },
@@ -322,6 +318,7 @@ const openrouter = new OpenRouterService({
 ```
 
 6. **Generate a response**
+
 ```ts
 const result = await openrouter.generate({ userMessage: "Generate a simple recipe as JSON." });
 if (result.json) {
@@ -334,7 +331,6 @@ if (result.json) {
 7. **Error and observability**
    - Wrap calls in try/catch at the API boundary, map known failures to 4xx/5xx responses, and log sanitized diagnostics.
 
-
 ### How to configure prompts, response format, model, and parameters
 
 - **System message**: Set via `systemPrompt` in the constructor. It is placed as the first message with role `system`.
@@ -342,7 +338,6 @@ if (result.json) {
 - **Response format (JSON Schema)**: Provide (required) `jsonSchema` in the config to request `type: "json_schema"` with a named schema and `strict: true` by default.
 - **Model name**: Supply `model` in the config (e.g., `openai/gpt-4.1-mini`).
 - **Model parameters**: Pass `modelParameters` in the config (e.g., `temperature`, `top_p`, `max_tokens`). They are spread into the request payload.
-
 
 ### Example usage within `src/lib/services/generation-recipe.service.ts`
 
@@ -357,12 +352,8 @@ import { OpenRouterService } from "./openrouter.service"; // implement per this 
 const GeneratedRecipeSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
-  ingredients: z.array(
-    z.object({ content: z.string().min(1), position: z.number().int().positive() })
-  ).min(1),
-  steps: z.array(
-    z.object({ content: z.string().min(1), position: z.number().int().positive() })
-  ).min(1),
+  ingredients: z.array(z.object({ content: z.string().min(1), position: z.number().int().positive() })).min(1),
+  steps: z.array(z.object({ content: z.string().min(1), position: z.number().int().positive() })).min(1),
 });
 
 // Convert to JSON Schema for OpenRouter response_format
@@ -399,44 +390,42 @@ async function generateRecipeFromText(inputText: string, userId: string) {
 }
 ```
 
-
 ### Key components (with purpose, challenges, solutions)
 
 1. **Config object (`OpenRouterServiceConfig`)**
    - Functionality: Centralize all parameters to construct requests consistently.
    - Challenges:
-     1) Ensuring required fields exist; 2) Balancing flexibility vs. safety; 3) Keeping secrets safe.
+     1. Ensuring required fields exist; 2) Balancing flexibility vs. safety; 3) Keeping secrets safe.
    - Solutions:
-     1) Validate in constructor; 2) Strong types + defaults; 3) Read from server env only.
+     1. Validate in constructor; 2) Strong types + defaults; 3) Read from server env only.
 
 2. **Payload builder (`buildPayload`)**
    - Functionality: Produce a valid Chat Completions payload with model, messages, response format, and tuning parameters.
    - Challenges:
-     1) Schema support varies by model; 2) Token limits; 3) Prompt injection risk.
+     1. Schema support varies by model; 2) Token limits; 3) Prompt injection risk.
    - Solutions:
-     1) Require `jsonSchema` and fail fast; 2) Allow `max_tokens` and fail gracefully; 3) Enforce a strict system prompt and sanitize inputs at callers.
+     1. Require `jsonSchema` and fail fast; 2) Allow `max_tokens` and fail gracefully; 3) Enforce a strict system prompt and sanitize inputs at callers.
 
 3. **HTTP sender (`send`)**
    - Functionality: Perform the authenticated POST request with robust timeout and error surfacing.
    - Challenges:
-     1) Timeouts/hangs; 2) Non-2xx responses; 3) Transient provider errors.
+     1. Timeouts/hangs; 2) Non-2xx responses; 3) Transient provider errors.
    - Solutions:
-     1) `AbortController` + timeout; 2) Include status/body preview in errors; 3) Allow retries at caller if needed.
+     1. `AbortController` + timeout; 2) Include status/body preview in errors; 3) Allow retries at caller if needed.
 
 4. **Response validator (`validateResponse`)**
    - Functionality: Normalize outputs and validate structured content when requested.
    - Challenges:
-     1) Non-JSON content when schema requested; 2) Partial/empty choices; 3) Model hallucinations.
+     1. Non-JSON content when schema requested; 2) Partial/empty choices; 3) Model hallucinations.
    - Solutions:
-     1) Strict JSON parse + schema validation; 2) Shape checks; 3) Keep system prompt defensive and validate downstream.
+     1. Strict JSON parse + schema validation; 2) Shape checks; 3) Keep system prompt defensive and validate downstream.
 
 5. **Public generator (`generate`)**
    - Functionality: Orchestrate build → send → validate; return normalized result.
    - Challenges:
-     1) Propagating helpful errors; 2) Keeping method small and readable.
+     1. Propagating helpful errors; 2) Keeping method small and readable.
    - Solutions:
-     1) Throw contextualized errors and handle at API boundary; 2) Delegate to private helpers.
-
+     1. Throw contextualized errors and handle at API boundary; 2) Delegate to private helpers.
 
 ---
 

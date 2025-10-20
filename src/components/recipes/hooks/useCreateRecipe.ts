@@ -69,27 +69,30 @@ interface UseCreateRecipeOptions {
  * ```
  */
 export function useCreateRecipe(options?: UseCreateRecipeOptions) {
-  const mutation = useMutation({
-    mutationFn: createRecipe,
-    onSuccess: (createdRecipe: RecipeDetailDto) => {
-      queryClient.invalidateQueries({
-        queryKey: ["recipes"],
-      });
+  const mutation = useMutation(
+    {
+      mutationFn: createRecipe,
+      onSuccess: (createdRecipe: RecipeDetailDto) => {
+        queryClient.invalidateQueries({
+          queryKey: ["recipes"],
+        });
 
-      queryClient.invalidateQueries({
-        queryKey: ["tags"],
-      });
+        queryClient.invalidateQueries({
+          queryKey: ["tags"],
+        });
 
-      // Execute optional cleanup callback before redirect
-      if (options?.onSuccessBeforeRedirect) {
-        options.onSuccessBeforeRedirect();
-      }
-      window.location.href = `/recipes/${createdRecipe.id}`;
+        // Execute optional cleanup callback before redirect
+        if (options?.onSuccessBeforeRedirect) {
+          options.onSuccessBeforeRedirect();
+        }
+        window.location.href = `/recipes/${createdRecipe.id}`;
+      },
+      onError: (error: Error) => {
+        toast.error(`Błąd podczas tworzenia przepisu: ${error.message}`);
+      },
     },
-    onError: (error: Error) => {
-      toast.error(`Błąd podczas tworzenia przepisu: ${error.message}`);
-    },
-  }, queryClient);
+    queryClient
+  );
 
   return {
     mutate: mutation.mutate,

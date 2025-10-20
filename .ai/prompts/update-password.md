@@ -20,6 +20,7 @@ Here is the API hooks documentation:
 The update password functionality uses this API endpoint:
 
 #### Reset password
+
 - **Method**: `POST`
 - **URL**: `/api/auth/reset-password`
 - **Description**: Updates the user's password using a valid reset token obtained through the password recovery flow.
@@ -53,12 +54,12 @@ Follow the patterns and conventions described in the form documentation and API 
 Let me think through what components and hooks are needed:
 
 1. I need to analyze the requirements and create a comprehensive plan
-2. The main component is UpdatePasswordForm 
+2. The main component is UpdatePasswordForm
 3. I need hooks for both token verification and password update
 4. Error handling should be consistent with the documentation patterns
 5. The form should follow the form documentation guidelines
 6. I should list out all components and hooks that need to be implemented
-</scratchpad>
+   </scratchpad>
 
 Create a detailed implementation plan in markdown format that lists all the components and hooks that need to be implemented. Your plan should be structured with clear sections for components and hooks, including their responsibilities and key features.
 

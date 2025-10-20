@@ -102,8 +102,8 @@ export const AIRecipeTextInput = React.memo<AIRecipeTextInputProps>(
 
           {/* Instrukcja */}
           <p className="text-muted-foreground">
-            Opisz przepis, który chcesz stworzyć. Możesz podać składniki, sposób przygotowania lub
-            inne szczegóły. AI wygeneruje dla Ciebie kompletny przepis.
+            Opisz przepis, który chcesz stworzyć. Możesz podać składniki, sposób przygotowania lub inne szczegóły. AI
+            wygeneruje dla Ciebie kompletny przepis.
           </p>
 
           {/* Textarea z licznikiem */}
@@ -132,9 +132,7 @@ export const AIRecipeTextInput = React.memo<AIRecipeTextInputProps>(
                     <CharacterCounter current={charCount} min={MIN_CHARS} max={MAX_CHARS} />
                   </div>
                   {charCount > 0 && charCount < MIN_CHARS && (
-                    <p className="text-sm text-muted-foreground">
-                      Minimum {MIN_CHARS - charCount} znaków
-                    </p>
+                    <p className="text-sm text-muted-foreground">Minimum {MIN_CHARS - charCount} znaków</p>
                   )}
                 </div>
                 <FormMessage />
@@ -144,11 +142,7 @@ export const AIRecipeTextInput = React.memo<AIRecipeTextInputProps>(
 
           {/* Przycisk Generuj */}
           <div className="flex justify-end">
-            <Button
-              type="submit"
-              disabled={!isValid || isGenerating}
-              className="gap-2"
-            >
+            <Button type="submit" disabled={!isValid || isGenerating} className="gap-2">
               <Sparkles className="size-4" />
               {isGenerating ? "Generowanie..." : "Generuj przepis"}
             </Button>

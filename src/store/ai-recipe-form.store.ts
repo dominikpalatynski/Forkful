@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import type { AIRecipeFormPhase } from '@/components/recipes/types';
-import type { GeneratedRecipeDto } from '@/types';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import type { AIRecipeFormPhase } from "@/components/recipes/types";
+import type { GeneratedRecipeDto } from "@/types";
 
 /**
  * Stan formularza AI Recipe przechowywany w Zustand store.
@@ -31,8 +31,8 @@ type AIRecipeFormStore = AIRecipeFormState & AIRecipeFormActions;
  * Zwraca domyślny stan dla AI Recipe Form store.
  */
 const getDefaultState = (): AIRecipeFormState => ({
-  phase: 'input',
-  inputText: '',
+  phase: "input",
+  inputText: "",
   generationId: null,
   generatedData: null,
 });
@@ -63,14 +63,14 @@ export const useAIRecipeFormStore = create<AIRecipeFormStore>()(
 
       setGeneratedData: (generatedData, generationId) =>
         set({
-          phase: 'edit',
+          phase: "edit",
           generatedData,
           generationId,
         }),
 
       goBackToInput: () =>
         set({
-          phase: 'input',
+          phase: "input",
           generatedData: null,
           generationId: null,
           // inputText pozostaje zachowany
@@ -79,7 +79,7 @@ export const useAIRecipeFormStore = create<AIRecipeFormStore>()(
       reset: () => set(getDefaultState()),
     }),
     {
-      name: 'forkful-ai-recipe-draft', // klucz w localStorage
+      name: "forkful-ai-recipe-draft", // klucz w localStorage
       storage: createJSONStorage(() => localStorage),
     }
   )

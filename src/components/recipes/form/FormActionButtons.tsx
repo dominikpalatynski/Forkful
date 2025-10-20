@@ -12,7 +12,12 @@ import type { FormActionButtonsProps } from "../types/form.types";
  * @param isDirty - Whether the form has been modified from its initial state
  * @param submitButtonText - Optional custom text for submit button (defaults to "Zapisz zmiany")
  */
-export function FormActionButtons({ onCancel, isSubmitting, isDirty, submitButtonText = "Zapisz zmiany" }: FormActionButtonsProps) {
+export function FormActionButtons({
+  onCancel,
+  isSubmitting,
+  isDirty,
+  submitButtonText = "Zapisz zmiany",
+}: FormActionButtonsProps) {
   return (
     <div className="flex items-center justify-end gap-4 pt-6 border-t">
       <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting} className="px-6">

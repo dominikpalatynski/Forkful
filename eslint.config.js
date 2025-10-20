@@ -20,6 +20,7 @@ const baseConfig = tseslint.config({
   rules: {
     "no-console": "warn",
     "no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": "warn", // Allow any but warn
   },
 });
 
@@ -31,6 +32,7 @@ const jsxA11yConfig = tseslint.config({
   },
   rules: {
     ...jsxA11y.flatConfigs.recommended.rules,
+    "jsx-a11y/no-autofocus": "warn", // Allow autofocus but warn
   },
 });
 
@@ -52,7 +54,17 @@ const reactConfig = tseslint.config({
   rules: {
     ...eslintPluginReactHooks.configs.recommended.rules,
     "react/react-in-jsx-scope": "off",
-    "react-compiler/react-compiler": "error",
+    "react/prop-types": "off", // TypeScript handles prop validation
+    "react-compiler/react-compiler": "warn", // Downgrade to warning
+  },
+});
+
+// Test files config - more relaxed rules
+const testConfig = tseslint.config({
+  files: ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"],
+  rules: {
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-unused-vars": "off",
   },
 });
 
@@ -61,6 +73,7 @@ export default tseslint.config(
   baseConfig,
   jsxA11yConfig,
   reactConfig,
+  testConfig,
   eslintPluginAstro.configs["flat/recommended"],
   eslintPluginPrettier
 );

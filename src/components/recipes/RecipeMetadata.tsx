@@ -21,7 +21,7 @@ export function RecipeMetadata({ description }: RecipeMetadataProps) {
       <Card>
         <CardContent>
           {description && description.trim() !== "" ? (
-            <p >{description}</p>
+            <p>{description}</p>
           ) : (
             <p className="text-muted-foreground">Brak opisu</p>
           )}

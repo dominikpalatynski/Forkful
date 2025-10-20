@@ -2,7 +2,7 @@ name: Test & Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
@@ -14,20 +14,20 @@ jobs:
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v5
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v6
-      with:
-        node-version: '22.14.0'
-        cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.14.0"
+          cache: "npm"
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Build production
-      run: npm run build
+      - name: Build production
+        run: npm run build
 
-    - name: Run tests
-      run: npm run test
+      - name: Run tests
+        run: npm run test

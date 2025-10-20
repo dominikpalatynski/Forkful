@@ -24,8 +24,19 @@ export const POST: APIRoute = async ({ locals }) => {
     } catch (logoutError) {
       // Log the error for debugging but don't fail the request
       // as per requirements, logout should always succeed
-      console.error("Logout operation encountered an error:", logoutError);
-
+      return new Response(
+        JSON.stringify({
+          error: "Logout failed",
+          message: "An unexpected error occurred while processing your request",
+          details: logoutError instanceof Error ? logoutError.message : "Unknown error",
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       // Continue with success response since logout should not fail
     }
 
@@ -37,12 +48,11 @@ export const POST: APIRoute = async ({ locals }) => {
       },
     });
   } catch (error) {
-    // Catch-all for unexpected errors
-    console.error("Unexpected error in POST /api/auth/logout:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
         message: "An unexpected error occurred while processing your request",
+        details: error instanceof Error ? error.message : "Unknown error",
       }),
       {
         status: 500,

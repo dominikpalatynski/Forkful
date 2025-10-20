@@ -15,16 +15,8 @@ import type { CreateRecipeCommand } from "@/types";
  * - Derived state calculations
  */
 export function useAIRecipeFormFlow() {
-  const {
-    phase,
-    inputText,
-    generationId,
-    generatedData,
-    setInputText,
-    setGeneratedData,
-    goBackToInput,
-    reset,
-  } = useAIRecipeFormStore();
+  const { phase, inputText, generationId, generatedData, setInputText, setGeneratedData, goBackToInput, reset } =
+    useAIRecipeFormStore();
 
   const generateMutation = useGenerateRecipe();
   const createMutation = useCreateRecipe({

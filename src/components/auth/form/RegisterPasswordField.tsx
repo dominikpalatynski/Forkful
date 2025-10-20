@@ -34,4 +34,3 @@ export function RegisterPasswordField({ control }: RegisterPasswordFieldProps) {
     />
   );
 }
-

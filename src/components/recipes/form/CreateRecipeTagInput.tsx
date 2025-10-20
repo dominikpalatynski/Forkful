@@ -40,9 +40,7 @@ export function CreateRecipeTagInput({ control }: CreateRecipeTagInputProps) {
   );
 
   // Filter suggestions to exclude already selected tags
-  const filteredSuggestions = tagSuggestions.filter(
-    (suggestion) => !tags?.includes(suggestion.name)
-  );
+  const filteredSuggestions = tagSuggestions.filter((suggestion) => !tags?.includes(suggestion.name));
 
   const handleAddTag = () => {
     const trimmedValue = newTagValue.trim();
@@ -114,9 +112,7 @@ export function CreateRecipeTagInput({ control }: CreateRecipeTagInputProps) {
             {showSuggestions && filteredSuggestions.length > 0 && (
               <div className="absolute top-full left-0 right-0 z-10 mt-1 bg-background border border-border rounded-md shadow-lg max-h-40 overflow-y-auto">
                 {suggestionsLoading ? (
-                  <div className="px-3 py-2 text-sm text-muted-foreground">
-                    Ładowanie sugestii...
-                  </div>
+                  <div className="px-3 py-2 text-sm text-muted-foreground">Ładowanie sugestii...</div>
                 ) : (
                   filteredSuggestions.slice(0, 5).map((suggestion) => (
                     <button
@@ -155,8 +151,6 @@ export function CreateRecipeTagInput({ control }: CreateRecipeTagInputProps) {
           ))}
         </div>
       )}
-
-
     </div>
   );
 }

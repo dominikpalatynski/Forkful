@@ -41,15 +41,18 @@ async function logoutUser(): Promise<void> {
  * ```
  */
 export function useLogout() {
-  const mutation = useMutation({
-    mutationFn: logoutUser,
-    onSuccess: () => {
-      window.location.href = "/auth/login";
+  const mutation = useMutation(
+    {
+      mutationFn: logoutUser,
+      onSuccess: () => {
+        window.location.href = "/auth/login";
+      },
+      onError: (error: Error) => {
+        toast.error(`Logout failed: ${error.message}`);
+      },
     },
-    onError: (error: Error) => {
-      toast.error(`Logout failed: ${error.message}`);
-    },
-  }, queryClient);
+    queryClient
+  );
 
   return {
     mutate: mutation.mutate,

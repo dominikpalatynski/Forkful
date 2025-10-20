@@ -8,18 +8,22 @@ import { getUserPrompt } from "./prompt";
 export const GeneratedRecipeSchema = z.object({
   name: z.string().min(1, "Recipe name is required"),
   description: z.string().min(1, "Recipe description is required"),
-  ingredients: z.array(
-    z.object({
-      content: z.string().min(1, "Ingredient content cannot be empty"),
-      position: z.number().int().positive("Position must be a positive integer"),
-    })
-  ).min(1, "Recipe must have at least one ingredient"),
-  steps: z.array(
-    z.object({
-      content: z.string().min(1, "Step content cannot be empty"),
-      position: z.number().int().positive("Position must be a positive integer"),
-    })
-  ).min(1, "Recipe must have at least one step"),
+  ingredients: z
+    .array(
+      z.object({
+        content: z.string().min(1, "Ingredient content cannot be empty"),
+        position: z.number().int().positive("Position must be a positive integer"),
+      })
+    )
+    .min(1, "Recipe must have at least one ingredient"),
+  steps: z
+    .array(
+      z.object({
+        content: z.string().min(1, "Step content cannot be empty"),
+        position: z.number().int().positive("Position must be a positive integer"),
+      })
+    )
+    .min(1, "Recipe must have at least one step"),
 });
 
 // Convert Zod schema to JSON Schema for OpenRouter
@@ -91,7 +95,6 @@ export class GenerationRecipeService {
     }
   }
 
-
   private async validateRecipe(json: unknown): Promise<z.infer<typeof GeneratedRecipeSchema>> {
     try {
       const parsedRecipe = GeneratedRecipeSchema.parse(json);
@@ -124,5 +127,4 @@ export class GenerationRecipeService {
       console.error("Failed to log generation error:", logError);
     }
   }
-
 }

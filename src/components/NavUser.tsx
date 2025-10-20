@@ -1,47 +1,30 @@
-"use client"
+"use client";
 
-import {
-  User,
-  LogOut,
-  CreditCard,
-  MoreVertical,
-  Bell,
-  UserCircle,
-} from "lucide-react"
+import { User, LogOut, MoreVertical } from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar'
+import { Avatar } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from '@/components/ui/sidebar'
-import { useLogout } from '@/components/auth/hooks/useLogout'
+} from "@/components/ui/dropdown-menu";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
+import { useLogout } from "@/components/auth/hooks/useLogout";
 
 export function NavUser({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar: string
-  }
+    name: string;
+    email: string;
+    avatar: string;
+  };
 }) {
-  const { isMobile } = useSidebar()
-  const logoutMutation = useLogout()
+  const { isMobile } = useSidebar();
+  const logoutMutation = useLogout();
 
   return (
     <SidebarMenu>
@@ -52,7 +35,6 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.email}</span>
               </div>
@@ -76,10 +58,7 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => logoutMutation.mutate()}
-              disabled={logoutMutation.isPending}
-            >
+            <DropdownMenuItem onClick={() => logoutMutation.mutate()} disabled={logoutMutation.isPending}>
               <LogOut />
               {logoutMutation.isPending ? "Ładowanie..." : "Wyloguj"}
             </DropdownMenuItem>
@@ -87,5 +66,5 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

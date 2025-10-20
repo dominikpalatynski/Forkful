@@ -1,6 +1,6 @@
 import Ajv from "ajv";
 
-export type OpenRouterServiceConfig = {
+export interface OpenRouterServiceConfig {
   model: string;
   systemPrompt: string;
   jsonSchema: { name: string; schema: Record<string, unknown>; strict?: boolean };
@@ -14,10 +14,13 @@ export type OpenRouterServiceConfig = {
   };
   apiKey: string;
   baseUrl?: string;
-};
+}
 
 export class OpenRouterError extends Error {
-  constructor(message: string, public readonly context?: Record<string, unknown>) {
+  constructor(
+    message: string,
+    public readonly context?: Record<string, unknown>
+  ) {
     super(message);
     this.name = "OpenRouterError";
   }
@@ -29,7 +32,7 @@ export class OpenRouterService {
 
   constructor(
     private readonly config: OpenRouterServiceConfig,
-    private readonly fetchImpl: typeof fetch = fetch,
+    private readonly fetchImpl: typeof fetch = fetch
   ) {
     if (!config?.apiKey) {
       throw new OpenRouterError("OpenRouterService: apiKey is required");
@@ -87,7 +90,7 @@ export class OpenRouterService {
       const res = await this.fetchImpl(`${this.baseUrl}/chat/completions`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${apiKey}`,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
@@ -137,11 +140,12 @@ export class OpenRouterService {
     const isValid = validate(parsed);
 
     if (!isValid) {
-      const errors = validate.errors?.map(err => `${err.instancePath}: ${err.message}`).join(', ') ?? 'Unknown validation error';
+      const errors =
+        validate.errors?.map((err) => `${err.instancePath}: ${err.message}`).join(", ") ?? "Unknown validation error";
       throw new OpenRouterError(`OpenRouterService: response does not match schema: ${errors}`, {
         parsed,
         schema: this.config.jsonSchema.schema,
-        validationErrors: validate.errors
+        validationErrors: validate.errors,
       });
     }
 

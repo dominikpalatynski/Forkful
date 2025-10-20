@@ -35,9 +35,7 @@ export function RegisterForm() {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Utwórz konto</CardTitle>
-        <CardDescription>
-          Dołącz do Forkful i zacznij gotować
-        </CardDescription>
+        <CardDescription>Dołącz do Forkful i zacznij gotować</CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -72,11 +70,7 @@ export function RegisterForm() {
 
             <RegisterConfirmPasswordField control={form.control} />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={!form.formState.isDirty || isPending || isSuccess}
-            >
+            <Button type="submit" className="w-full" disabled={!form.formState.isDirty || isPending || isSuccess}>
               {isPending ? "Tworzenie konta..." : isSuccess ? "Konto utworzone" : "Załóż konto"}
             </Button>
           </form>
@@ -85,19 +79,13 @@ export function RegisterForm() {
         <div className="text-center space-y-2 mt-6">
           <p className="text-sm text-muted-foreground">
             Masz już konto?{" "}
-            <a
-              href="/auth/login"
-              className="text-primary hover:underline font-medium"
-            >
+            <a href="/auth/login" className="text-primary hover:underline font-medium">
               Zaloguj się
             </a>
           </p>
           <p className="text-sm text-muted-foreground">
             Zapomniałeś hasła?{" "}
-            <a
-              href="/auth/forgot-password"
-              className="text-primary hover:underline font-medium"
-            >
+            <a href="/auth/forgot-password" className="text-primary hover:underline font-medium">
               Resetuj hasło
             </a>
           </p>

@@ -72,16 +72,10 @@ export function ConfirmationDialog({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel
-            onClick={cancelButton.onClick}
-            disabled={cancelButton.disabled}
-          >
+          <AlertDialogCancel onClick={cancelButton.onClick} disabled={cancelButton.disabled}>
             {cancelButton.text || "Cancel"}
           </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={actionButton.onClick}
-            disabled={actionButton.disabled || actionButton.isLoading}
-          >
+          <AlertDialogAction onClick={actionButton.onClick} disabled={actionButton.disabled || actionButton.isLoading}>
             {actionButton.isLoading ? actionButton.loadingText || actionButton.text : actionButton.text}
           </AlertDialogAction>
         </AlertDialogFooter>

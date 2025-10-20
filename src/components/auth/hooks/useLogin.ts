@@ -44,15 +44,18 @@ async function loginUser(credentials: LoginSchemaType): Promise<void> {
  * ```
  */
 export function useLogin() {
-  const mutation = useMutation({
-    mutationFn: loginUser,
-    onSuccess: () => {
-      window.location.href = "/recipes";
+  const mutation = useMutation(
+    {
+      mutationFn: loginUser,
+      onSuccess: () => {
+        window.location.href = "/recipes";
+      },
+      onError: (error: Error) => {
+        toast.error(`Login failed: ${error.message}`);
+      },
     },
-    onError: (error: Error) => {
-      toast.error(`Login failed: ${error.message}`);
-    },
-  }, queryClient);
+    queryClient
+  );
 
   return {
     mutate: mutation.mutate,

@@ -98,7 +98,7 @@ export function RecipeEditForm({ initialData, recipeId }: RecipeEditFormProps) {
           <Separator />
 
           <EditableIngredientsList control={form.control} />
-          
+
           <Separator />
 
           <EditableStepsList control={form.control} />

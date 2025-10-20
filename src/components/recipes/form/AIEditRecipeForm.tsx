@@ -130,9 +130,7 @@ export function AIEditRecipeForm({
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold">Edytuj wygenerowany przepis</h1>
-          <p className="text-muted-foreground mt-2">
-            Możesz edytować wygenerowane dane przed zapisaniem przepisu.
-          </p>
+          <p className="text-muted-foreground mt-2">Możesz edytować wygenerowane dane przed zapisaniem przepisu.</p>
         </div>
 
         {/* Basic Info (name, description) */}
@@ -148,11 +146,7 @@ export function AIEditRecipeForm({
         <CreateRecipeTagInput control={form.control} suggestions={tagSuggestions} />
 
         {/* Action Buttons */}
-        <AIFormActionButtons
-          onBackToTextEdit={onBackToTextEdit}
-          onCancel={onCancel}
-          isSubmitting={isSubmitting}
-        />
+        <AIFormActionButtons onBackToTextEdit={onBackToTextEdit} onCancel={onCancel} isSubmitting={isSubmitting} />
       </form>
     </Form>
   );

@@ -3,6 +3,7 @@
 ## 1. Przegląd
 
 Widok "Tworzenie Przepisu z AI" umożliwia użytkownikom dodawanie nowych przepisów poprzez wykorzystanie sztucznej inteligencji do automatycznego przetwarzania tekstu źródłowego. Widok składa się z dwóch faz:
+
 1. **Faza wprowadzania tekstu**: użytkownik wkleja tekst przepisu (20-10,000 znaków) i wywołuje generowanie AI
 2. **Faza edycji**: wyświetlany jest formularz z danymi wygenerowanymi przez AI, które użytkownik może zweryfikować i edytować przed zapisem
 
@@ -46,11 +47,13 @@ AIRecipeForm (główny kontener)
 **Opis**: Główny komponent zarządzający przepływem między fazami. Odpowiada za orkiestrację stanu, przechowywanie danych w localStorage oraz decydowanie, który subkomponent wyświetlić.
 
 **Główne elementy**:
+
 - Conditional rendering: `AIRecipeTextInput` lub `AIEditRecipeForm` w zależności od fazy
 - Dialog potwierdzenia anulowania (`CancelRecipeEditDialog`)
 - Obsługa stanu fazy, generationId i wygenerowanych danych
 
 **Obsługiwane zdarzenia**:
+
 - `onGenerateSuccess(generatedRecipe: GeneratedRecipeDto)` - przejście do fazy edycji
 - `onGenerateError(error: Error)` - wyświetlenie toast z błędem
 - `onBackToTextEdit()` - powrót do fazy wprowadzania tekstu
@@ -58,14 +61,17 @@ AIRecipeForm (główny kontener)
 - `onSubmit(data: CreateRecipeCommand)` - utworzenie przepisu z generationId
 
 **Warunki walidacji**:
+
 - Brak bezpośredniej walidacji - deleguje do subkomponentów
 
 **Typy**:
+
 - `AIRecipeFormPhase` - enum/union type dla faz ('input' | 'edit')
 - `AIRecipeFormState` - interfejs stanu komponentu
 - `GeneratedRecipeDto` - typ danych zwróconych przez API
 
 **Propsy**:
+
 - Brak - komponent samodzielny (root component)
 
 ### AIRecipeTextInput
@@ -73,25 +79,30 @@ AIRecipeForm (główny kontener)
 **Opis**: Komponent fazy wprowadzania tekstu. Wyświetla textarea z licznikiem znaków i przycisk generowania przepisu.
 
 **Główne elementy**:
+
 - `<Textarea>` - pole do wklejania tekstu (min 20, max 10,000 znaków)
 - `<CharacterCounter>` - wizualny licznik z informacją o limitach
 - `<Button>` - przycisk "Generuj przepis" wywołujący API
 
 **Obsługiwane zdarzenia**:
+
 - `onTextChange(text: string)` - aktualizacja wartości textarea
 - `onGenerateClick()` - wywołanie generowania przez AI
 - `onBackClick()` - powrót do strony głównej
 
 **Warunki walidacji**:
+
 - Długość tekstu >= 20 znaków (przycisk disabled)
 - Długość tekstu <= 10,000 znaków (blokada wprowadzania)
 - Brak pustych/whitespace-only wartości
 
 **Typy**:
+
 - `AIRecipeTextInputProps` - interfejs propsów komponentu
 - `GenerateRecipeCommand` - typ requestu do API
 
 **Propsy**:
+
 ```typescript
 interface AIRecipeTextInputProps {
   value: string;
@@ -107,22 +118,27 @@ interface AIRecipeTextInputProps {
 **Opis**: Wizualny licznik znaków z kolorowym feedbackiem o limitach i warunkach walidacji.
 
 **Główne elementy**:
+
 - `<span>` z dynamiczną klasą CSS zależną od stanu (sukces/ostrzeżenie/błąd)
 - Tekst formatowany: `{currentCount} / {maxCount}`
 
 **Obsługiwane zdarzenia**:
+
 - Brak - komponent prezentacyjny
 
 **Warunki walidacji**:
+
 - Wyświetla wizualny stan:
   - Czerwony: `count < 20` lub `count > 10000`
   - Pomarańczowy: `count >= 9500 && count <= 10000`
   - Zielony: `count >= 20 && count < 9500`
 
 **Typy**:
+
 - `CharacterCounterProps` - interfejs propsów
 
 **Propsy**:
+
 ```typescript
 interface CharacterCounterProps {
   current: number;
@@ -136,6 +152,7 @@ interface CharacterCounterProps {
 **Opis**: Formularz edycji wygenerowanych przez AI danych przepisu. Reużywa istniejące komponenty formularza z ManualRecipeForm z dodatkowymi przyciskami akcji.
 
 **Główne elementy**:
+
 - `<Form>` wrapper z react-hook-form
 - `<CreateRecipeBasicInfoSection>` - nazwa i opis
 - `<CreateRecipeTagInput>` - zarządzanie tagami
@@ -145,11 +162,13 @@ interface CharacterCounterProps {
 - `<AIFormActionButtons>` - przyciski akcji (w tym "Wstecz do edycji tekstu")
 
 **Obsługiwane zdarzenia**:
+
 - `onSubmit(data: CreateRecipeCommand)` - utworzenie przepisu z generationId
 - `onBackToTextEdit()` - powrót do fazy wprowadzania tekstu
 - `onCancel()` - anulowanie z potwierdzeniem
 
 **Warunki walidacji**:
+
 - Wszystkie warunki z `CreateRecipeSchema`:
   - Nazwa: min 1 znak, max 255 znaków
   - Opis: opcjonalny
@@ -159,11 +178,13 @@ interface CharacterCounterProps {
 - Walidacja real-time przez Zod + react-hook-form
 
 **Typy**:
+
 - `AIEditRecipeFormProps` - interfejs propsów
 - `CreateRecipeCommand` - typ danych formularza
 - `GeneratedRecipeDto` - typ danych początkowych
 
 **Propsy**:
+
 ```typescript
 interface AIEditRecipeFormProps {
   initialData: GeneratedRecipeDto;
@@ -180,24 +201,29 @@ interface AIEditRecipeFormProps {
 **Opis**: Rozszerzony komponent `FormActionButtons` z dodatkowym przyciskiem "Wstecz do edycji tekstu" specyficznym dla flow AI.
 
 **Główne elementy**:
+
 - `<Button>` - "Wstecz do edycji tekstu" (variant: ghost)
 - `<Button>` - "Anuluj" (variant: outline)
 - `<Button>` - "Utwórz przepis" (variant: default, type: submit)
 
 **Obsługiwane zdarzenia**:
+
 - `onBackToTextEdit()` - powrót do fazy textarea
 - `onCancel()` - anulowanie procesu
 - Form submit - obsługiwane przez form wrapper
 
 **Warunki walidacji**:
+
 - "Wstecz do edycji tekstu": zawsze aktywny (chyba że isSubmitting)
 - "Anuluj": zawsze aktywny (chyba że isSubmitting)
 - "Utwórz przepis": disabled jeśli !isDirty || isSubmitting
 
 **Typy**:
+
 - `AIFormActionButtonsProps` - interfejs propsów
 
 **Propsy**:
+
 ```typescript
 interface AIFormActionButtonsProps {
   onBackToTextEdit: () => void;
@@ -212,6 +238,7 @@ interface AIFormActionButtonsProps {
 ### Nowe typy do dodania w `src/types.ts`:
 
 Już istniejące (nie wymagają zmian):
+
 - `GeneratedRecipeDto` - odpowiedź z POST /api/recipes/generate
 - `CreateRecipeCommand` - payload do POST /api/recipes
 - `GenerateRecipeCommand` - payload do POST /api/recipes/generate
@@ -220,7 +247,7 @@ Już istniejące (nie wymagają zmian):
 
 ```typescript
 // Faza przepływu AI Recipe Form
-export type AIRecipeFormPhase = 'input' | 'edit';
+export type AIRecipeFormPhase = "input" | "edit";
 
 // Stan formularza AI przechowywany w localStorage
 export interface AIRecipeFormState {
@@ -279,21 +306,24 @@ Nie są potrzebne dodatkowe ViewModels - komponenty wykorzystują istniejące DT
 **Lokalizacja**: `src/store/ai-recipe-form.store.ts`
 
 **Stan przechowywany w store**:
+
 - `phase: AIRecipeFormPhase` - aktualny etap ('input' | 'edit')
 - `inputText: string` - tekst z textarea
 - `generationId: string | null` - ID generacji z API
 - `generatedData: GeneratedRecipeDto | null` - dane zwrócone przez AI
 
 **Stan lokalny komponentu (nie persistowany)**:
+
 - `showCancelDialog: boolean` - stan dialogu potwierdzenia (tylko w AIRecipeForm)
 
 **Struktura Zustand store**:
+
 ```typescript
 // src/store/ai-recipe-form.store.ts
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import type { AIRecipeFormPhase } from '@/components/recipes/types';
-import type { GeneratedRecipeDto } from '@/types';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import type { AIRecipeFormPhase } from "@/components/recipes/types";
+import type { GeneratedRecipeDto } from "@/types";
 
 interface AIRecipeFormState {
   phase: AIRecipeFormPhase;
@@ -313,8 +343,8 @@ interface AIRecipeFormActions {
 type AIRecipeFormStore = AIRecipeFormState & AIRecipeFormActions;
 
 const getDefaultState = (): AIRecipeFormState => ({
-  phase: 'input',
-  inputText: '',
+  phase: "input",
+  inputText: "",
   generationId: null,
   generatedData: null,
 });
@@ -332,14 +362,14 @@ export const useAIRecipeFormStore = create<AIRecipeFormStore>()(
 
       setGeneratedData: (generatedData, generationId) =>
         set({
-          phase: 'edit',
+          phase: "edit",
           generatedData,
           generationId,
         }),
 
       goBackToInput: () =>
         set({
-          phase: 'input',
+          phase: "input",
           generatedData: null,
           generationId: null,
           // inputText pozostaje zachowany
@@ -348,7 +378,7 @@ export const useAIRecipeFormStore = create<AIRecipeFormStore>()(
       reset: () => set(getDefaultState()),
     }),
     {
-      name: 'forkful-ai-recipe-draft', // klucz w localStorage
+      name: "forkful-ai-recipe-draft", // klucz w localStorage
       storage: createJSONStorage(() => localStorage),
       // Opcjonalnie: partialize jeśli chcemy persistować tylko część stanu
       // partialize: (state) => ({
@@ -363,8 +393,9 @@ export const useAIRecipeFormStore = create<AIRecipeFormStore>()(
 ```
 
 **Użycie w komponencie AIRecipeForm**:
+
 ```typescript
-import { useAIRecipeFormStore } from '@/store/ai-recipe-form.store';
+import { useAIRecipeFormStore } from "@/store/ai-recipe-form.store";
 
 export function AIRecipeForm() {
   // Dostęp do stanu i akcji z Zustand
@@ -386,6 +417,7 @@ export function AIRecipeForm() {
 ```
 
 **Zalety użycia Zustand**:
+
 - ✅ Automatyczna persistence z middleware `persist`
 - ✅ Lepsze performance - subskrypcja tylko na potrzebne slice'y stanu
 - ✅ Możliwość używania stanu w innych komponentach bez prop drilling
@@ -396,6 +428,7 @@ export function AIRecipeForm() {
 ### Zarządzanie formularzem (react-hook-form)
 
 W komponencie **AIEditRecipeForm**:
+
 - Użycie `useForm` z custom hooka `@/hooks/use-form`
 - Schema: `CreateRecipeSchema`
 - defaultValues: dane z `GeneratedRecipeDto` przekształcone do `CreateRecipeCommand`
@@ -408,6 +441,7 @@ W komponencie **AIEditRecipeForm**:
 **Cel**: Generowanie strukturalnego przepisu z tekstu przy użyciu AI.
 
 **Request Type**: `GenerateRecipeCommand`
+
 ```typescript
 {
   inputText: string; // 20-10,000 znaków
@@ -415,6 +449,7 @@ W komponencie **AIEditRecipeForm**:
 ```
 
 **Response Type (200 OK)**: `GeneratedRecipeDto`
+
 ```typescript
 {
   generationId: string; // UUID
@@ -426,39 +461,46 @@ W komponencie **AIEditRecipeForm**:
 ```
 
 **Error Responses**:
+
 - `400 Bad Request` - walidacja nie powiodła się (np. > 10,000 znaków)
 - `401 Unauthorized` - użytkownik niezalogowany
 - `422 Unprocessable Entity` - tekst zbyt krótki lub niezwiązany z przepisami
 - `500 Internal Server Error` - błąd AI lub serwera
 
 **Custom Hook: useGenerateRecipe**
+
 ```typescript
 export function useGenerateRecipe() {
-  const mutation = useMutation({
-    mutationFn: async (inputText: string) => {
-      const response = await fetch('/api/recipes/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inputText }),
-      });
+  const mutation = useMutation(
+    {
+      mutationFn: async (inputText: string) => {
+        const response = await fetch("/api/recipes/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ inputText }),
+        });
 
-      if (!response.ok) {
-        if (response.status === 422) {
-          throw new Error('Podany tekst nie wygląda na przepis. Upewnij się, że zawiera składniki i kroki przygotowania.');
+        if (!response.ok) {
+          if (response.status === 422) {
+            throw new Error(
+              "Podany tekst nie wygląda na przepis. Upewnij się, że zawiera składniki i kroki przygotowania."
+            );
+          }
+          if (response.status === 400) {
+            const data = await response.json();
+            throw new Error(data.message || "Nieprawidłowe dane wejściowe");
+          }
+          throw new Error("Nie udało się wygenerować przepisu. Spróbuj ponownie.");
         }
-        if (response.status === 400) {
-          const data = await response.json();
-          throw new Error(data.message || 'Nieprawidłowe dane wejściowe');
-        }
-        throw new Error('Nie udało się wygenerować przepisu. Spróbuj ponownie.');
-      }
 
-      return response.json() as Promise<GeneratedRecipeDto>;
+        return response.json() as Promise<GeneratedRecipeDto>;
+      },
+      onError: (error: Error) => {
+        toast.error(`Błąd generowania: ${error.message}`);
+      },
     },
-    onError: (error: Error) => {
-      toast.error(`Błąd generowania: ${error.message}`);
-    },
-  }, queryClient);
+    queryClient
+  );
 
   return {
     mutate: mutation.mutate,
@@ -478,6 +520,7 @@ export function useGenerateRecipe() {
 **Cel**: Utworzenie przepisu z wygenerowanych i zedytowanych danych.
 
 **Request Type**: `CreateRecipeCommand`
+
 ```typescript
 {
   name: string;
@@ -492,6 +535,7 @@ export function useGenerateRecipe() {
 **Response Type (201 Created)**: `RecipeDetailDto`
 
 **Custom Hook**: Reużycie istniejącego `useCreateRecipe` z modyfikacją:
+
 - Hook otrzyma w payloadzie `generationId` z AIRecipeForm
 - Backend automatycznie oznaczy `generation.is_accepted = true` przy zapisie
 
@@ -568,6 +612,7 @@ export function useGenerateRecipe() {
 **Komponent**: `AIRecipeTextInput`
 
 **Warunki**:
+
 1. **Długość tekstu minimum (20 znaków)**:
    - Sprawdzane: `inputText.trim().length >= 20`
    - Wpływ: Przycisk "Generuj przepis" disabled jeśli false
@@ -585,13 +630,14 @@ export function useGenerateRecipe() {
 ### Walidacja Zod (GenerateRecipeSchema)
 
 **Schema**: `GenerateRecipeSchema` (już zdefiniowany)
+
 ```typescript
 z.object({
   inputText: z
     .string()
     .min(20, "Input text must be at least 20 characters long.")
-    .max(10000, "Input text cannot exceed 10,000 characters.")
-})
+    .max(10000, "Input text cannot exceed 10,000 characters."),
+});
 ```
 
 **Zastosowanie**: Walidacja przed wysłaniem do API w `useGenerateRecipe`
@@ -601,6 +647,7 @@ z.object({
 **Komponent**: `AIEditRecipeForm`
 
 **Schema**: `CreateRecipeSchema` (już zdefiniowany)
+
 ```typescript
 z.object({
   name: z.string().min(1, "Recipe name is required").max(255, "Recipe name is too long"),
@@ -609,10 +656,11 @@ z.object({
   ingredients: z.array(RecipeIngredientCommandSchema).default([]),
   steps: z.array(RecipeStepCommandSchema).default([]),
   tags: z.array(z.string().min(1)).default([]),
-})
+});
 ```
 
 **Warunki sprawdzane przez formularz**:
+
 1. **Nazwa przepisu**:
    - Min 1 znak, max 255 znaków
    - Wyświetlane: `<FormMessage>` pod polem
@@ -637,35 +685,39 @@ z.object({
 
 ### Wpływ warunków na stan UI
 
-| Warunek | Komponent | Stan UI | Akcja blokowana |
-|---------|-----------|---------|-----------------|
-| `inputText.length < 20` | AIRecipeTextInput | Przycisk "Generuj" disabled, licznik czerwony | Generowanie |
-| `inputText.length > 10000` | AIRecipeTextInput | Blokada textarea, licznik czerwony | Wpisywanie |
-| `isGenerating = true` | AIRecipeTextInput | Spinner, przyciski disabled | Wszystkie |
-| `!isDirty` | AIEditRecipeForm | Przycisk "Utwórz" disabled | Submit |
-| `isSubmitting = true` | AIEditRecipeForm | Wszystkie przyciski disabled | Wszystkie |
-| `form.errors` | AIEditRecipeForm | FormMessage widoczne, submit disabled | Submit |
+| Warunek                    | Komponent         | Stan UI                                       | Akcja blokowana |
+| -------------------------- | ----------------- | --------------------------------------------- | --------------- |
+| `inputText.length < 20`    | AIRecipeTextInput | Przycisk "Generuj" disabled, licznik czerwony | Generowanie     |
+| `inputText.length > 10000` | AIRecipeTextInput | Blokada textarea, licznik czerwony            | Wpisywanie      |
+| `isGenerating = true`      | AIRecipeTextInput | Spinner, przyciski disabled                   | Wszystkie       |
+| `!isDirty`                 | AIEditRecipeForm  | Przycisk "Utwórz" disabled                    | Submit          |
+| `isSubmitting = true`      | AIEditRecipeForm  | Wszystkie przyciski disabled                  | Wszystkie       |
+| `form.errors`              | AIEditRecipeForm  | FormMessage widoczne, submit disabled         | Submit          |
 
 ## 10. Obsługa błędów
 
 ### Błędy API (POST /api/recipes/generate)
 
 **Typ błędu**: `400 Bad Request`
+
 - **Przyczyna**: Walidacja Zod nie powiodła się
 - **Obsługa**: Toast z komunikatem z API lub domyślnym "Nieprawidłowe dane wejściowe"
 - **UX**: Pozostanie w fazie 'input', tekst zachowany
 
 **Typ błędu**: `401 Unauthorized`
+
 - **Przyczyna**: Użytkownik niezalogowany
 - **Obsługa**: Toast "Musisz być zalogowany, aby użyć tej funkcji"
 - **UX**: Przekierowanie do strony logowania
 
 **Typ błędu**: `422 Unprocessable Entity`
+
 - **Przyczyna**: AI nie rozpoznało tekstu jako przepisu
 - **Obsługa**: Toast "Podany tekst nie wygląda na przepis. Upewnij się, że zawiera składniki i kroki przygotowania."
 - **UX**: Pozostanie w fazie 'input', tekst zachowany, możliwość edycji i ponownej próby
 
 **Typ błędu**: `500 Internal Server Error`
+
 - **Przyczyna**: Błąd AI lub serwera
 - **Obsługa**: Toast "Nie udało się wygenerować przepisu. Spróbuj ponownie później."
 - **UX**: Pozostanie w fazie 'input', tekst zachowany
@@ -673,6 +725,7 @@ z.object({
 ### Błędy API (POST /api/recipes)
 
 **Obsługa**: Już zaimplementowana w `useCreateRecipe`
+
 - Toast z komunikatem błędu
 - Pozostanie w formularzu edycji
 - Dane zachowane
@@ -680,12 +733,14 @@ z.object({
 ### Błędy Zustand persistence
 
 **Scenariusz**: Brak dostępu do localStorage lub quota exceeded
+
 - **Obsługa**: Zustand middleware `persist` automatycznie obsługuje błędy
 - **Fallback**: Store działa w trybie in-memory (bez persistence)
 - **UX**: Brak wpływu na funkcjonalność, brak recovery po odświeżeniu
 - **Implementacja**: Middleware `persist` wbudowane obsługuje błędy storage
 
 **Scenariusz**: Uszkodzone dane w localStorage
+
 - **Obsługa**: Middleware `persist` automatycznie waliduje dane przy deserializacji
 - **Fallback**: Jeśli deserializacja się nie powiedzie, użyje stanu początkowego
 - **UX**: Start od czystego stanu (faza 'input', pusta textarea)
@@ -694,14 +749,17 @@ z.object({
 ### Edge cases
 
 **Przypadek**: Użytkownik generuje, następnie wraca do edycji tekstu, zmienia 1 znak i generuje ponownie
+
 - **Obsługa**: Nowe wywołanie API, nowe `generationId`, nadpisanie poprzednich danych
 - **Analityka**: Poprzednia generacja pozostaje w bazie z `is_accepted = false`
 
 **Przypadek**: Użytkownik zamyka kartę bez zapisania
+
 - **Obsługa**: Dane pozostają w localStorage (dzięki Zustand persist)
 - **UX**: Po powrocie do `/recipes/new-ai` stan zostaje automatycznie przywrócony przez store
 
 **Przypadek**: Sieć offline podczas generowania
+
 - **Obsługa**: Fetch error → catch w `useGenerateRecipe`
 - **Toast**: "Brak połączenia z internetem. Sprawdź połączenie i spróbuj ponownie."
 - **UX**: Pozostanie w fazie 'input', możliwość ponownej próby
@@ -709,10 +767,12 @@ z.object({
 ## 11. Kroki implementacji
 
 ### Krok 1: Instalacja Zustand
+
 - [ ] Zainstalować Zustand: `npm install zustand`
 - [ ] Zweryfikować wersję (zalecana: ≥4.0.0 dla najnowszej składni TypeScript)
 
 ### Krok 2: Przygotowanie typów i schematów
+
 - [ ] Dodać nowe typy do `src/components/recipes/types.ts`:
   - `AIRecipeFormPhase`
   - `AIRecipeTextInputProps`
@@ -723,6 +783,7 @@ z.object({
 - [ ] Zweryfikować, czy `GeneratedRecipeDto` i `GenerateRecipeCommand` są poprawnie zdefiniowane w `src/types.ts`
 
 ### Krok 3: Implementacja Zustand store
+
 - [ ] Utworzyć plik `src/store/ai-recipe-form.store.ts`
 - [ ] Zaimplementować store według wzorca z sekcji "6. Zarządzanie stanem":
   - Interface `AIRecipeFormState` (state)
@@ -736,6 +797,7 @@ z.object({
   - Storage: `createJSONStorage(() => localStorage)`
 
 ### Krok 4: Implementacja custom hooka useGenerateRecipe
+
 - [ ] Utworzyć plik `src/components/recipes/hooks/useGenerateRecipe.ts`
 - [ ] Zaimplementować mutation z:
   - Fetch do `/api/recipes/generate`
@@ -744,6 +806,7 @@ z.object({
   - Zwrot standardowego interface z mutation state
 
 ### Krok 5: Implementacja komponentu CharacterCounter
+
 - [ ] Utworzyć plik `src/components/recipes/form/CharacterCounter.tsx`
 - [ ] Zaimplementować logikę kolorowania:
   - Czerwony: `current < min` lub `current > max`
@@ -753,6 +816,7 @@ z.object({
 - [ ] Dodać atrybuty ARIA dla dostępności (aria-live)
 
 ### Krok 6: Implementacja komponentu AIRecipeTextInput
+
 - [ ] Utworzyć plik `src/components/recipes/form/AIRecipeTextInput.tsx`
 - [ ] Struktura:
   - `<Textarea>` z `maxLength={10000}`
@@ -765,6 +829,7 @@ z.object({
 - [ ] Stylowanie: zgodne z istniejącymi formami (card, spacing)
 
 ### Krok 7: Implementacja komponentu AIFormActionButtons
+
 - [ ] Utworzyć plik `src/components/recipes/form/AIFormActionButtons.tsx`
 - [ ] Struktura (3 przyciski):
   - "Wstecz do edycji tekstu" (variant: ghost, onClick: onBackToTextEdit)
@@ -773,6 +838,7 @@ z.object({
 - [ ] Layout: flex justify-between (pierwszy przycisk po lewej, reszta po prawej)
 
 ### Krok 8: Implementacja komponentu AIEditRecipeForm
+
 - [ ] Utworzyć plik `src/components/recipes/form/AIEditRecipeForm.tsx`
 - [ ] Inicjalizacja formularza:
   - `useForm` z `CreateRecipeSchema`
@@ -794,6 +860,7 @@ z.object({
 - [ ] Integracja z `CancelRecipeEditDialog`
 
 ### Krok 9: Implementacja głównego komponentu AIRecipeForm
+
 - [ ] Utworzyć plik `src/components/recipes/form/AIRecipeForm.tsx`
 - [ ] Inicjalizacja:
   - Użycie `useAIRecipeFormStore` z Zustand dla globalnego stanu
@@ -818,6 +885,7 @@ z.object({
   - Wywołanie `setGeneratedData(data, generationId)` automatycznie ustawia fazę na 'edit'
 
 ### Krok 10: Utworzenie strony Astro
+
 - [ ] Utworzyć plik `src/pages/recipes/new-ai.astro`
 - [ ] Struktura:
   - Import `DashboardLayout`
@@ -827,6 +895,7 @@ z.object({
 - [ ] Stylowanie: spójne z `recipes/new.astro`
 
 ### Krok 11: Dodanie przycisku "Z AI" na stronie głównej
+
 - [ ] Znaleźć komponent/stronę z przyciskiem "Ręcznie" (prawdopodobnie `/recipes` lub dashboard)
 - [ ] Dodać przycisk "Z AI" obok przycisku "Ręcznie":
   - Tekst: "Z AI" lub "Z pomocą AI"
@@ -836,6 +905,7 @@ z.object({
 - [ ] Dostępność: aria-label="Utwórz przepis z pomocą sztucznej inteligencji"
 
 ### Krok 12: Testy manualne
+
 - [ ] **Test 1: Happy path**
   - Przejście do `/recipes/new-ai`
   - Wklejenie tekstu przepisu (>20 znaków)
@@ -884,6 +954,7 @@ z.object({
     - Tabela `generation` ma wpis z `is_accepted = true`
 
 ### Krok 13: Dostępność i UX
+
 - [ ] Sprawdzić nawigację klawiaturą przez cały flow
 - [ ] Dodać odpowiednie `aria-label` do przycisków
 - [ ] Dodać `aria-live` do licznika znaków
@@ -892,6 +963,7 @@ z.object({
 - [ ] Sprawdzić działanie z czytnikiem ekranu (VoiceOver/NVDA)
 
 ### Krok 14: Dokumentacja i finalizacja
+
 - [ ] Dodać komentarze JSDoc do wszystkich komponentów, hooków i store
 - [ ] Zaktualizować `src/components/recipes/types.ts` z exportami
 - [ ] Sprawdzić czy wszystkie importy są poprawne

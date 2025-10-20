@@ -9,11 +9,7 @@ import {
   useSensors,
   type DragEndEvent,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { EditableSectionHeader } from "./EditableSectionHeader";
@@ -115,15 +111,8 @@ export function CreateRecipeIngredientsList({ control }: CreateRecipeIngredients
           <p>Brak składników. Dodaj pierwszy składnik, aby rozpocząć.</p>
         </div>
       ) : (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={ingredientIds}
-            strategy={verticalListSortingStrategy}
-          >
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={ingredientIds} strategy={verticalListSortingStrategy}>
             <div className="space-y-3">
               {fields.map((field, index) => (
                 <DraggableCreateIngredientItem

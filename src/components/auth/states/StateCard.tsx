@@ -23,9 +23,7 @@ interface StateCardProps {
 export function StateCard({ children, variant = "default" }: StateCardProps) {
   return (
     <Card className="w-full max-w-md mx-auto">
-      <CardContent className={variant === "default" ? "pt-6" : ""}>
-        {children}
-      </CardContent>
+      <CardContent className={variant === "default" ? "pt-6" : ""}>{children}</CardContent>
     </Card>
   );
 }
@@ -65,7 +63,7 @@ export function StateCardWithHeader({
   title,
   description,
   children,
-  variant = "default"
+  variant = "default",
 }: StateCardWithHeaderProps) {
   const iconBgClass = variant === "error" ? "bg-red-100" : "bg-gray-100";
   const titleClass = variant === "error" ? "text-xl text-red-900" : "text-xl";
@@ -74,15 +72,9 @@ export function StateCardWithHeader({
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
-        <div className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full ${iconBgClass}`}>
-          {icon}
-        </div>
+        <div className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full ${iconBgClass}`}>{icon}</div>
         <CardTitle className={titleClass}>{title}</CardTitle>
-        {description && (
-          <CardDescription className={descriptionClass}>
-            {description}
-          </CardDescription>
-        )}
+        {description && <CardDescription className={descriptionClass}>{description}</CardDescription>}
       </CardHeader>
       {children && <CardContent>{children}</CardContent>}
     </Card>

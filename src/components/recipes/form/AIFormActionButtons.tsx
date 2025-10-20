@@ -26,34 +26,18 @@ import type { AIFormActionButtonsProps } from "../types/ai.types";
  * />
  * ```
  */
-export function AIFormActionButtons({
-  onBackToTextEdit,
-  onCancel,
-  isSubmitting
-}: AIFormActionButtonsProps) {
+export function AIFormActionButtons({ onBackToTextEdit, onCancel, isSubmitting }: AIFormActionButtonsProps) {
   return (
     <div className="flex items-center justify-between gap-4 pt-6 border-t">
       {/* Przycisk po lewej stronie */}
-      <Button
-        type="button"
-        variant="ghost"
-        onClick={onBackToTextEdit}
-        disabled={isSubmitting}
-        className="gap-2"
-      >
+      <Button type="button" variant="ghost" onClick={onBackToTextEdit} disabled={isSubmitting} className="gap-2">
         <ArrowLeft className="size-4" />
         Wróć do edycji tekstu
       </Button>
 
       {/* Przyciski po prawej stronie */}
       <div className="flex items-center gap-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          disabled={isSubmitting}
-          className="px-6"
-        >
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting} className="px-6">
           Anuluj
         </Button>
 

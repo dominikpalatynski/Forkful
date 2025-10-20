@@ -1,9 +1,9 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     exclude: [],
-    include: ['src/**/*.test.ts'],
+    include: ["src/**/*.test.ts"],
   },
-})
+});

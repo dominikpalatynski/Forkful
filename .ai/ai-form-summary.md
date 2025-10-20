@@ -1,6 +1,7 @@
 # AI Recipe Form - Dokumentacja Techniczna
 
 ## Spis Treści
+
 1. [Przegląd Architektury](#przegląd-architektury)
 2. [Przepływ Danych](#przepływ-danych)
 3. [Szczegółowy Opis Komponentów](#szczegółowy-opis-komponentów)
@@ -161,23 +162,25 @@ AIRecipeForm ma **dwie fazy** (kontrolowane przez `phase` w Zustand store):
 **Lokalizacja:** `src/components/recipes/AIRecipeForm.tsx`
 
 **Odpowiedzialności:**
+
 - Orchestracja dwóch faz (input/edit)
 - Zarządzanie dialogami potwierdzenia
 - Koordynacja komunikacji między child components a Zustand store
 - Obsługa mutation hooks (useGenerateRecipe, useCreateRecipe)
 
 **State:**
+
 ```typescript
 // Z Zustand store
 const {
-  phase,              // 'input' | 'edit'
-  inputText,          // Tekst wprowadzony przez usera
-  generationId,       // ID generacji z API
-  generatedData,      // Dane wygenerowane przez AI
-  setInputText,       // Setter dla inputText
-  setGeneratedData,   // Setter + zmiana phase na 'edit'
-  goBackToInput,      // Reset do fazy 'input' (zachowuje inputText)
-  reset,              // Całkowity reset store
+  phase, // 'input' | 'edit'
+  inputText, // Tekst wprowadzony przez usera
+  generationId, // ID generacji z API
+  generatedData, // Dane wygenerowane przez AI
+  setInputText, // Setter dla inputText
+  setGeneratedData, // Setter + zmiana phase na 'edit'
+  goBackToInput, // Reset do fazy 'input' (zachowuje inputText)
+  reset, // Całkowity reset store
 } = useAIRecipeFormStore();
 
 // Local state
@@ -241,6 +244,7 @@ return <ErrorMessage /> + <ConfirmationDialog />
 **Lokalizacja:** `src/components/recipes/form/AIRecipeTextInput.tsx`
 
 **Odpowiedzialności:**
+
 - Wyświetlanie textarea z walidacją (100-1000 znaków)
 - Licznik znaków z kolorowym feedbackiem
 - Generowanie przepisu z AI
@@ -251,7 +255,8 @@ return <ErrorMessage /> + <ConfirmationDialog />
 ```typescript
 // Zod schema
 const inputTextSchema = z.object({
-  inputText: z.string()
+  inputText: z
+    .string()
     .min(100, "Tekst musi mieć minimum 100 znaków")
     .max(1000, "Tekst może mieć maksymalnie 1000 znaków"),
 });
@@ -259,19 +264,20 @@ const inputTextSchema = z.object({
 // useForm z custom hook
 const form = useForm({
   schema: inputTextSchema,
-  defaultValues: { inputText: value },  // value z props (Zustand)
-  mode: "onChange",                      // Walidacja na każdą zmianę
+  defaultValues: { inputText: value }, // value z props (Zustand)
+  mode: "onChange", // Walidacja na każdą zmianę
 });
 ```
 
 **Props Interface:**
+
 ```typescript
 interface AIRecipeTextInputProps {
-  value: string;                           // Z Zustand store
-  onChange: (value: string) => void;       // Sync do Zustand
+  value: string; // Z Zustand store
+  onChange: (value: string) => void; // Sync do Zustand
   onGenerate: (inputText: string) => void; // Trigger generowania
-  isGenerating: boolean;                   // Loading state
-  onBack: () => void;                      // Nawigacja do "/"
+  isGenerating: boolean; // Loading state
+  onBack: () => void; // Nawigacja do "/"
 }
 ```
 
@@ -309,13 +315,13 @@ interface AIRecipeTextInputProps {
             <Textarea
               {...field}
               onChange={(e) => {
-                field.onChange(e);           // React Hook Form
-                handleFieldChange(e.value);  // Sync z Zustand
+                field.onChange(e); // React Hook Form
+                handleFieldChange(e.value); // Sync z Zustand
               }}
             />
           </FormControl>
           <CharacterCounter current={charCount} />
-          <FormMessage />  {/* Automatyczne błędy z zod */}
+          <FormMessage /> {/* Automatyczne błędy z zod */}
         </FormItem>
       )}
     />
@@ -329,6 +335,7 @@ interface AIRecipeTextInputProps {
 ```
 
 **Walidacja:**
+
 - `form.formState.isValid` - obliczane automatycznie przez react-hook-form
 - Przycisk disabled gdy: `!isValid || isGenerating`
 - FormMessage pokazuje błędy z zod schema
@@ -340,6 +347,7 @@ interface AIRecipeTextInputProps {
 **Lokalizacja:** `src/components/recipes/form/AIEditRecipeForm.tsx`
 
 **Odpowiedzialności:**
+
 - Wyświetlanie formularza edycji wygenerowanych danych
 - Reużywanie komponentów z manual creation
 - Walidacja przed zapisem
@@ -353,34 +361,43 @@ const createRecipeSchema = z.object({
   name: z.string().min(1).max(255),
   description: z.string().optional(),
   generationId: z.string().optional(),
-  ingredients: z.array(z.object({
-    content: z.string().min(1),
-    position: z.number(),
-  })).optional(),
-  steps: z.array(z.object({
-    content: z.string().min(1),
-    position: z.number(),
-  })).optional(),
+  ingredients: z
+    .array(
+      z.object({
+        content: z.string().min(1),
+        position: z.number(),
+      })
+    )
+    .optional(),
+  steps: z
+    .array(
+      z.object({
+        content: z.string().min(1),
+        position: z.number(),
+      })
+    )
+    .optional(),
   tags: z.array(z.string()).optional(),
 });
 
 // useForm
 const form = useForm<CreateRecipeCommand>({
   resolver: zodResolver(createRecipeSchema),
-  defaultValues: getDefaultValues(),  // Transformacja GeneratedRecipeDto
+  defaultValues: getDefaultValues(), // Transformacja GeneratedRecipeDto
   mode: "onChange",
 });
 ```
 
 **Props Interface:**
+
 ```typescript
 interface AIEditRecipeFormProps {
-  initialData: GeneratedRecipeDto;          // Z Zustand store
-  generationId: string;                      // Z Zustand store
+  initialData: GeneratedRecipeDto; // Z Zustand store
+  generationId: string; // Z Zustand store
   onSubmit: (data: CreateRecipeCommand) => void;
-  onBackToTextEdit: () => void;              // Trigger dialogu
-  onCancel: () => void;                      // Trigger dialogu
-  isSubmitting: boolean;                     // Loading state
+  onBackToTextEdit: () => void; // Trigger dialogu
+  onCancel: () => void; // Trigger dialogu
+  isSubmitting: boolean; // Loading state
 }
 ```
 
@@ -392,7 +409,7 @@ const getDefaultValues = (): CreateRecipeCommand => {
   return {
     name: initialData.name,
     description: initialData.description ?? undefined,
-    generationId,                              // ← Ważne!
+    generationId, // ← Ważne!
     ingredients: initialData.ingredients || [],
     steps: initialData.steps || [],
     tags: [],
@@ -431,7 +448,7 @@ const getDefaultValues = (): CreateRecipeCommand => {
 const handleSubmit = (data: CreateRecipeCommand) => {
   const dataWithGenerationId: CreateRecipeCommand = {
     ...data,
-    generationId,  // Dodajemy generationId przed wysłaniem
+    generationId, // Dodajemy generationId przed wysłaniem
   };
   onSubmit(dataWithGenerationId);
 };
@@ -444,10 +461,12 @@ const handleSubmit = (data: CreateRecipeCommand) => {
 **Lokalizacja:** `src/components/recipes/form/AIFormActionButtons.tsx`
 
 **Odpowiedzialności:**
+
 - Wyświetlanie trzech przycisków akcji w fazie 'edit'
 - Obsługa disabled states
 
 **Props Interface:**
+
 ```typescript
 interface AIFormActionButtonsProps {
   onBackToTextEdit: () => void;
@@ -466,6 +485,7 @@ interface AIFormActionButtonsProps {
 ```
 
 **Logika:**
+
 ```tsx
 <div className="flex items-center justify-between">
   {/* Lewy przycisk */}
@@ -500,6 +520,7 @@ interface AIFormActionButtonsProps {
 ```
 
 **isDirty Check:**
+
 - `isDirty` = `form.formState.isDirty` z react-hook-form
 - Przycisk "Zapisz" disabled gdy użytkownik nie zmienił nic w formularzu
 - Chroni przed przypadkowym zapisem bez edycji
@@ -511,11 +532,13 @@ interface AIFormActionButtonsProps {
 **Lokalizacja:** `src/components/recipes/form/CharacterCounter.tsx`
 
 **Odpowiedzialności:**
+
 - Wyświetlanie licznika "current / max"
 - Kolorowanie na podstawie liczby znaków
 - Dostępność (ARIA attributes)
 
 **Props Interface:**
+
 ```typescript
 interface CharacterCounterProps {
   current: number;
@@ -529,23 +552,19 @@ interface CharacterCounterProps {
 ```typescript
 const getColorClass = (): string => {
   if (current < min) {
-    return "text-red-600";           // < 100: czerwony
+    return "text-red-600"; // < 100: czerwony
   }
   if (current < min + 50) {
-    return "text-orange-600";        // 100-149: pomarańczowy
+    return "text-orange-600"; // 100-149: pomarańczowy
   }
-  return "text-green-600";           // 150+: zielony
+  return "text-green-600"; // 150+: zielony
 };
 ```
 
 **ARIA Attributes:**
 
 ```tsx
-<div
-  role="status"
-  aria-live={current > max ? "assertive" : "polite"}
-  aria-label={getAriaLabel()}
->
+<div role="status" aria-live={current > max ? "assertive" : "polite"} aria-label={getAriaLabel()}>
   {current} / {max}
 </div>
 ```
@@ -566,9 +585,9 @@ const getColorClass = (): string => {
 
 ```typescript
 interface AIRecipeFormState {
-  phase: AIRecipeFormPhase;              // 'input' | 'edit'
-  inputText: string;                      // Tekst z textarea
-  generationId: string | null;            // ID z API
+  phase: AIRecipeFormPhase; // 'input' | 'edit'
+  inputText: string; // Tekst z textarea
+  generationId: string | null; // ID z API
   generatedData: GeneratedRecipeDto | null;
 }
 ```
@@ -588,48 +607,58 @@ interface AIRecipeFormActions {
 **Implementacja Akcji:**
 
 1. **setPhase**
+
    ```typescript
-   setPhase: (phase) => set({ phase })
+   setPhase: (phase) => set({ phase });
    ```
+
    - Prosty setter dla phase
 
 2. **setInputText**
+
    ```typescript
-   setInputText: (inputText) => set({ inputText })
+   setInputText: (inputText) => set({ inputText });
    ```
+
    - Aktualizuje inputText (wywołany z AIRecipeTextInput)
 
 3. **setGeneratedData**
+
    ```typescript
    setGeneratedData: (generatedData, generationId) =>
      set({
-       phase: 'edit',           // ← Automatyczna zmiana fazy!
+       phase: "edit", // ← Automatyczna zmiana fazy!
        generatedData,
        generationId,
-     })
+     });
    ```
+
    - Zapisuje dane z API
    - **Automatycznie** zmienia phase na 'edit'
    - Trigger re-renderu AIRecipeForm → renderuje AIEditRecipeForm
 
 4. **goBackToInput**
+
    ```typescript
    goBackToInput: () =>
      set({
-       phase: 'input',
+       phase: "input",
        generatedData: null,
        generationId: null,
        // inputText pozostaje zachowany! ← Ważne!
-     })
+     });
    ```
+
    - Powrót do fazy 'input'
    - **Usuwa** generatedData i generationId
    - **Zachowuje** inputText (użytkownik może wygenerować ponownie)
 
 5. **reset**
+
    ```typescript
-   reset: () => set(getDefaultState())
+   reset: () => set(getDefaultState());
    ```
+
    - Całkowity reset do stanu początkowego
    - Czyści wszystko (inputText, generatedData, phase)
 
@@ -638,9 +667,11 @@ interface AIRecipeFormActions {
 ```typescript
 export const useAIRecipeFormStore = create<AIRecipeFormStore>()(
   persist(
-    (set) => ({ /* ... */ }),
+    (set) => ({
+      /* ... */
+    }),
     {
-      name: 'forkful-ai-recipe-draft',  // Klucz w localStorage
+      name: "forkful-ai-recipe-draft", // Klucz w localStorage
       storage: createJSONStorage(() => localStorage),
     }
   )
@@ -681,6 +712,7 @@ export const useAIRecipeFormStore = create<AIRecipeFormStore>()(
 **Lokalizacja:** `src/components/recipes/hooks/useGenerateRecipe.ts`
 
 **Odpowiedzialności:**
+
 - Generowanie przepisu z AI przez API
 - Obsługa błędów z toast notifications
 - React Query mutation
@@ -692,7 +724,7 @@ async function generateRecipe(data: GenerateRecipeCommand): Promise<GeneratedRec
   const response = await fetch("/api/recipes/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),  // { inputText: "..." }
+    body: JSON.stringify(data), // { inputText: "..." }
   });
 
   // Obsługa błędów
@@ -713,7 +745,7 @@ async function generateRecipe(data: GenerateRecipeCommand): Promise<GeneratedRec
     throw new Error("Nie udało się wygenerować przepisu");
   }
 
-  return response.json();  // GeneratedRecipeDto
+  return response.json(); // GeneratedRecipeDto
 }
 ```
 
@@ -721,12 +753,15 @@ async function generateRecipe(data: GenerateRecipeCommand): Promise<GeneratedRec
 
 ```typescript
 export function useGenerateRecipe() {
-  const mutation = useMutation({
-    mutationFn: generateRecipe,
-    onError: (error: Error) => {
-      toast.error(`Błąd podczas generowania przepisu: ${error.message}`);
+  const mutation = useMutation(
+    {
+      mutationFn: generateRecipe,
+      onError: (error: Error) => {
+        toast.error(`Błąd podczas generowania przepisu: ${error.message}`);
+      },
     },
-  }, queryClient);
+    queryClient
+  );
 
   return {
     mutate: mutation.mutate,
@@ -735,7 +770,7 @@ export function useGenerateRecipe() {
     isError: mutation.isError,
     error: mutation.error as Error | null,
     isSuccess: mutation.isSuccess,
-    data: mutation.data,        // GeneratedRecipeDto
+    data: mutation.data, // GeneratedRecipeDto
     reset: mutation.reset,
   } as const;
 }
@@ -751,7 +786,7 @@ const handleGenerate = (text: string) => {
     { inputText: text },
     {
       onSuccess: (data) => {
-        setGeneratedData(data, data.generationId);  // Zustand action
+        setGeneratedData(data, data.generationId); // Zustand action
       },
     }
   );
@@ -765,6 +800,7 @@ const handleGenerate = (text: string) => {
 **Lokalizacja:** `src/components/recipes/hooks/useCreateRecipe.ts`
 
 **Odpowiedzialności:**
+
 - Zapisywanie przepisu do bazy danych
 - Invalidacja cache React Query
 - Czyszczenie localStorage (manual + AI draft)
@@ -775,7 +811,7 @@ const handleGenerate = (text: string) => {
 
 ```typescript
 interface UseCreateRecipeOptions {
-  onSuccessBeforeRedirect?: () => void;  // Callback przed redirectem
+  onSuccessBeforeRedirect?: () => void; // Callback przed redirectem
 }
 ```
 
@@ -800,7 +836,7 @@ async function createRecipe(data: CreateRecipeCommand): Promise<RecipeDetailDto>
     throw new Error("Nie udało się utworzyć przepisu");
   }
 
-  return response.json();  // RecipeDetailDto
+  return response.json(); // RecipeDetailDto
 }
 ```
 
@@ -808,35 +844,40 @@ async function createRecipe(data: CreateRecipeCommand): Promise<RecipeDetailDto>
 
 ```typescript
 export function useCreateRecipe(options?: UseCreateRecipeOptions) {
-  const mutation = useMutation({
-    mutationFn: createRecipe,
-    onSuccess: (createdRecipe: RecipeDetailDto) => {
-      // 1. Invalidacja cache
-      queryClient.invalidateQueries({ queryKey: ["recipes"] });
-      queryClient.invalidateQueries({ queryKey: ["tags"] });
+  const mutation = useMutation(
+    {
+      mutationFn: createRecipe,
+      onSuccess: (createdRecipe: RecipeDetailDto) => {
+        // 1. Invalidacja cache
+        queryClient.invalidateQueries({ queryKey: ["recipes"] });
+        queryClient.invalidateQueries({ queryKey: ["tags"] });
 
-      // 2. Czyszczenie localStorage (manual draft)
-      localStorage.removeItem(DRAFT_KEY);
+        // 2. Czyszczenie localStorage (manual draft)
+        localStorage.removeItem(DRAFT_KEY);
 
-      // 3. Callback przed redirectem (AI form cleanup)
-      if (options?.onSuccessBeforeRedirect) {
-        options.onSuccessBeforeRedirect();  // ← reset() z Zustand
-      }
+        // 3. Callback przed redirectem (AI form cleanup)
+        if (options?.onSuccessBeforeRedirect) {
+          options.onSuccessBeforeRedirect(); // ← reset() z Zustand
+        }
 
-      // 4. Toast + redirect
-      toast.success("Przepis został pomyślnie utworzony!", {
-        duration: 1500,
-        onAutoClose: () => {
-          window.location.href = `/recipes/${createdRecipe.id}`;
-        },
-      });
+        // 4. Toast + redirect
+        toast.success("Przepis został pomyślnie utworzony!", {
+          duration: 1500,
+          onAutoClose: () => {
+            window.location.href = `/recipes/${createdRecipe.id}`;
+          },
+        });
+      },
+      onError: (error: Error) => {
+        toast.error(`Błąd podczas tworzenia przepisu: ${error.message}`);
+      },
     },
-    onError: (error: Error) => {
-      toast.error(`Błąd podczas tworzenia przepisu: ${error.message}`);
-    },
-  }, queryClient);
+    queryClient
+  );
 
-  return { /* ... */ };
+  return {
+    /* ... */
+  };
 }
 ```
 
@@ -845,7 +886,7 @@ export function useCreateRecipe(options?: UseCreateRecipeOptions) {
 ```typescript
 const createMutation = useCreateRecipe({
   onSuccessBeforeRedirect: () => {
-    reset();  // Zustand: czyści 'forkful-ai-recipe-draft' z localStorage
+    reset(); // Zustand: czyści 'forkful-ai-recipe-draft' z localStorage
   },
 });
 
@@ -896,7 +937,7 @@ AIRecipeForm używa **3 dialogi** (ConfirmationDialog):
 ```typescript
 const handleCancel = () => {
   if (hasData) {
-    setIsConfirmDialogOpen(true);  // Pokazuje dialog
+    setIsConfirmDialogOpen(true); // Pokazuje dialog
   } else {
     reset();
     window.location.href = "/";
@@ -904,7 +945,7 @@ const handleCancel = () => {
 };
 
 const handleConfirmCancel = () => {
-  reset();                           // Zustand: usuwa wszystko
+  reset(); // Zustand: usuwa wszystko
   window.location.href = "/";
 };
 ```
@@ -939,11 +980,11 @@ const handleConfirmCancel = () => {
 
 ```typescript
 const handleBackToTextEdit = () => {
-  setIsBackToTextDialogOpen(true);  // Zawsze pokazuje dialog
+  setIsBackToTextDialogOpen(true); // Zawsze pokazuje dialog
 };
 
 const handleConfirmBackToText = () => {
-  goBackToInput();                   // Zustand: phase → 'input'
+  goBackToInput(); // Zustand: phase → 'input'
   setIsBackToTextDialogOpen(false);
 };
 ```
@@ -965,6 +1006,7 @@ const handleConfirmBackToText = () => {
 ```
 
 **Efekt:**
+
 - Powrót do fazy 'input'
 - **Zachowuje** inputText
 - **Usuwa** generatedData i generationId
@@ -987,10 +1029,10 @@ const hasData = useMemo(() => {
 
 const handleBack = () => {
   if (hasData) {
-    setIsConfirmDialogOpen(true);  // Dialog gdy są dane
+    setIsConfirmDialogOpen(true); // Dialog gdy są dane
   } else {
     reset();
-    window.location.href = "/";    // Bezpośredni redirect
+    window.location.href = "/"; // Bezpośredni redirect
   }
 };
 ```
@@ -1017,11 +1059,11 @@ const handleBack = () => {
 
 ### Podsumowanie Dialogów
 
-| Dialog | Faza | Trigger | Warunek | Akcja |
-|--------|------|---------|---------|-------|
-| "Anuluj" | edit | Przycisk "Anuluj" | generatedData !== null | reset() + redirect |
-| "Wróć do tekstu" | edit | Przycisk "Wróć do edycji tekstu" | Zawsze | goBackToInput() |
-| "Wróć" (input) | input | Przycisk "Wróć" | inputText.length > 0 | reset() + redirect |
+| Dialog           | Faza  | Trigger                          | Warunek                | Akcja              |
+| ---------------- | ----- | -------------------------------- | ---------------------- | ------------------ |
+| "Anuluj"         | edit  | Przycisk "Anuluj"                | generatedData !== null | reset() + redirect |
+| "Wróć do tekstu" | edit  | Przycisk "Wróć do edycji tekstu" | Zawsze                 | goBackToInput()    |
+| "Wróć" (input)   | input | Przycisk "Wróć"                  | inputText.length > 0   | reset() + redirect |
 
 ---
 
@@ -1044,12 +1086,14 @@ const inputTextSchema = z.object({
 ```
 
 **Walidacja:**
+
 - Minimum 100 znaków (czerwony licznik)
 - Maksimum 1000 znaków (validation error)
 - Walidacja on change (`mode: "onChange"`)
 - Przycisk submit disabled gdy `!isValid`
 
 **Wyświetlanie błędów:**
+
 - `<FormMessage />` automatycznie pokazuje błędy z zod
 - CharacterCounter pokazuje kolorowe wskazanie (czerwony/pomarańczowy/zielony)
 
@@ -1061,24 +1105,31 @@ const inputTextSchema = z.object({
 
 ```typescript
 const createRecipeSchema = z.object({
-  name: z.string()
-    .min(1, "Nazwa przepisu jest wymagana")
-    .max(255, "Nazwa jest zbyt długa"),
+  name: z.string().min(1, "Nazwa przepisu jest wymagana").max(255, "Nazwa jest zbyt długa"),
   description: z.string().optional(),
   generationId: z.string().optional(),
-  ingredients: z.array(z.object({
-    content: z.string().min(1, "Składnik nie może być pusty"),
-    position: z.number(),
-  })).optional(),
-  steps: z.array(z.object({
-    content: z.string().min(1, "Krok nie może być pusty"),
-    position: z.number(),
-  })).optional(),
+  ingredients: z
+    .array(
+      z.object({
+        content: z.string().min(1, "Składnik nie może być pusty"),
+        position: z.number(),
+      })
+    )
+    .optional(),
+  steps: z
+    .array(
+      z.object({
+        content: z.string().min(1, "Krok nie może być pusty"),
+        position: z.number(),
+      })
+    )
+    .optional(),
   tags: z.array(z.string()).optional(),
 });
 ```
 
 **Walidacja:**
+
 - **name:** Required, 1-255 znaków
 - **description:** Optional
 - **ingredients:** Optional array, content wymagany
@@ -1087,14 +1138,16 @@ const createRecipeSchema = z.object({
 - **generationId:** Optional (ale zawsze dodawany w handleSubmit)
 
 **Walidacja on change:**
+
 ```typescript
 const form = useForm({
   resolver: zodResolver(createRecipeSchema),
-  mode: "onChange",  // Walidacja przy każdej zmianie
+  mode: "onChange", // Walidacja przy każdej zmianie
 });
 ```
 
 **Disabled state:**
+
 ```typescript
 <Button
   type="submit"
@@ -1120,19 +1173,23 @@ Aplikacja używa **2 klucze** w localStorage:
 **Zarządzany przez:** Zustand persist middleware
 
 **Zawiera:**
+
 ```json
 {
   "state": {
     "phase": "edit",
     "inputText": "...",
     "generationId": "abc-123",
-    "generatedData": { /* GeneratedRecipeDto */ }
+    "generatedData": {
+      /* GeneratedRecipeDto */
+    }
   },
   "version": 0
 }
 ```
 
 **Cykl życia:**
+
 - **Zapis:** Automatyczny przy każdej zmianie state (Zustand)
 - **Odczyt:** Automatyczny przy inicjalizacji aplikacji
 - **Usunięcie:** `reset()` w useCreateRecipe.onSuccess
@@ -1150,9 +1207,11 @@ Aplikacja używa **2 klucze** w localStorage:
 **Zawiera:** Draft ręcznie tworzonego przepisu
 
 **Cykl życia:**
+
 - **Usunięcie:** W `useCreateRecipe.onSuccess`
 
 **Dlaczego usuwane w useCreateRecipe?**
+
 - useCreateRecipe jest współdzielony między AI i manual form
 - Po zapisie przepisu oba drafty są nieaktualne
 
@@ -1169,11 +1228,13 @@ queryClient.invalidateQueries({ queryKey: ["tags"] });
 ```
 
 **Efekt:**
+
 - Lista przepisów zostanie automatycznie odświeżona
 - Lista tagów zostanie automatycznie odświeżona
 - Użytkownik po zapisie zobaczy nowy przepis na liście
 
 **Queries:**
+
 - `["recipes"]` - Lista przepisów (useRecipeListState)
 - `["tags"]` - Lista tagów (useTags)
 
@@ -1186,6 +1247,7 @@ queryClient.invalidateQueries({ queryKey: ["tags"] });
 #### 1. Zmiana limitu znaków (np. 50-2000)
 
 **Pliki do edycji:**
+
 - `AIRecipeTextInput.tsx` (linia 11-12)
 
 ```typescript
@@ -1199,11 +1261,13 @@ const MAX_CHARS = 2000;
 ```
 
 **Efekt:**
+
 - Automatyczna zmiana walidacji zod
 - Automatyczna zmiana w CharacterCounter
 - Automatyczna zmiana komunikatów błędów
 
 **Nie musisz zmieniać:**
+
 - inputTextSchema (używa stałych)
 - CharacterCounter (otrzymuje props)
 - API validation (backend niezależny)
@@ -1215,32 +1279,35 @@ const MAX_CHARS = 2000;
 **Pliki do edycji:**
 
 1. **types.ts** - Dodaj pole do `CreateRecipeCommand`
+
    ```typescript
    export interface CreateRecipeCommand {
      name: string;
      description?: string;
-     cookingTime?: number;  // ← NOWE
+     cookingTime?: number; // ← NOWE
      // ...
    }
    ```
 
 2. **AIEditRecipeForm.tsx** - Aktualizuj schema
+
    ```typescript
    const createRecipeSchema = z.object({
      name: z.string().min(1).max(255),
      description: z.string().optional(),
-     cookingTime: z.number().min(1).optional(),  // ← NOWE
+     cookingTime: z.number().min(1).optional(), // ← NOWE
      // ...
    });
    ```
 
 3. **AIEditRecipeForm.tsx** - Dodaj do defaultValues
+
    ```typescript
    const getDefaultValues = (): CreateRecipeCommand => {
      return {
        name: initialData.name,
        description: initialData.description ?? undefined,
-       cookingTime: undefined,  // ← NOWE
+       cookingTime: undefined, // ← NOWE
        // ...
      };
    };
@@ -1264,6 +1331,7 @@ const MAX_CHARS = 2000;
    ```
 
 **Nie musisz zmieniać:**
+
 - AIRecipeForm (przekazuje dane transparentnie)
 - useCreateRecipe (generyczny dla CreateRecipeCommand)
 - Zustand store (przechowuje GeneratedRecipeDto osobno)
@@ -1273,6 +1341,7 @@ const MAX_CHARS = 2000;
 #### 3. Zmiana tekstu w dialogach
 
 **Plik do edycji:**
+
 - `AIRecipeForm.tsx`
 
 **Przykład:**

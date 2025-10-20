@@ -67,7 +67,7 @@ export class RecipeService {
       // Step 2: Insert ingredients if provided
       if (data.ingredients && data.ingredients.length > 0) {
         const ingredientsToInsert = data.ingredients.map((ingredient) => ({
-          recipe_id: recipeId!,
+          recipe_id: recipeId as string,
           content: ingredient.content,
           position: ingredient.position,
         }));
@@ -82,7 +82,7 @@ export class RecipeService {
       // Step 3: Insert steps if provided
       if (data.steps && data.steps.length > 0) {
         const stepsToInsert = data.steps.map((step) => ({
-          recipe_id: recipeId!,
+          recipe_id: recipeId as string,
           content: step.content,
           position: step.position,
         }));
@@ -136,7 +136,7 @@ export class RecipeService {
         // Create recipe-tag associations
         if (tagIds.length > 0) {
           const recipeTagsToInsert = tagIds.map((tagId) => ({
-            recipe_id: recipeId!,
+            recipe_id: recipeId as string,
             tag_id: tagId,
           }));
 
@@ -478,7 +478,9 @@ export class RecipeService {
     ingredients: UpdateRecipeCommand["ingredients"]
   ): Promise<void> {
     // Get IDs of ingredients that should be kept (those with IDs in the request)
-    const ingredientIdsToKeep = ingredients.filter((ingredient) => ingredient.id).map((ingredient) => ingredient.id!);
+    const ingredientIdsToKeep = ingredients
+      .filter((ingredient) => ingredient.id)
+      .map((ingredient) => ingredient.id as string);
 
     // Delete ingredients not in the keep list
     if (ingredientIdsToKeep.length > 0) {
@@ -512,7 +514,7 @@ export class RecipeService {
           content: ingredient.content,
           position: ingredient.position,
         })
-        .eq("id", ingredient.id!)
+        .eq("id", ingredient.id as string)
         .eq("recipe_id", recipeId);
 
       if (updateError) {
@@ -545,7 +547,7 @@ export class RecipeService {
    */
   private async updateRecipeSteps(recipeId: string, steps: UpdateRecipeCommand["steps"]): Promise<void> {
     // Get IDs of steps that should be kept (those with IDs in the request)
-    const stepIdsToKeep = steps.filter((step) => step.id).map((step) => step.id!);
+    const stepIdsToKeep = steps.filter((step) => step.id).map((step) => step.id as string);
 
     // Delete steps not in the keep list
     if (stepIdsToKeep.length > 0) {
@@ -579,7 +581,7 @@ export class RecipeService {
           content: step.content,
           position: step.position,
         })
-        .eq("id", step.id!)
+        .eq("id", step.id as string)
         .eq("recipe_id", recipeId);
 
       if (updateError) {

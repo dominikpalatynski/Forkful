@@ -8,13 +8,10 @@ import { useCallbackRef } from "./use-callback-ref";
 
 export function useDebouncedCallback<T extends (...args: never[]) => unknown>(
   callback: T,
-  options:
-    | number
-    | { delay: number; flushOnUnmount?: boolean; leading?: boolean },
+  options: number | { delay: number; flushOnUnmount?: boolean; leading?: boolean }
 ) {
   const delay = typeof options === "number" ? options : options.delay;
-  const flushOnUnmount =
-    typeof options === "number" ? false : options.flushOnUnmount;
+  const flushOnUnmount = typeof options === "number" ? false : options.flushOnUnmount;
   const leading = typeof options === "number" ? false : options.leading;
 
   const handleCallback = useCallbackRef(callback);
@@ -47,11 +44,10 @@ export function useDebouncedCallback<T extends (...args: never[]) => unknown>(
         debounceTimerRef.current = window.setTimeout(flush, delay);
         leadingRef.current = false;
       },
-      // eslint-disable-next-line react-hooks/react-compiler
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      [handleCallback, delay, leading],
+      [handleCallback, delay, leading]
     ),
-    { flush: flushRef.current },
+    { flush: flushRef.current }
   );
 
   useEffect(
@@ -61,7 +57,7 @@ export function useDebouncedCallback<T extends (...args: never[]) => unknown>(
         lastCallback.flush();
       }
     },
-    [lastCallback, flushOnUnmount],
+    [lastCallback, flushOnUnmount]
   );
 
   return lastCallback;

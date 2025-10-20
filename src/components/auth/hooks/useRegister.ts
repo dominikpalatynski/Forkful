@@ -44,12 +44,15 @@ async function registerUser(credentials: RegisterSchemaType): Promise<void> {
  * ```
  */
 export function useRegister() {
-  const mutation = useMutation({
-    mutationFn: registerUser,
-    onError: (error: Error) => {
-      toast.error(`Rejestracja nie powiodła się: ${error.message}`);
+  const mutation = useMutation(
+    {
+      mutationFn: registerUser,
+      onError: (error: Error) => {
+        toast.error(`Rejestracja nie powiodła się: ${error.message}`);
+      },
     },
-  }, queryClient);
+    queryClient
+  );
 
   return {
     mutate: mutation.mutate,
@@ -61,4 +64,3 @@ export function useRegister() {
     reset: mutation.reset,
   } as const;
 }
-

@@ -80,6 +80,6 @@ const mockRecipes: Recipe[] = [
   },
 ];
 
-export const GET: APIRoute = async ({ request, url }) => {
+export const GET: APIRoute = async () => {
   return new Response(JSON.stringify({ recipes: mockRecipes }), { status: 200 });
 };

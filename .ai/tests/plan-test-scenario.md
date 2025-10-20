@@ -9,6 +9,7 @@ Here is the service class to analyze:
 Your task is to create a well-structured list of unit test scenarios for this service. Focus on creating meaningful, necessary test scenarios that cover the essential functionality without creating unnecessary or redundant tests.
 
 When analyzing the service class, consider:
+
 - Each public method and its different execution paths
 - Input validation and edge cases
 - Error handling scenarios
@@ -18,6 +19,7 @@ When analyzing the service class, consider:
 - Any async operations and their outcomes
 
 For each test scenario, provide:
+
 1. **Scenario Name**: A clear, descriptive name
 2. **Prerequisites**: What needs to be set up (mocks, data, conditions)
 3. **Expected Output**: What the test should verify (return values, side effects, exceptions)
@@ -27,6 +29,7 @@ Structure your response as a markdown document that can be easily copied and use
 Do not create unnecessary scenarios that test the same logic multiple times or test framework functionality rather than business logic.
 
 Your final output should be a complete markdown document inside <markdown> tags that includes:
+
 - A title for the test scenarios
 - Organized sections for different aspects of testing (if applicable)
 - Each scenario clearly formatted with name, prerequisites, and expected output

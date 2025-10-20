@@ -84,7 +84,6 @@ try {
   // `joke` jest teraz w pełni typowanym obiektem!
   console.log("Setup:", joke.setup);
   console.log("Punchline:", joke.punchline);
-
 } catch (error) {
   // Błędy mogą być specyficzne, np. OpenRouterValidationError
   console.error("Wystąpił błąd:", error);
@@ -108,10 +107,10 @@ Serwis automatycznie doda do `systemPrompt` instrukcję, aby model zwrócił odp
 
 Serwis definiuje kilka własnych klas błędów, dziedziczących po `Error`, aby ułatwić debugowanie:
 
--   `OpenRouterConfigurationError`: Błąd konfiguracji (np. brak klucza API, nieprawidłowe parametry).
--   `OpenRouterAPIError`: Błąd zwrócony przez API OpenRouter (np. status 4xx, 5xx).
--   `OpenRouterRequestError`: Błąd na poziomie sieci (np. problem z `fetch`).
--   `OpenRouterResponseError`: Odpowiedź z API ma nieoczekiwaną strukturę.
--   `OpenRouterValidationError`: Nie udało się sparsować lub zwalidować odpowiedzi JSON.
+- `OpenRouterConfigurationError`: Błąd konfiguracji (np. brak klucza API, nieprawidłowe parametry).
+- `OpenRouterAPIError`: Błąd zwrócony przez API OpenRouter (np. status 4xx, 5xx).
+- `OpenRouterRequestError`: Błąd na poziomie sieci (np. problem z `fetch`).
+- `OpenRouterResponseError`: Odpowiedź z API ma nieoczekiwaną strukturę.
+- `OpenRouterValidationError`: Nie udało się sparsować lub zwalidować odpowiedzi JSON.
 
 Zaleca się używanie bloku `try...catch` i sprawdzanie typu błędu za pomocą `instanceof`, aby odpowiednio reagować na różne sytuacje.

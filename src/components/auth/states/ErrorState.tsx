@@ -39,13 +39,7 @@ interface ErrorStateProps {
  * </ErrorState>
  * ```
  */
-export function ErrorState({
-  title,
-  error,
-  onRetry,
-  retryLabel = "Try Again",
-  children
-}: ErrorStateProps) {
+export function ErrorState({ title, error, onRetry, retryLabel = "Try Again", children }: ErrorStateProps) {
   return (
     <StateCardWithHeader
       icon={<AlertCircle className="h-6 w-6 text-red-600" />}

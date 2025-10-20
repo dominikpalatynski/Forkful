@@ -65,12 +65,15 @@ async function generateRecipe(data: GenerateRecipeCommand): Promise<GeneratedRec
  * ```
  */
 export function useGenerateRecipe() {
-  const mutation = useMutation({
-    mutationFn: generateRecipe,
-    onError: (error: Error) => {
-      toast.error(`Błąd podczas generowania przepisu: ${error.message}`);
+  const mutation = useMutation(
+    {
+      mutationFn: generateRecipe,
+      onError: (error: Error) => {
+        toast.error(`Błąd podczas generowania przepisu: ${error.message}`);
+      },
     },
-  }, queryClient);
+    queryClient
+  );
 
   return {
     mutate: mutation.mutate,

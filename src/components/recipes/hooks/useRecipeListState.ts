@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { PaginatedRecipesDto, TagDto } from "@/types";
 import { useDebounce } from "./useDebounce";
@@ -83,7 +83,6 @@ export function useRecipeListState() {
   }, []);
 
   const handleTagSelect = useCallback((tagName: string | null) => {
-
     setSelectedTag((prev) => (prev === tagName ? null : tagName));
     setCurrentPage(1);
   }, []);

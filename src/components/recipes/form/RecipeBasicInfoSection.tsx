@@ -43,7 +43,13 @@ export function RecipeBasicInfoSection({ control }: RecipeBasicInfoSectionProps)
           <FormItem>
             <FormLabel>Opis</FormLabel>
             <FormControl>
-              <Textarea placeholder="Dodaj opcjonalny opis przepisu" rows={4} className="resize-none" {...field} value={field.value ?? ""} />
+              <Textarea
+                placeholder="Dodaj opcjonalny opis przepisu"
+                rows={4}
+                className="resize-none"
+                {...field}
+                value={field.value ?? ""}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { GenerationRecipeService } from "../../../lib/services/generation-recipe.service";
 import { OpenRouterService } from "../../../lib/services/openrouter.service";
-import { systemPrompt, getUserPrompt } from "../../../lib/services/prompt";
+import { systemPrompt } from "../../../lib/services/prompt";
 import { GeneratedRecipeJsonSchemaFull } from "../../../lib/services/generation-recipe.service";
 import { GenerateRecipeSchema } from "../../../lib/schemas/recipe.schema";
 import { getAuthenticatedUserId } from "../../../lib/utils";
@@ -33,7 +33,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     let requestBody;
     try {
       requestBody = await request.json();
-    } catch (parseError) {
+    } catch {
       return new Response(
         JSON.stringify({
           error: "Bad Request",
@@ -71,7 +71,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Step 4: Initialize generation service and generate recipe
     const openRouterService = new OpenRouterService({
-      apiKey: import.meta.env.OPENROUTER_API_KEY!,
+      apiKey: import.meta.env.OPENROUTER_API_KEY as string,
       model: "anthropic/claude-3-haiku",
       systemPrompt: systemPrompt,
       jsonSchema: {
@@ -79,8 +79,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         schema: GeneratedRecipeJsonSchemaFull,
         strict: true,
       },
-      modelParameters: { temperature: 0.3,
-        max_tokens: 10000, },
+      modelParameters: { temperature: 0.3, max_tokens: 10000 },
     });
 
     const generationService = new GenerationRecipeService(locals.supabase, openRouterService);
@@ -113,7 +112,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
 
       // Generic server error
-      console.error("Recipe generation failed:", serviceError);
       return new Response(
         JSON.stringify({
           error: "Internal Server Error",
@@ -127,11 +125,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
   } catch (error) {
     // Step 7: Handle unexpected errors
-    console.error("Unexpected error in recipe generation endpoint:", error);
     return new Response(
       JSON.stringify({
         error: "Internal Server Error",
         message: "An unexpected error occurred. Please try again later.",
+        details: error instanceof Error ? error.message : "Unknown error",
       }),
       {
         status: 500,

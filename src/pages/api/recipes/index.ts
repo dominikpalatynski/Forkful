@@ -57,7 +57,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
     try {
       recipes = await recipeService.getRecipesForUser(userId, validatedParams);
     } catch (serviceError) {
-      console.error("Failed to get recipes:", serviceError);
       return new Response(
         JSON.stringify({
           error: "Failed to get recipes",
@@ -81,11 +80,11 @@ export const GET: APIRoute = async ({ request, locals }) => {
     });
   } catch (error) {
     // Catch-all for unexpected errors
-    console.error("Unexpected error in GET /api/recipes:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
         message: "An unexpected error occurred while processing your request",
+        details: error instanceof Error ? error.message : "Unknown error",
       }),
       {
         status: 500,
@@ -157,7 +156,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
     try {
       createdRecipe = await recipeService.createRecipe(validatedData, userId);
     } catch (serviceError) {
-      console.error("Failed to create recipe:", serviceError);
       return new Response(
         JSON.stringify({
           error: "Failed to create recipe",
@@ -180,12 +178,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
       },
     });
   } catch (error) {
-    // Catch-all for unexpected errors
-    console.error("Unexpected error in POST /api/recipes:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
         message: "An unexpected error occurred while processing your request",
+        details: error instanceof Error ? error.message : "Unknown error",
       }),
       {
         status: 500,

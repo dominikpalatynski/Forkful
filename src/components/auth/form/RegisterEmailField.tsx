@@ -20,13 +20,7 @@ export function RegisterEmailField({ control }: RegisterEmailFieldProps) {
         <FormItem className="w-full">
           <FormLabel>Email *</FormLabel>
           <FormControl>
-            <Input
-              className="w-full"
-              type="email"
-              placeholder="your@email.com"
-              autoComplete="email"
-              {...field}
-            />
+            <Input className="w-full" type="email" placeholder="your@email.com" autoComplete="email" {...field} />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -34,4 +28,3 @@ export function RegisterEmailField({ control }: RegisterEmailFieldProps) {
     />
   );
 }
-

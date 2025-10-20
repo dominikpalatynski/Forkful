@@ -55,10 +55,7 @@ export const CharacterCounter = React.memo<CharacterCounterProps>(({ current, mi
 
   return (
     <div
-      className={cn(
-        "text-sm font-medium transition-colors",
-        getColorClass()
-      )}
+      className={cn("text-sm font-medium transition-colors", getColorClass())}
       role="status"
       aria-live={getAriaLive()}
       aria-label={getAriaLabel()}

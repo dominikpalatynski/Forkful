@@ -59,7 +59,7 @@ Główne założenia architektury:
   - **UX**: Dwukolumnowy layout na desktopie (składniki | kroki) dla lepszej czytelności. Modal potwierdzający usunięcie, aby zapobiec przypadkowym akcjom.
   - **Dostępność**: Semantyczny kod HTML (`article`, `h1`, `ul`, `ol`) dla lepszej interpretacji przez czytniki ekranu.
   - **Bezpieczeństwo**: Użytkownik może wyświetlić tylko własne przepisy (zabezpieczenie na poziomie API).
- 
+
 ### Widok 5: Tworzenie Przepisu Ręcznie
 
 - **Nazwa widoku**: Tworzenie Przepisu Ręcznie
@@ -85,7 +85,7 @@ Główne założenia architektury:
   - **Bezpieczeństwo**: Walidacja długości tekstu źródłowego (20-10,000 znaków) przy użyciu Zod. Wszystkie dane wejściowe walidowane po stronie klienta i serwera. Śledzenie generowania w tabeli `generation` z polem `is_accepted` do analizy wykorzystania funkcji AI.
 
 ### Widok 7: Edycja Przepisu
- 
+
 - **Nazwa widoku**: Edycja Przepisu
 - **Ścieżka**: `/recipes/[id]/edit`
 - **Główny cel**: Umożliwienie użytkownikowi zaktualizowania istniejącego przepisu.
@@ -94,7 +94,7 @@ Główne założenia architektury:
 - **UX, dostępność i bezpieczeństwo**:
   - **UX**: Powiadomienia (toasty) informujące o sukcesie lub błędzie operacji. Walidacja w czasie rzeczywistym.
   - **Bezpieczeństwo**: Walidacja danych wejściowych po stronie klienta (Zod) i serwera. Użytkownik może edytować tylko własne przepisy (zabezpieczenie na poziomie API).
- 
+
 ## 3. Mapa podróży użytkownika
 
 ### Główny przepływ użytkownika - tworzenie ręczne:

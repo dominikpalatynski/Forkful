@@ -32,9 +32,7 @@ export function LoginForm() {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Welcome back</CardTitle>
-        <CardDescription>
-          Sign in to your account to continue
-        </CardDescription>
+        <CardDescription>Sign in to your account to continue</CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -53,11 +51,7 @@ export function LoginForm() {
 
             <LoginPasswordField control={form.control} />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={!form.formState.isDirty || isPending}
-            >
+            <Button type="submit" className="w-full" disabled={!form.formState.isDirty || isPending}>
               {isPending ? "Signing in..." : "Sign in"}
             </Button>
           </form>
@@ -65,20 +59,14 @@ export function LoginForm() {
 
         <div className="text-center space-y-2 mt-6">
           <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <a
-              href="/auth/register"
-              className="text-primary hover:underline font-medium"
-            >
+            Don&apos;t have an account?{" "}
+            <a href="/auth/register" className="text-primary hover:underline font-medium">
               Sign up
             </a>
           </p>
           <p className="text-sm text-muted-foreground">
             Forgot your password?{" "}
-            <a
-              href="/auth/forgot-password"
-              className="text-primary hover:underline font-medium"
-            >
+            <a href="/auth/forgot-password" className="text-primary hover:underline font-medium">
               Reset password
             </a>
           </p>

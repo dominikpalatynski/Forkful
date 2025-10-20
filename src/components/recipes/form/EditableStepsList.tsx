@@ -9,11 +9,7 @@ import {
   useSensors,
   type DragEndEvent,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { EditableSectionHeader } from "./EditableSectionHeader";
@@ -96,13 +92,7 @@ export function EditableStepsList({ control }: EditableStepsListProps) {
       <EditableSectionHeader
         title="Kroki przygotowania"
         action={
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleAddStep}
-            className="flex items-center gap-2"
-          >
+          <Button type="button" variant="outline" size="sm" onClick={handleAddStep} className="flex items-center gap-2">
             <Plus className="w-4 h-4" />
             Dodaj krok
           </Button>
@@ -114,11 +104,7 @@ export function EditableStepsList({ control }: EditableStepsListProps) {
           <p>Brak kroków. Dodaj pierwszy krok przygotowania.</p>
         </div>
       ) : (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={stepIds} strategy={verticalListSortingStrategy}>
             <div className="space-y-4">
               {fields.map((field, index) => (

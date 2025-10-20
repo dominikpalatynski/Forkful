@@ -51,6 +51,7 @@ new.astro
 ### ManualRecipeForm
 
 **Opis komponentu**: Główny komponent formularza do ręcznego tworzenia przepisu. Zarządza stanem formularza, koordynuje wszystkie sekcje formularza oraz obsługuje wysyłanie danych do API. W przeciwieństwie do `RecipeEditForm`, ten komponent:
+
 - Nie wymaga początkowych danych (pustry formularz)
 - Używa `CreateRecipeSchema` zamiast `UpdateRecipeSchema`
 - Wykorzystuje `useCreateRecipe` hook zamiast `useUpdateRecipe`
@@ -58,6 +59,7 @@ new.astro
 - Obsługuje przywracanie draftu z localStorage
 
 **Główne elementy HTML i komponenty dzieci**:
+
 - `<Form>` - wrapper shadcn/ui dla react-hook-form (istniejący)
 - `<form>` - natywny element HTML z `onSubmit`
 - `<CreateRecipeBasicInfoSection>` - sekcja z nazwą i opisem (**NOWY komponent**)
@@ -69,6 +71,7 @@ new.astro
 - `<CancelRecipeEditDialog>` - dialog potwierdzenia anulowania (istniejący)
 
 **Obsługiwane zdarzenia**:
+
 - `onSubmit` - wysłanie formularza (tworzenie przepisu)
 - `handleCancel` - kliknięcie przycisku Anuluj
 - `handleCancelConfirm` - potwierdzenie anulowania w dialogu
@@ -76,6 +79,7 @@ new.astro
 
 **Warunki walidacji**:
 Walidacja odbywa się zgodnie z `CreateRecipeSchema`:
+
 - **name** (string):
   - Minimum 1 znak (required): "Recipe name is required"
   - Maximum 255 znaków: "Recipe name is too long"
@@ -99,6 +103,7 @@ Walidacja odbywa się zgodnie z `CreateRecipeSchema`:
   - Dla manualnego tworzenia: `undefined`
 
 **Typy**:
+
 - Props: `ManualRecipeFormProps` (pusty interfejs lub brak propsów)
 - Form data: `CreateRecipeCommand` (z `@/types`)
 - Schema: `CreateRecipeSchema` (z `@/lib/schemas/recipe.schema`)
@@ -158,6 +163,7 @@ export interface ManualRecipeFormProps {
 **Opis**: **Komponent istniejący - wymaga modyfikacji**. Komponent nie zależy bezpośrednio od typów command, ale wymaga dodania opcjonalnego propa `submitButtonText` aby umożliwić zmianę tekstu "Zapisz zmiany" na "Zapisz przepis".
 
 **Wymagana modyfikacja**:
+
 1. Dodać opcjonalny props `submitButtonText?: string` do interfejsu `FormActionButtonsProps` w `src/components/recipes/types.ts`
 2. W komponencie użyć `submitButtonText || "Zapisz zmiany"` jako tekst przycisku submit
 
@@ -222,12 +228,14 @@ export interface FormActionButtonsProps {
 ### Typy już istniejące (wykorzystywane ponownie)
 
 Z pliku `@/types`:
+
 - `CreateRecipeCommand` - typ dla danych formularza tworzenia przepisu
 - `RecipeIngredientCommand` - typ dla składnika w komendzie tworzenia
 - `RecipeStepCommand` - typ dla kroku w komendzie tworzenia
 - `RecipeDetailDto` - typ zwracany przez API po utworzeniu przepisu
 
 Z pliku `@/lib/schemas/recipe.schema`:
+
 - `CreateRecipeSchema` - schema walidacji Zod dla tworzenia przepisu
 - `RecipeIngredientCommandSchema` - schema dla składnika
 - `RecipeStepCommandSchema` - schema dla kroku
@@ -236,22 +244,22 @@ Z pliku `@/lib/schemas/recipe.schema`:
 
 ```typescript
 interface CreateRecipeCommand {
-  name: string;                           // Nazwa przepisu (required, 1-255 znaków)
-  description?: string;                   // Opis (optional)
-  generationId?: string;                  // ID generacji AI (optional, UUID)
+  name: string; // Nazwa przepisu (required, 1-255 znaków)
+  description?: string; // Opis (optional)
+  generationId?: string; // ID generacji AI (optional, UUID)
   ingredients?: RecipeIngredientCommand[]; // Lista składników (optional, default: [])
-  steps?: RecipeStepCommand[];            // Lista kroków (optional, default: [])
-  tags?: string[];                        // Lista tagów (optional, default: [])
+  steps?: RecipeStepCommand[]; // Lista kroków (optional, default: [])
+  tags?: string[]; // Lista tagów (optional, default: [])
 }
 
 interface RecipeIngredientCommand {
-  content: string;   // Treść składnika (required, min 1 znak)
-  position: number;  // Pozycja na liście (required, dodatnia liczba całkowita)
+  content: string; // Treść składnika (required, min 1 znak)
+  position: number; // Pozycja na liście (required, dodatnia liczba całkowita)
 }
 
 interface RecipeStepCommand {
-  content: string;   // Treść kroku (required, min 1 znak)
-  position: number;  // Pozycja na liście (required, dodatnia liczba całkowita)
+  content: string; // Treść kroku (required, min 1 znak)
+  position: number; // Pozycja na liście (required, dodatnia liczba całkowita)
 }
 ```
 
@@ -288,6 +296,7 @@ const form = useForm({
 ```
 
 **Wartości początkowe**:
+
 - `name`: pusty string
 - `description`: pusty string
 - `ingredients`: tablica z jednym pustym składnikiem (aby UI nie był całkowicie pusty)
@@ -357,6 +366,7 @@ useEffect(() => {
 ### Czyszczenie localStorage
 
 localStorage jest czyszczony w następujących sytuacjach:
+
 1. Po pomyślnym zapisaniu przepisu (w `onSuccess` hooka `useCreateRecipe`)
 2. Po potwierdzeniu anulowania (w `handleCancelConfirm`)
 3. Gdy draft jest starszy niż 24 godziny (opcjonalnie)
@@ -372,11 +382,13 @@ localStorage jest czyszczony w następujących sytuacjach:
 ### Request
 
 **Headers**:
+
 ```
 Content-Type: application/json
 ```
 
 **Body** (typ: `CreateRecipeCommand`):
+
 ```json
 {
   "name": "Spaghetti Carbonara",
@@ -399,6 +411,7 @@ Content-Type: application/json
 ### Response
 
 **Success (201 Created)** - typ: `RecipeDetailDto`:
+
 ```json
 {
   "id": "uuid-nowego-przepisu",
@@ -419,6 +432,7 @@ Content-Type: application/json
 ```
 
 **Error (400 Bad Request)**:
+
 ```json
 {
   "error": "Validation failed",
@@ -432,6 +446,7 @@ Content-Type: application/json
 ```
 
 **Error (401 Unauthorized)**:
+
 ```json
 {
   "error": "Unauthorized"
@@ -443,6 +458,7 @@ Content-Type: application/json
 **Lokalizacja**: `src/components/recipes/hooks/useCreateRecipe.ts`
 
 **Odpowiedzialności**:
+
 1. Wykonanie POST request do `/api/recipes`
 2. Obsługa błędów HTTP (400, 401, 500)
 3. Wyświetlenie toast notifications (success/error)
@@ -484,34 +500,37 @@ async function createRecipe(data: CreateRecipeCommand): Promise<RecipeDetailDto>
 }
 
 export function useCreateRecipe() {
-  const mutation = useMutation({
-    mutationFn: createRecipe,
-    onSuccess: (createdRecipe: RecipeDetailDto) => {
-      // Inwaliduj cache listy przepisów
-      queryClient.invalidateQueries({
-        queryKey: ["recipes"],
-      });
+  const mutation = useMutation(
+    {
+      mutationFn: createRecipe,
+      onSuccess: (createdRecipe: RecipeDetailDto) => {
+        // Inwaliduj cache listy przepisów
+        queryClient.invalidateQueries({
+          queryKey: ["recipes"],
+        });
 
-      // Inwaliduj cache tagów (mogły zostać dodane nowe)
-      queryClient.invalidateQueries({
-        queryKey: ["tags"],
-      });
+        // Inwaliduj cache tagów (mogły zostać dodane nowe)
+        queryClient.invalidateQueries({
+          queryKey: ["tags"],
+        });
 
-      // Wyczyść draft z localStorage
-      localStorage.removeItem(DRAFT_KEY);
+        // Wyczyść draft z localStorage
+        localStorage.removeItem(DRAFT_KEY);
 
-      // Pokaż toast i przekieruj
-      toast.success("Przepis został pomyślnie utworzony!", {
-        duration: 1500,
-        onAutoClose: () => {
-          window.location.href = `/recipes/${createdRecipe.id}`;
-        },
-      });
+        // Pokaż toast i przekieruj
+        toast.success("Przepis został pomyślnie utworzony!", {
+          duration: 1500,
+          onAutoClose: () => {
+            window.location.href = `/recipes/${createdRecipe.id}`;
+          },
+        });
+      },
+      onError: (error: Error) => {
+        toast.error(`Błąd podczas tworzenia przepisu: ${error.message}`);
+      },
     },
-    onError: (error: Error) => {
-      toast.error(`Błąd podczas tworzenia przepisu: ${error.message}`);
-    },
-  }, queryClient);
+    queryClient
+  );
 
   return {
     mutate: mutation.mutate,
@@ -532,6 +551,7 @@ export function useCreateRecipe() {
 **Akcja**: Użytkownik wpisuje tekst w pola formularza (nazwa, opis, składniki, kroki, tagi)
 
 **Efekt**:
+
 - Wartość pola jest aktualizowana w stanie formularza (react-hook-form)
 - Po 1 sekundzie od ostatniej zmiany, stan formularza jest zapisywany do localStorage
 - Walidacja w czasie rzeczywistym: jeśli pole ma błąd, wyświetlany jest komunikat pod polem
@@ -542,6 +562,7 @@ export function useCreateRecipe() {
 **Akcja**: Użytkownik klika przycisk "Dodaj składnik"
 
 **Efekt**:
+
 - Do tablicy `ingredients` w formularzu dodawany jest nowy element `{ content: " ", position: N+1 }`
 - Nowe pole input pojawia się na liście składników
 - Fokus może być ustawiony na nowym polu (opcjonalnie)
@@ -551,6 +572,7 @@ export function useCreateRecipe() {
 **Akcja**: Użytkownik klika ikonę kosza przy składniku
 
 **Efekt**:
+
 - Element jest usuwany z tablicy `ingredients` w formularzu
 - Pole input znika z listy
 - Przycisk usuwania jest wyłączony, gdy lista ma tylko jeden element
@@ -560,6 +582,7 @@ export function useCreateRecipe() {
 **Akcja**: Użytkownik klika przycisk "Dodaj krok"
 
 **Efekt**:
+
 - Do tablicy `steps` w formularzu dodawany jest nowy element `{ content: " ", position: N+1 }`
 - Nowe pole textarea pojawia się na liście kroków
 - Fokus może być ustawiony na nowym polu (opcjonalnie)
@@ -569,6 +592,7 @@ export function useCreateRecipe() {
 **Akcja**: Użytkownik klika ikonę kosza przy kroku
 
 **Efekt**:
+
 - Element jest usuwany z tablicy `steps` w formularzu
 - Pole textarea znika z listy
 - Przycisk usuwania jest wyłączony, gdy lista ma tylko jeden element
@@ -578,6 +602,7 @@ export function useCreateRecipe() {
 **Akcja**: Użytkownik wpisuje nazwę tagu i klika "Dodaj" lub naciska Enter
 
 **Efekt**:
+
 - Tag jest dodawany do tablicy `tags` w formularzu (jeśli jeszcze nie istnieje)
 - Tag pojawia się jako "pigułka" (pill) pod polem input
 - Pole input jest czyszczone
@@ -588,6 +613,7 @@ export function useCreateRecipe() {
 **Akcja**: Użytkownik klika ikonę "x" na pigułce tagu
 
 **Efekt**:
+
 - Tag jest usuwany z tablicy `tags` w formularzu
 - Pigułka znika z widoku
 
@@ -596,6 +622,7 @@ export function useCreateRecipe() {
 **Akcja**: Użytkownik klika przycisk "Zapisz przepis"
 
 **Efekt**:
+
 1. Formularz jest walidowany (react-hook-form + Zod)
 2. Jeśli walidacja przejdzie:
    - Pozycje składników i kroków są przeliczane (index + 1)
@@ -614,6 +641,7 @@ export function useCreateRecipe() {
 **Akcja**: Użytkownik klika przycisk "Anuluj"
 
 **Efekt**:
+
 1. Jeśli formularz nie został zmodyfikowany (`isDirty === false`):
    - Użytkownik jest natychmiast przekierowywany do strony głównej `/recipes`
 2. Jeśli formularz został zmodyfikowany (`isDirty === true`):
@@ -627,6 +655,7 @@ export function useCreateRecipe() {
 **Akcja**: Użytkownik otwiera stronę `/recipes/new`, a w localStorage znajduje się zapisany draft
 
 **Efekt**:
+
 - Draft jest automatycznie ładowany do formularza (wartości pól są wypełniane)
 - Opcjonalnie: wyświetlany jest toast informujący "Przywrócono niezapisany przepis"
 - Użytkownik może kontynuować edycję lub usunąć draft klikając "Anuluj"
@@ -638,6 +667,7 @@ export function useCreateRecipe() {
 Wszystkie pola formularza są walidowane zgodnie z `CreateRecipeSchema`:
 
 #### Nazwa przepisu (`name`)
+
 - **Komponent**: `RecipeBasicInfoSection`
 - **Warunek**: Pole jest wymagane, minimum 1 znak, maksimum 255 znaków
 - **Komunikat błędu**:
@@ -646,12 +676,14 @@ Wszystkie pola formularza są walidowane zgodnie z `CreateRecipeSchema`:
 - **Wpływ na UI**: Komunikat błędu wyświetlany pod polem input, border pola zmienia kolor na czerwony
 
 #### Opis (`description`)
+
 - **Komponent**: `RecipeBasicInfoSection`
 - **Warunek**: Pole opcjonalne, brak ograniczeń
 - **Komunikat błędu**: Brak
 - **Wpływ na UI**: Brak
 
 #### Składniki (`ingredients`)
+
 - **Komponent**: `EditableIngredientsList`
 - **Warunek**: Każdy składnik musi mieć:
   - `content`: minimum 1 znak
@@ -660,6 +692,7 @@ Wszystkie pola formularza są walidowane zgodnie z `CreateRecipeSchema`:
 - **Wpływ na UI**: Komunikat błędu wyświetlany pod polem input składnika
 
 #### Kroki (`steps`)
+
 - **Komponent**: `EditableStepsList`
 - **Warunek**: Każdy krok musi mieć:
   - `content`: minimum 1 znak
@@ -668,6 +701,7 @@ Wszystkie pola formularza są walidowane zgodnie z `CreateRecipeSchema`:
 - **Wpływ na UI**: Komunikat błędu wyświetlany pod polem textarea kroku
 
 #### Tagi (`tags`)
+
 - **Komponent**: `TagInput`
 - **Warunek**: Każdy tag musi być niepustym stringiem (minimum 1 znak)
 - **Komunikat błędu**: "Tag name cannot be empty"
@@ -676,6 +710,7 @@ Wszystkie pola formularza są walidowane zgodnie z `CreateRecipeSchema`:
 ### 9.2. Warunki aktywacji przycisków
 
 #### Przycisk "Zapisz przepis"
+
 - **Warunek aktywacji**: `isDirty === true && !isSubmitting`
 - **Warunek dezaktywacji**: `isDirty === false || isSubmitting`
 - **Wpływ na UI**:
@@ -684,29 +719,35 @@ Wszystkie pola formularza są walidowane zgodnie z `CreateRecipeSchema`:
   - Podczas wysyłania: tekst "Zapisywanie...", spinner (opcjonalnie)
 
 #### Przycisk "Anuluj"
+
 - **Warunek aktywacji**: `!isSubmitting`
 - **Warunek dezaktywacji**: `isSubmitting`
 - **Wpływ na UI**: Przycisk jest nieaktywny tylko podczas wysyłania formularza
 
 #### Przycisk "Dodaj składnik"
+
 - **Warunek aktywacji**: Zawsze aktywny
 - **Wpływ na UI**: Brak
 
 #### Przycisk "Usuń składnik"
+
 - **Warunek aktywacji**: `ingredients.length > 1`
 - **Warunek dezaktywacji**: `ingredients.length === 1`
 - **Wpływ na UI**: Przycisk jest nieaktywny, gdy lista ma tylko jeden element (nie można usunąć ostatniego)
 
 #### Przycisk "Dodaj krok"
+
 - **Warunek aktywacji**: Zawsze aktywny
 - **Wpływ na UI**: Brak
 
 #### Przycisk "Usuń krok"
+
 - **Warunek aktywacji**: `steps.length > 1`
 - **Warunek dezaktywacji**: `steps.length === 1`
 - **Wpływ na UI**: Przycisk jest nieaktywny, gdy lista ma tylko jeden element (nie można usunąć ostatniego)
 
 #### Przycisk "Dodaj" (tag)
+
 - **Warunek aktywacji**: `newTagValue.trim().length > 0`
 - **Warunek dezaktywacji**: `newTagValue.trim().length === 0`
 - **Wpływ na UI**: Przycisk jest nieaktywny, gdy pole tagu jest puste
@@ -742,6 +783,7 @@ Endpoint `/api/recipes` (POST) wykonuje następujące walidacje:
 **Scenariusz**: Użytkownik próbuje wysłać formularz z nieprawidłowymi danymi (np. pusta nazwa)
 
 **Obsługa**:
+
 1. React-hook-form blokuje wysłanie formularza
 2. Zod zwraca błędy walidacji
 3. Komunikaty błędów są wyświetlane pod odpowiednimi polami
@@ -755,6 +797,7 @@ Endpoint `/api/recipes` (POST) wykonuje następujące walidacje:
 **Scenariusz**: Użytkownik próbuje zapisać przepis, ale serwer jest niedostępny lub nie ma połączenia z internetem
 
 **Obsługa**:
+
 1. Fetch rzuca błąd (np. `TypeError: Failed to fetch`)
 2. Hook `useCreateRecipe` wyłapuje błąd w `onError`
 3. Wyświetlany jest toast: "Błąd podczas tworzenia przepisu: Failed to fetch"
@@ -768,6 +811,7 @@ Endpoint `/api/recipes` (POST) wykonuje następujące walidacje:
 **Scenariusz**: Dane formularza przeszły walidację klienta, ale serwer wykrył błąd (np. niespójność danych)
 
 **Obsługa**:
+
 1. API zwraca 400 z JSON: `{ "error": "Validation failed", "details": [...] }`
 2. Hook `useCreateRecipe` parsuje odpowiedź i rzuca `Error` z komunikatem
 3. Wyświetlany jest toast: "Błąd podczas tworzenia przepisu: Validation failed"
@@ -780,6 +824,7 @@ Endpoint `/api/recipes` (POST) wykonuje następujące walidacje:
 **Scenariusz**: Użytkownik nie jest zalogowany (sesja wygasła)
 
 **Obsługa**:
+
 1. API zwraca 401
 2. Hook `useCreateRecipe` rzuca `Error`: "Musisz być zalogowany, aby utworzyć przepis"
 3. Wyświetlany jest toast z tym komunikatem
@@ -792,6 +837,7 @@ Endpoint `/api/recipes` (POST) wykonuje następujące walidacje:
 **Scenariusz**: Problem po stronie serwera (błąd bazy danych, crash aplikacji)
 
 **Obsługa**:
+
 1. API zwraca 500 z JSON: `{ "error": "Internal server error", "message": "..." }`
 2. Hook `useCreateRecipe` rzuca `Error`: "Nie udało się utworzyć przepisu"
 3. Wyświetlany jest toast: "Błąd podczas tworzenia przepisu: Nie udało się utworzyć przepisu"
@@ -804,6 +850,7 @@ Endpoint `/api/recipes` (POST) wykonuje następujące walidacje:
 **Scenariusz**: localStorage zawiera uszkodzone dane (np. niepoprawny JSON)
 
 **Obsługa**:
+
 1. `JSON.parse()` rzuca błąd
 2. Błąd jest wyłapywany w `try-catch`
 3. localStorage jest czyszczony: `localStorage.removeItem(DRAFT_KEY)`
@@ -817,6 +864,7 @@ Endpoint `/api/recipes` (POST) wykonuje następujące walidacje:
 **Scenariusz**: Użytkownik przypadkowo zamyka kartę przeglądarki podczas wypełniania formularza
 
 **Obsługa**:
+
 1. Auto-save zapisał draft do localStorage (przed zamknięciem)
 2. Gdy użytkownik ponownie otwiera `/recipes/new`, draft jest automatycznie przywracany
 3. Toast informuje: "Przywrócono niezapisany przepis" (opcjonalnie)
@@ -828,6 +876,7 @@ Endpoint `/api/recipes` (POST) wykonuje następujące walidacje:
 **Scenariusz**: Użytkownik zostawia niektóre pola składników lub kroków puste
 
 **Obsługa**:
+
 1. Walidacja Zod wykrywa puste pola (`min(1, "... cannot be empty")`)
 2. Komunikaty błędów są wyświetlane pod pustymi polami
 3. Formularz nie jest wysyłany
@@ -842,6 +891,7 @@ Endpoint `/api/recipes` (POST) wykonuje następujące walidacje:
 **Plik**: `src/components/recipes/hooks/useCreateRecipe.ts`
 
 **Opis**: Stworzyć custom hook oparty na `useMutation` z React Query, który:
+
 - Wykonuje POST request do `/api/recipes`
 - Obsługuje odpowiedzi: 201 Created, 400 Bad Request, 401 Unauthorized, 500 Internal Server Error
 - Wyświetla toast notifications (sukces/błąd)
@@ -852,6 +902,7 @@ Endpoint `/api/recipes` (POST) wykonuje następujące walidacje:
 **Wzór**: `src/components/recipes/hooks/useUpdateRecipe.ts`
 
 **Zależności**:
+
 ```typescript
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -893,6 +944,7 @@ export interface CreateRecipeTagInputProps {
 ```
 
 **Modyfikacja istniejącego interfejsu**:
+
 ```typescript
 // Zmodyfikować istniejący interfejs FormActionButtonsProps
 export interface FormActionButtonsProps {
@@ -908,6 +960,7 @@ export interface FormActionButtonsProps {
 **Plik**: `src/components/recipes/form/CreateRecipeBasicInfoSection.tsx`
 
 **Opis**: Skopiować implementację z `RecipeBasicInfoSection.tsx` i zmienić:
+
 - Nazwę komponentu na `CreateRecipeBasicInfoSection`
 - Import typu z `RecipeBasicInfoSectionProps` na `CreateRecipeBasicInfoSectionProps`
 - Wszystkie pozostałe części pozostają identyczne
@@ -917,6 +970,7 @@ export interface FormActionButtonsProps {
 **Plik**: `src/components/recipes/form/CreateRecipeIngredientsList.tsx`
 
 **Opis**: Skopiować implementację z `EditableIngredientsList.tsx` i zmienić:
+
 - Nazwę komponentu na `CreateRecipeIngredientsList`
 - Import typu z `EditableIngredientsListProps` na `CreateRecipeIngredientsListProps`
 - Wszystkie pozostałe części pozostają identyczne (w tym `EditableSectionHeader` może być używany bez zmian)
@@ -926,6 +980,7 @@ export interface FormActionButtonsProps {
 **Plik**: `src/components/recipes/form/CreateRecipeStepsList.tsx`
 
 **Opis**: Skopiować implementację z `EditableStepsList.tsx` i zmienić:
+
 - Nazwę komponentu na `CreateRecipeStepsList`
 - Import typu z `EditableStepsListProps` na `CreateRecipeStepsListProps`
 - Wszystkie pozostałe części pozostają identyczne (w tym `EditableSectionHeader` może być używany bez zmian)
@@ -935,6 +990,7 @@ export interface FormActionButtonsProps {
 **Plik**: `src/components/recipes/form/CreateRecipeTagInput.tsx`
 
 **Opis**: Skopiować implementację z `TagInput.tsx` i zmienić:
+
 - Nazwę komponentu na `CreateRecipeTagInput`
 - Import typu z `TagInputProps` na `CreateRecipeTagInputProps`
 - Wszystkie pozostałe części pozostają identyczne (w tym `TagPill` może być używany bez zmian)
@@ -946,6 +1002,7 @@ export interface FormActionButtonsProps {
 **Opis**: Dodać obsługę opcjonalnego propa `submitButtonText`:
 
 **Zmiana w propsach** (już dodane w Kroku 2):
+
 ```typescript
 export interface FormActionButtonsProps {
   onCancel: () => void;
@@ -956,6 +1013,7 @@ export interface FormActionButtonsProps {
 ```
 
 **Zmiana w komponencie**:
+
 ```typescript
 export function FormActionButtons({
   onCancel,
@@ -982,6 +1040,7 @@ export function FormActionButtons({
 **Plik**: `src/components/recipes/form/ManualRecipeForm.tsx`
 
 **Opis**: Stworzyć główny komponent formularza dla ręcznego tworzenia przepisu:
+
 - Używa `useForm` z `CreateRecipeSchema`
 - Definiuje puste wartości początkowe
 - Implementuje `onSubmit` z użyciem `useCreateRecipe`
@@ -994,6 +1053,7 @@ export function FormActionButtons({
 **Wzór**: `src/components/recipes/form/RecipeEditForm.tsx`
 
 **Główne różnice od RecipeEditForm**:
+
 - Brak propsów `initialData` i `recipeId`
 - Używa `CreateRecipeSchema` zamiast `UpdateRecipeSchema`
 - Używa `useCreateRecipe` zamiast `useUpdateRecipe`
@@ -1001,6 +1061,7 @@ export function FormActionButtons({
 - Przekierowuje do `/recipes/{newId}` zamiast `/recipes/{existingId}`
 
 **Struktura komponentu**:
+
 ```typescript
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
 
@@ -1057,6 +1118,7 @@ export function ManualRecipeForm() {
 **Plik**: `src/pages/recipes/new.astro`
 
 **Opis**: Stworzyć nową stronę Astro dla widoku tworzenia przepisu:
+
 - Ustawić `export const prerender = false` (SSR)
 - Zaimportować layout (np. `MainLayout`)
 - Zaimportować komponent `ManualRecipeForm` z flagą `client:only="react"`
@@ -1064,6 +1126,7 @@ export function ManualRecipeForm() {
 - Stylowanie zgodnie z innymi widokami
 
 **Struktura**:
+
 ```astro
 ---
 import MainLayout from "@/layouts/MainLayout.astro";
@@ -1076,9 +1139,7 @@ export const prerender = false;
   <div class="container mx-auto py-8 px-4">
     <header class="mb-8">
       <h1 class="text-3xl font-bold">Utwórz nowy przepis</h1>
-      <p class="text-muted-foreground mt-2">
-        Wypełnij formularz, aby dodać nowy przepis do swojej kolekcji.
-      </p>
+      <p class="text-muted-foreground mt-2">Wypełnij formularz, aby dodać nowy przepis do swojej kolekcji.</p>
     </header>
 
     <ManualRecipeForm client:only="react" />
@@ -1102,11 +1163,13 @@ export const prerender = false;
   </a>
 </div>
 ```
+
 ---
 
 ## Podsumowanie
 
 Plan implementacji obejmuje:
+
 - **1 nowy custom hook**: `useCreateRecipe`
 - **1 nowy komponent React**: `ManualRecipeForm`
 - **1 nowa strona Astro**: `/recipes/new`

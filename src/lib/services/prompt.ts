@@ -36,5 +36,4 @@ export const getUserPrompt = (inputText: string) => `Wyciągnij przepis z tego t
 
 ${inputText}
 
-Utwórz kompletny, ustrukturyzowany przepis z nazwą, opisem, składnikami i krokami.`
-
+Utwórz kompletny, ustrukturyzowany przepis z nazwą, opisem, składnikami i krokami.`;

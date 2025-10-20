@@ -104,7 +104,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
 
       // Handle other service errors
-      console.error("Failed to verify reset token:", authError);
       return new Response(
         JSON.stringify({
           error: "Token verification failed",
@@ -133,11 +132,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
     );
   } catch (error) {
     // Catch-all for unexpected errors
-    console.error("Unexpected error in POST /api/auth/verify-reset-token:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
         message: "An unexpected error occurred while processing your request",
+        details: error instanceof Error ? error.message : "Unknown error",
       }),
       {
         status: 500,
@@ -148,4 +147,3 @@ export const POST: APIRoute = async ({ request, locals }) => {
     );
   }
 };
-

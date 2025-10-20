@@ -7,6 +7,7 @@ This document outlines comprehensive unit test scenarios for the `RecipeService`
 ## Service Methods
 
 The RecipeService has 5 public methods to test:
+
 1. `createRecipe()` - Create a new recipe with related data
 2. `getRecipeById()` - Retrieve a single recipe
 3. `getRecipesForUser()` - Retrieve paginated list of recipes
@@ -22,6 +23,7 @@ The RecipeService has 5 public methods to test:
 #### 1.1 Success Scenarios
 
 **1.1.1 Create Recipe with Full Data**
+
 - **Scenario Name**: Successfully create recipe with all fields (name, description, ingredients, steps, tags)
 - **Prerequisites**:
   - Mock Supabase with successful responses for all operations
@@ -37,6 +39,7 @@ The RecipeService has 5 public methods to test:
   - Returns RecipeDetailDto with all related data
 
 **1.1.2 Create Minimal Recipe (Name Only)**
+
 - **Scenario Name**: Successfully create recipe with only required name field
 - **Prerequisites**:
   - Mock Supabase with successful responses
@@ -49,6 +52,7 @@ The RecipeService has 5 public methods to test:
   - Returns valid RecipeDetailDto
 
 **1.1.3 Create Recipe with Existing Tags**
+
 - **Scenario Name**: Create recipe with tags that already exist for the user
 - **Prerequisites**:
   - Mock Supabase with:
@@ -63,6 +67,7 @@ The RecipeService has 5 public methods to test:
   - Returns recipe with correct tags
 
 **1.1.4 Create Recipe with Mixed New and Existing Tags**
+
 - **Scenario Name**: Create recipe where some tags exist and some are new
 - **Prerequisites**:
   - Mock Supabase with:
@@ -76,6 +81,7 @@ The RecipeService has 5 public methods to test:
   - Returns recipe with both tags
 
 **1.1.5 Create Recipe without Generation ID**
+
 - **Scenario Name**: Create recipe without linking to a generation record
 - **Prerequisites**:
   - Mock Supabase (all operations except generation update)
@@ -89,6 +95,7 @@ The RecipeService has 5 public methods to test:
 #### 1.2 Error Scenarios
 
 **1.2.1 Recipe Insert Fails**
+
 - **Scenario Name**: Fail when initial recipe insert fails
 - **Prerequisites**:
   - Mock Supabase recipe insert to return error
@@ -99,6 +106,7 @@ The RecipeService has 5 public methods to test:
   - All subsequent operations skipped
 
 **1.2.2 Ingredient Insert Fails - Rollback Triggered**
+
 - **Scenario Name**: Rollback recipe creation when ingredient insert fails
 - **Prerequisites**:
   - Mock Supabase with:
@@ -112,6 +120,7 @@ The RecipeService has 5 public methods to test:
   - All related data cleaned up
 
 **1.2.3 Step Insert Fails - Rollback Triggered**
+
 - **Scenario Name**: Rollback recipe creation when step insert fails
 - **Prerequisites**:
   - Mock Supabase with:
@@ -125,6 +134,7 @@ The RecipeService has 5 public methods to test:
   - No recipe or related data left
 
 **1.2.4 Tag Creation Fails - Rollback Triggered**
+
 - **Scenario Name**: Rollback when creating new tag fails
 - **Prerequisites**:
   - Mock Supabase with:
@@ -138,6 +148,7 @@ The RecipeService has 5 public methods to test:
   - Recipe and all related data deleted
 
 **1.2.5 Tag Linking Fails - Rollback Triggered**
+
 - **Scenario Name**: Rollback when linking tags to recipe fails
 - **Prerequisites**:
   - Mock Supabase with:
@@ -149,6 +160,7 @@ The RecipeService has 5 public methods to test:
   - Complete rollback executed
 
 **1.2.6 Generation Update Fails - Rollback Triggered**
+
 - **Scenario Name**: Rollback when updating generation record fails
 - **Prerequisites**:
   - Mock Supabase with:
@@ -160,6 +172,7 @@ The RecipeService has 5 public methods to test:
   - Complete rollback executed
 
 **1.2.7 GetRecipeById Fails After Successful Creation**
+
 - **Scenario Name**: Fail when fetching created recipe returns error
 - **Prerequisites**:
   - Mock Supabase with:
@@ -170,6 +183,7 @@ The RecipeService has 5 public methods to test:
   - Rollback executed to clean up orphaned recipe
 
 **1.2.8 Schema Validation Fails on Created Recipe**
+
 - **Scenario Name**: Invalid recipe structure returned from database
 - **Prerequisites**:
   - Mock Supabase to return malformed recipe data (missing required fields)
@@ -185,6 +199,7 @@ The RecipeService has 5 public methods to test:
 #### 2.1 Success Scenarios
 
 **2.1.1 Get Recipe - User Owns Recipe**
+
 - **Scenario Name**: Successfully retrieve full recipe details when user is authorized
 - **Prerequisites**:
   - Mock Supabase with:
@@ -199,6 +214,7 @@ The RecipeService has 5 public methods to test:
   - No authorization error
 
 **2.1.2 Get Recipe with No Ingredients**
+
 - **Scenario Name**: Successfully retrieve recipe with null/empty ingredients array
 - **Prerequisites**:
   - Mock Supabase to return recipe with ingredients: null
@@ -209,6 +225,7 @@ The RecipeService has 5 public methods to test:
   - No errors
 
 **2.1.3 Get Recipe with No Steps**
+
 - **Scenario Name**: Successfully retrieve recipe with null/empty steps array
 - **Prerequisites**:
   - Mock Supabase to return recipe with steps: null
@@ -217,6 +234,7 @@ The RecipeService has 5 public methods to test:
   - Ingredients and tags included normally
 
 **2.1.4 Get Recipe with No Tags**
+
 - **Scenario Name**: Successfully retrieve recipe with null/empty tags array
 - **Prerequisites**:
   - Mock Supabase to return recipe with recipe_tags: null or []
@@ -225,6 +243,7 @@ The RecipeService has 5 public methods to test:
   - Other fields included normally
 
 **2.1.5 Get Recipe - Ingredients/Steps Sorted Correctly**
+
 - **Scenario Name**: Verify ingredients and steps are sorted by position
 - **Prerequisites**:
   - Mock Supabase to return:
@@ -237,6 +256,7 @@ The RecipeService has 5 public methods to test:
 #### 2.2 Authorization Error Scenarios
 
 **2.2.1 Recipe Not Found**
+
 - **Scenario Name**: Throw NotFoundError when recipe doesn't exist
 - **Prerequisites**:
   - Mock Supabase existence check to return PGRST116 error (no rows)
@@ -246,6 +266,7 @@ The RecipeService has 5 public methods to test:
   - No second database query executed
 
 **2.2.2 Recipe Not Found - Null Response**
+
 - **Scenario Name**: Throw NotFoundError when recipe query returns null
 - **Prerequisites**:
   - Mock Supabase to return no error but data: null
@@ -253,6 +274,7 @@ The RecipeService has 5 public methods to test:
   - NotFoundError thrown: "Recipe with ID '...' not found"
 
 **2.2.3 Access Denied - User Doesn't Own Recipe**
+
 - **Scenario Name**: Throw ForbiddenError when user doesn't own recipe
 - **Prerequisites**:
   - Mock Supabase existence check returns: { id: "recipe-123", user_id: "owner-user-123" }
@@ -264,6 +286,7 @@ The RecipeService has 5 public methods to test:
 #### 2.3 Database Error Scenarios
 
 **2.3.1 Existence Check Database Error**
+
 - **Scenario Name**: Fail when checking recipe existence encounters database error
 - **Prerequisites**:
   - Mock Supabase existence check to return error (not PGRST116): { message: "Connection timeout" }
@@ -272,6 +295,7 @@ The RecipeService has 5 public methods to test:
   - No authorization check performed
 
 **2.3.2 Recipe Fetch Database Error**
+
 - **Scenario Name**: Fail when fetching full recipe details encounters database error
 - **Prerequisites**:
   - Mock existence check to succeed
@@ -280,6 +304,7 @@ The RecipeService has 5 public methods to test:
   - Error thrown: "Failed to fetch recipe details: Query failed"
 
 **2.3.3 Schema Validation Fails**
+
 - **Scenario Name**: Fail when fetched recipe data doesn't match schema
 - **Prerequisites**:
   - Mock Supabase to return recipe with invalid structure (missing id, malformed nested data)
@@ -293,6 +318,7 @@ The RecipeService has 5 public methods to test:
 #### 3.1 Success Scenarios
 
 **3.1.1 Get Recipes - Default Options (Page 1, No Filter)**
+
 - **Scenario Name**: Retrieve first page of recipes with default sort (created_at, desc)
 - **Prerequisites**:
   - Mock Supabase with recipes count and data
@@ -306,6 +332,7 @@ The RecipeService has 5 public methods to test:
   - Query uses baseSelect (not tagFilteredSelect)
 
 **3.1.2 Get Recipes - With Tag Filter**
+
 - **Scenario Name**: Retrieve recipes filtered by specific tag
 - **Prerequisites**:
   - Mock Supabase with:
@@ -319,6 +346,7 @@ The RecipeService has 5 public methods to test:
   - Pagination shows totalPages: 1
 
 **3.1.3 Get Recipes - Sort by Name Ascending**
+
 - **Scenario Name**: Retrieve recipes sorted by name in ascending order
 - **Prerequisites**:
   - Mock Supabase to sort by name, ascending
@@ -329,6 +357,7 @@ The RecipeService has 5 public methods to test:
   - Query called with order(sortBy, { ascending: true })
 
 **3.1.4 Get Recipes - Sort by Created_At Ascending**
+
 - **Scenario Name**: Retrieve recipes sorted by created_at in ascending order
 - **Prerequisites**:
   - Options: { sortBy: "created_at", order: "asc" }
@@ -338,16 +367,18 @@ The RecipeService has 5 public methods to test:
   - Query called with correct ascending flag
 
 **3.1.5 Get Recipes - Pagination Multiple Pages**
+
 - **Scenario Name**: Retrieve different pages of recipes
 - **Prerequisites**:
   - Mock Supabase with 25 total recipes, pageSize: 10
   - Request: page: 2
 - **Expected Output**:
-  - Query range: from (1)*10 = 10, to 19
+  - Query range: from (1)\*10 = 10, to 19
   - Pagination shows: page: 2, totalPages: 3, totalItems: 25
   - data: 10 items (recipes 11-20)
 
 **3.1.6 Get Recipes - Last Page with Partial Results**
+
 - **Scenario Name**: Retrieve last page with fewer items than pageSize
 - **Prerequisites**:
   - Total recipes: 25, pageSize: 10
@@ -358,6 +389,7 @@ The RecipeService has 5 public methods to test:
   - Pagination shows: totalPages: 3, data.length: 5
 
 **3.1.7 Get Recipes - Empty Results**
+
 - **Scenario Name**: Return empty list when no recipes exist
 - **Prerequisites**:
   - Mock Supabase to return: data: [], count: 0
@@ -368,6 +400,7 @@ The RecipeService has 5 public methods to test:
     - pagination: { page: 1, pageSize: 10, totalItems: 0, totalPages: 0 }
 
 **3.1.8 Get Recipes - Tag Filter Returns Empty**
+
 - **Scenario Name**: Return empty list when tag filter matches no recipes
 - **Prerequisites**:
   - Tag filter: "NonexistentTag"
@@ -377,6 +410,7 @@ The RecipeService has 5 public methods to test:
   - totalItems: 0, totalPages: 0
 
 **3.1.9 Get Recipes - Large Page Size**
+
 - **Scenario Name**: Retrieve all recipes in single page with pageSize > total count
 - **Prerequisites**:
   - Total recipes: 5, pageSize: 100
@@ -385,6 +419,7 @@ The RecipeService has 5 public methods to test:
   - pagination: { page: 1, pageSize: 100, totalItems: 5, totalPages: 1 }
 
 **3.1.10 Get Recipes - Recipes with Mixed Tags**
+
 - **Scenario Name**: Return recipes with correctly mapped tags
 - **Prerequisites**:
   - Mock Supabase to return recipes with varying numbers of tags
@@ -398,6 +433,7 @@ The RecipeService has 5 public methods to test:
 #### 3.2 Error Scenarios
 
 **3.2.1 Database Query Fails**
+
 - **Scenario Name**: Fail when database query encounters error
 - **Prerequisites**:
   - Mock Supabase to return error: { message: "Database connection lost" }
@@ -405,6 +441,7 @@ The RecipeService has 5 public methods to test:
   - Error thrown: "Failed to get recipes for user: Failed to fetch recipes: Database connection lost"
 
 **3.2.2 Schema Validation Fails**
+
 - **Scenario Name**: Fail when recipe data doesn't match schema
 - **Prerequisites**:
   - Mock Supabase to return recipes with invalid structure (missing id)
@@ -412,6 +449,7 @@ The RecipeService has 5 public methods to test:
   - Error thrown: "Failed to get recipes for user: Invalid recipe data structure: ..."
 
 **3.2.3 Count is Null**
+
 - **Scenario Name**: Handle null count from Supabase gracefully
 - **Prerequisites**:
   - Mock Supabase to return: count: null, data: [recipes...]
@@ -427,6 +465,7 @@ The RecipeService has 5 public methods to test:
 #### 4.1 Success Scenarios
 
 **4.1.1 Update Recipe - All Fields**
+
 - **Scenario Name**: Successfully update recipe name, description, ingredients, steps, and tags
 - **Prerequisites**:
   - Mock Supabase with:
@@ -442,6 +481,7 @@ The RecipeService has 5 public methods to test:
   - Returns updated RecipeDetailDto
 
 **4.1.2 Update Recipe - Name and Description Only**
+
 - **Scenario Name**: Update only recipe metadata without changing ingredients/steps/tags
 - **Prerequisites**:
   - UpdateRecipeCommand with:
@@ -456,6 +496,7 @@ The RecipeService has 5 public methods to test:
   - Returns recipe with new metadata but same related data
 
 **4.1.3 Update Recipe - Add Ingredients**
+
 - **Scenario Name**: Add new ingredients to existing recipe
 - **Prerequisites**:
   - Recipe has 2 existing ingredients
@@ -467,6 +508,7 @@ The RecipeService has 5 public methods to test:
   - Returns recipe with 4 ingredients
 
 **4.1.4 Update Recipe - Remove Ingredients**
+
 - **Scenario Name**: Delete ingredients from recipe
 - **Prerequisites**:
   - Recipe has 3 ingredients (IDs: ing-1, ing-2, ing-3)
@@ -477,6 +519,7 @@ The RecipeService has 5 public methods to test:
   - Returns recipe with 2 ingredients
 
 **4.1.5 Update Recipe - Replace All Ingredients**
+
 - **Scenario Name**: Remove all existing ingredients and add new ones
 - **Prerequisites**:
   - Recipe has 2 ingredients
@@ -487,6 +530,7 @@ The RecipeService has 5 public methods to test:
   - Returns recipe with 3 new ingredients
 
 **4.1.6 Update Recipe - Clear All Ingredients**
+
 - **Scenario Name**: Remove all ingredients from recipe
 - **Prerequisites**:
   - Recipe has 2 ingredients
@@ -496,6 +540,7 @@ The RecipeService has 5 public methods to test:
   - Returns recipe with empty ingredients array
 
 **4.1.7 Update Recipe - Add/Remove/Update Tags**
+
 - **Scenario Name**: Update tags: add new, keep some, remove some
 - **Prerequisites**:
   - Recipe has tags: ["Vegetarian", "Quick"]
@@ -509,6 +554,7 @@ The RecipeService has 5 public methods to test:
   - Returns recipe with ["Vegetarian", "Easy", "New"]
 
 **4.1.8 Update Recipe - Clear All Tags**
+
 - **Scenario Name**: Remove all tags from recipe
 - **Prerequisites**:
   - UpdateRecipeCommand with: tags: []
@@ -517,6 +563,7 @@ The RecipeService has 5 public methods to test:
   - Returns recipe with empty tags array
 
 **4.1.9 Update Recipe - With Existing User Tags**
+
 - **Scenario Name**: Link recipe to tags that already exist for user
 - **Prerequisites**:
   - Mock tag queries to return existing tags for "Vegetarian" and "Quick"
@@ -529,6 +576,7 @@ The RecipeService has 5 public methods to test:
 #### 4.2 Error Scenarios - Authorization
 
 **4.2.1 Recipe Not Found**
+
 - **Scenario Name**: Fail when recipe doesn't exist
 - **Prerequisites**:
   - Mock existence check to return PGRST116 error
@@ -539,6 +587,7 @@ The RecipeService has 5 public methods to test:
   - No rollback
 
 **4.2.2 Access Denied - Different User**
+
 - **Scenario Name**: Fail when user doesn't own recipe
 - **Prerequisites**:
   - Recipe owner: "user-123"
@@ -550,6 +599,7 @@ The RecipeService has 5 public methods to test:
 #### 4.3 Error Scenarios - Update Operations
 
 **4.3.1 Recipe Update Fails - Rollback Triggered**
+
 - **Scenario Name**: Rollback when main recipe update fails
 - **Prerequisites**:
   - Mock Supabase with:
@@ -561,6 +611,7 @@ The RecipeService has 5 public methods to test:
   - No ingredient/step/tag updates attempted
 
 **4.3.2 Ingredient Update Fails - Rollback Triggered**
+
 - **Scenario Name**: Rollback all changes when ingredient update fails
 - **Prerequisites**:
   - Recipe update succeeds
@@ -571,6 +622,7 @@ The RecipeService has 5 public methods to test:
   - Returns to original state
 
 **4.3.3 Ingredient Delete Fails - Rollback Triggered**
+
 - **Scenario Name**: Rollback when deleting old ingredients fails
 - **Prerequisites**:
   - Mock ingredient delete to fail: { message: "Foreign key constraint" }
@@ -579,6 +631,7 @@ The RecipeService has 5 public methods to test:
   - Rollback executed
 
 **4.3.4 Step Update Fails - Rollback Triggered**
+
 - **Scenario Name**: Rollback when step operations fail
 - **Prerequisites**:
   - Recipe and ingredient updates succeed
@@ -587,6 +640,7 @@ The RecipeService has 5 public methods to test:
   - Complete rollback executed
 
 **4.3.5 Tag Creation Fails During Update - Rollback Triggered**
+
 - **Scenario Name**: Rollback when creating new tag during update fails
 - **Prerequisites**:
   - All recipe/ingredient/step updates succeed
@@ -595,6 +649,7 @@ The RecipeService has 5 public methods to test:
   - Complete rollback executed
 
 **4.3.6 Tag Linking Fails - Rollback Triggered**
+
 - **Scenario Name**: Rollback when recipe_tags insertion fails
 - **Prerequisites**:
   - Tag creation succeeds
@@ -603,6 +658,7 @@ The RecipeService has 5 public methods to test:
   - Complete rollback executed
 
 **4.3.7 GetRecipeById Fails After Update - Rollback Triggered**
+
 - **Scenario Name**: Rollback when fetching updated recipe fails
 - **Prerequisites**:
   - All updates succeed
@@ -617,6 +673,7 @@ The RecipeService has 5 public methods to test:
 #### 5.1 Success Scenarios
 
 **5.1.1 Delete Recipe - User Owns Recipe**
+
 - **Scenario Name**: Successfully delete recipe when user is authorized
 - **Prerequisites**:
   - Mock Supabase with:
@@ -632,6 +689,7 @@ The RecipeService has 5 public methods to test:
 #### 5.2 Authorization Error Scenarios
 
 **5.2.1 Recipe Not Found**
+
 - **Scenario Name**: Throw NotFoundError when recipe doesn't exist
 - **Prerequisites**:
   - Mock existence check to return PGRST116 error
@@ -641,6 +699,7 @@ The RecipeService has 5 public methods to test:
   - No delete operation executed
 
 **5.2.2 Recipe Not Found - Null Response**
+
 - **Scenario Name**: Throw NotFoundError when existence check returns null
 - **Prerequisites**:
   - Mock existence check returns no error but data: null
@@ -648,6 +707,7 @@ The RecipeService has 5 public methods to test:
   - NotFoundError thrown: "Recipe with ID '...' not found"
 
 **5.2.3 Access Denied - Different User**
+
 - **Scenario Name**: Throw ForbiddenError when user doesn't own recipe
 - **Prerequisites**:
   - Recipe owner: "owner-123"
@@ -660,6 +720,7 @@ The RecipeService has 5 public methods to test:
 #### 5.3 Database Error Scenarios
 
 **5.3.1 Existence Check Database Error**
+
 - **Scenario Name**: Fail when checking existence encounters database error
 - **Prerequisites**:
   - Mock existence check to return error (not PGRST116): { message: "Connection timeout" }
@@ -668,6 +729,7 @@ The RecipeService has 5 public methods to test:
   - No delete operation executed
 
 **5.3.2 Delete Operation Database Error**
+
 - **Scenario Name**: Fail when delete operation encounters database error
 - **Prerequisites**:
   - Existence check succeeds
@@ -680,6 +742,7 @@ The RecipeService has 5 public methods to test:
 ## Mocking Strategy
 
 ### Supabase Client Mock Pattern
+
 All tests should mock the Supabase client using Vitest's `vi.fn()` and `vi.spyOn()`. The mock should support method chaining for Supabase query builder pattern:
 
 ```typescript
@@ -699,7 +762,9 @@ const mockSupabase = {
 ```
 
 ### Error Response Pattern
+
 Supabase errors should be mocked with:
+
 ```typescript
 { data: null, error: { message: "error message", code: "ERROR_CODE" } }
 ```
@@ -709,26 +774,31 @@ Supabase errors should be mocked with:
 ## Testing Considerations
 
 ### 1. Rollback Testing
+
 - Verify that rollback operations actually delete the created data
 - Ensure original error is re-thrown (not masked by rollback errors)
 - Test scenarios where rollback itself might fail (should be logged, not thrown)
 
 ### 2. Authorization Testing
+
 - Always test both successful authorization and denied access
 - Distinguish between NotFoundError and ForbiddenError scenarios
 - Verify that authorization checks happen before attempting operations
 
 ### 3. Data Transformation
+
 - Test that Supabase nested structures are correctly transformed to DTOs
 - Verify sorting of ingredients/steps by position
 - Test tag array flattening from nested structure
 
 ### 4. Async Operations
+
 - All Supabase calls are async and should be awaited in tests
 - Test promise rejection handling
 - Verify error propagation through async chains
 
 ### 5. Edge Cases
+
 - Empty arrays (ingredients, steps, tags)
 - Null vs. empty array in Supabase responses
 - Missing optional fields in CreateRecipeCommand
@@ -739,6 +809,7 @@ Supabase errors should be mocked with:
 ## Test Organization
 
 Recommended file structure:
+
 ```
 src/lib/services/__tests__/
   ├── recipe.service.test.ts (main test file)

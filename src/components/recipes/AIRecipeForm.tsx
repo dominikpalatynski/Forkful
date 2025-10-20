@@ -119,14 +119,8 @@ export function AIRecipeForm() {
    */
   return (
     <div className="space-y-4">
-      <p className="text-muted-foreground">
-        Wystąpił błąd w przepływie tworzenia przepisu. Spróbuj ponownie.
-      </p>
-      <button
-        type="button"
-        onClick={handleBack}
-        className="text-primary hover:underline"
-      >
+      <p className="text-muted-foreground">Wystąpił błąd w przepływie tworzenia przepisu. Spróbuj ponownie.</p>
+      <button type="button" onClick={handleBack} className="text-primary hover:underline">
         Wróć do strony głównej
       </button>
     </div>

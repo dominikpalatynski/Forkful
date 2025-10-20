@@ -54,7 +54,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
     try {
       tags = await tagService.getTags(userId, validatedParams.q);
     } catch (serviceError) {
-      console.error("Failed to get tags:", serviceError);
       return new Response(
         JSON.stringify({
           error: "Failed to get tags",
@@ -77,12 +76,11 @@ export const GET: APIRoute = async ({ request, locals }) => {
       },
     });
   } catch (error) {
-    // Catch-all for unexpected errors
-    console.error("Unexpected error in GET /api/tags:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
         message: "An unexpected error occurred while processing your request",
+        details: error instanceof Error ? error.message : "Unknown error",
       }),
       {
         status: 500,

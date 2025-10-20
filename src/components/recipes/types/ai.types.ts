@@ -1,5 +1,5 @@
 /** Faza przepływu AI Recipe Form */
-export type AIRecipeFormPhase = 'input' | 'edit';
+export type AIRecipeFormPhase = "input" | "edit";
 
 /** Props dla AIRecipeTextInput */
 export interface AIRecipeTextInputProps {

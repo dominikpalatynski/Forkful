@@ -25,7 +25,7 @@ export function UpdatePasswordForm() {
     mutate: updatePassword,
     isPending: isUpdatePending,
     error: updateError,
-    isError: isUpdateError
+    isError: isUpdateError,
   } = useUpdatePassword();
 
   // Handle form submission
@@ -44,14 +44,8 @@ export function UpdatePasswordForm() {
   // Show error state if token verification failed
   if (tokenVerification.isError && tokenVerification.error) {
     return (
-      <ErrorState
-        title="Invalid Reset Link"
-        error={tokenVerification.error}
-      >
-        <a
-          href="/auth/forgot-password"
-          className="text-primary hover:underline font-medium"
-        >
+      <ErrorState title="Invalid Reset Link" error={tokenVerification.error}>
+        <a href="/auth/forgot-password" className="text-primary hover:underline font-medium">
           Request a new password reset link
         </a>
       </ErrorState>
@@ -60,13 +54,7 @@ export function UpdatePasswordForm() {
 
   // Show error state if password update failed
   if (isUpdateError && updateError) {
-    return (
-      <ErrorState
-        title="Password Update Failed"
-        error={updateError}
-        onRetry={() => window.location.reload()}
-      />
-    );
+    return <ErrorState title="Password Update Failed" error={updateError} onRetry={() => window.location.reload()} />;
   }
 
   // Don't render form until token is successfully verified
@@ -75,11 +63,5 @@ export function UpdatePasswordForm() {
   }
 
   // Render the password form
-  return (
-    <PasswordForm
-      onSubmit={handleSubmit}
-      isPending={isUpdatePending}
-    />
-  );
+  return <PasswordForm onSubmit={handleSubmit} isPending={isUpdatePending} />;
 }
-

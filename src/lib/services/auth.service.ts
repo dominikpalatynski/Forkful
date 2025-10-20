@@ -1,5 +1,12 @@
 import type { SupabaseClientType } from "../../db/supabase.client";
-import type { LoginSchemaType, RegisterSchemaType, ForgotPasswordSchemaType, ResetPasswordSchemaType, UpdatePasswordSchemaType, VerifyResetTokenSchemaType } from "../schemas/auth.schema";
+import type {
+  LoginSchemaType,
+  RegisterSchemaType,
+  ForgotPasswordSchemaType,
+  ResetPasswordSchemaType,
+  UpdatePasswordSchemaType,
+  VerifyResetTokenSchemaType,
+} from "../schemas/auth.schema";
 
 /**
  * Custom error classes for authentication service operations
@@ -37,16 +44,18 @@ export class AuthService {
    */
   async login(credentials: LoginSchemaType): Promise<void> {
     try {
-      const { data, error } = await this.supabase.auth.signInWithPassword({
+      const { error } = await this.supabase.auth.signInWithPassword({
         email: credentials.email,
         password: credentials.password,
       });
 
       if (error) {
         // Handle different types of authentication errors
-        if (error.message.includes("Invalid login credentials") ||
-            error.message.includes("Email not confirmed") ||
-            error.message.includes("User not found")) {
+        if (
+          error.message.includes("Invalid login credentials") ||
+          error.message.includes("Email not confirmed") ||
+          error.message.includes("User not found")
+        ) {
           throw new AuthenticationError("Invalid email or password");
         }
 
@@ -84,15 +93,14 @@ export class AuthService {
    */
   async register(credentials: RegisterSchemaType): Promise<void> {
     try {
-      const { data, error } = await this.supabase.auth.signUp({
+      const { error } = await this.supabase.auth.signUp({
         email: credentials.email,
         password: credentials.password,
       });
 
       if (error) {
         // Handle different types of registration errors
-        if (error.message.includes("User already registered") ||
-            error.message.includes("already been registered")) {
+        if (error.message.includes("User already registered") || error.message.includes("already been registered")) {
           throw new AuthenticationError("A user with this email already exists");
         }
 
@@ -120,8 +128,6 @@ export class AuthService {
         throw error;
       }
 
-      // Handle unexpected errors
-      console.error("Unexpected error during registration:", error);
       throw new Error("An unexpected error occurred during registration. Please try again.");
     }
   }
@@ -144,7 +150,7 @@ export class AuthService {
       // Success - session is cleared
     } catch (error) {
       // Re-throw intentional errors
-      if (error instanceof Error && error.message.startsWith('Logout failed:')) {
+      if (error instanceof Error && error.message.startsWith("Logout failed:")) {
         throw error;
       }
 
@@ -165,12 +171,9 @@ export class AuthService {
    */
   async forgotPassword(emailData: ForgotPasswordSchemaType, url: string): Promise<void> {
     try {
-      const { error } = await this.supabase.auth.resetPasswordForEmail(
-        emailData.email,
-        {
-          redirectTo: `${url}/auth/reset-password`,
-        }
-      );
+      const { error } = await this.supabase.auth.resetPasswordForEmail(emailData.email, {
+        redirectTo: `${url}/auth/reset-password`,
+      });
 
       if (error) {
         // Handle different types of password reset errors
@@ -213,15 +216,17 @@ export class AuthService {
    */
   async resetPassword(passwordData: ResetPasswordSchemaType): Promise<void> {
     try {
-      const { data, error } = await this.supabase.auth.updateUser({
+      const { error } = await this.supabase.auth.updateUser({
         password: passwordData.password,
       });
 
       if (error) {
         // Handle different types of password update errors
-        if (error.message.includes("Invalid refresh token") ||
-            error.message.includes("Token has expired") ||
-            error.message.includes("JWT expired")) {
+        if (
+          error.message.includes("Invalid refresh token") ||
+          error.message.includes("Token has expired") ||
+          error.message.includes("JWT expired")
+        ) {
           throw new AuthenticationError("Your password reset link has expired. Please request a new one.");
         }
 
@@ -280,15 +285,19 @@ export class AuthService {
     try {
       const { data, error } = await this.supabase.auth.verifyOtp({
         token_hash: tokenData.token_hash,
-        type: 'recovery',
+        type: "recovery",
       });
 
       if (error) {
         // Handle different types of token verification errors
-        if (error.message.includes("Token has expired") ||
-            error.message.includes("JWT expired") ||
-            error.message.includes("Invalid token")) {
-          throw new AuthenticationError("Your password reset link has expired or is invalid. Please request a new one.");
+        if (
+          error.message.includes("Token has expired") ||
+          error.message.includes("JWT expired") ||
+          error.message.includes("Invalid token")
+        ) {
+          throw new AuthenticationError(
+            "Your password reset link has expired or is invalid. Please request a new one."
+          );
         }
 
         if (error.message.includes("Invalid refresh token")) {
@@ -303,7 +312,7 @@ export class AuthService {
       if (data.user) {
         return {
           id: data.user.id,
-          email: data.user.email || '',
+          email: data.user.email || "",
         };
       }
 

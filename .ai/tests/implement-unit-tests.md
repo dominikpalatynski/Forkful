@@ -34,6 +34,7 @@ Your task is to:
 4. Generate a complete TypeScript test file
 
 Before writing your test implementation, work in <analysis> tags inside your thinking block to:
+
 - List out each method in the class along with its parameters, return type, and any dependencies it uses. It's OK for this section to be quite long.
 - Go through each test scenario one by one and write down exactly what behavior it asks you to verify
 - For each test scenario, identify which specific mocking patterns from the provided Supabase examples you'll need to use
@@ -50,21 +51,22 @@ After your analysis, provide the complete TypeScript unit test file implementati
 - Clear, descriptive test names
 
 Example output structure:
+
 ```typescript
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from "vitest";
 // ... other imports
 
 // ... mocks setup
 
-describe('ClassName', () => {
+describe("ClassName", () => {
   // ... setup
 
-  describe('method name', () => {
-    it('should [specific behavior from test scenario]', () => {
+  describe("method name", () => {
+    it("should [specific behavior from test scenario]", () => {
       // ... test implementation
-    })
-  })
-})
+    });
+  });
+});
 ```
 
 Remember: Focus on implementing exactly what is requested in the test scenarios, nothing more.

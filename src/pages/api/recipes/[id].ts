@@ -55,14 +55,13 @@ export const GET: APIRoute = async ({ params, locals }) => {
     try {
       recipe = await recipeService.getRecipeById(validatedParams.id, userId);
     } catch (serviceError) {
-      console.error("Failed to get recipe by ID:", serviceError);
-
       // Handle specific custom error types
       if (serviceError instanceof NotFoundError) {
         return new Response(
           JSON.stringify({
             error: "Recipe not found",
             message: "The recipe with the specified ID does not exist.",
+            details: serviceError instanceof Error ? serviceError.message : "Unknown error",
           }),
           {
             status: 404,
@@ -112,11 +111,11 @@ export const GET: APIRoute = async ({ params, locals }) => {
     });
   } catch (error) {
     // Catch-all for unexpected errors
-    console.error("Unexpected error in GET /api/recipes/[id]:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
         message: "An unexpected error occurred while processing your request",
+        details: error instanceof Error ? error.message : "Unknown error",
       }),
       {
         status: 500,
@@ -174,7 +173,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     let requestBody;
     try {
       requestBody = await request.json();
-    } catch (parseError) {
+    } catch {
       return new Response(
         JSON.stringify({
           error: "Invalid JSON",
@@ -217,14 +216,13 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     try {
       updatedRecipe = await recipeService.updateRecipe(validatedParams.id, validatedData, userId);
     } catch (serviceError) {
-      console.error("Failed to update recipe:", serviceError);
-
       // Handle specific custom error types
       if (serviceError instanceof NotFoundError) {
         return new Response(
           JSON.stringify({
             error: "Recipe not found",
             message: "The recipe with the specified ID does not exist.",
+            details: serviceError instanceof Error ? serviceError.message : "Unknown error",
           }),
           {
             status: 404,
@@ -274,11 +272,11 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     });
   } catch (error) {
     // Catch-all for unexpected errors
-    console.error("Unexpected error in PUT /api/recipes/[id]:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
         message: "An unexpected error occurred while processing your request",
+        details: error instanceof Error ? error.message : "Unknown error",
       }),
       {
         status: 500,
@@ -336,14 +334,13 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     try {
       await recipeService.deleteRecipe(validatedParams.id, userId);
     } catch (serviceError) {
-      console.error("Failed to delete recipe:", serviceError);
-
       // Handle specific custom error types
       if (serviceError instanceof NotFoundError) {
         return new Response(
           JSON.stringify({
             error: "Recipe not found",
             message: "The recipe with the specified ID does not exist.",
+            details: serviceError instanceof Error ? serviceError.message : "Unknown error",
           }),
           {
             status: 404,
@@ -359,6 +356,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
           JSON.stringify({
             error: "Access forbidden",
             message: "You don't have permission to delete this recipe.",
+            details: serviceError instanceof Error ? serviceError.message : "Unknown error",
           }),
           {
             status: 403,
@@ -389,12 +387,11 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       status: 204,
     });
   } catch (error) {
-    // Catch-all for unexpected errors
-    console.error("Unexpected error in DELETE /api/recipes/[id]:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",
         message: "An unexpected error occurred while processing your request",
+        details: error instanceof Error ? error.message : "Unknown error",
       }),
       {
         status: 500,

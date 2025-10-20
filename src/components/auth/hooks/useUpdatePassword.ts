@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { queryClient } from "@/store/query";
 
 /**
@@ -66,12 +65,15 @@ async function updatePassword(passwordData: { password: string; confirmPassword:
  * ```
  */
 export function useUpdatePassword() {
-  const mutation = useMutation({
-    mutationFn: updatePassword,
-    onSuccess: () => {
+  const mutation = useMutation(
+    {
+      mutationFn: updatePassword,
+      onSuccess: () => {
         window.location.href = "/auth/login";
+      },
     },
-  }, queryClient);
+    queryClient
+  );
 
   return {
     mutate: mutation.mutate,
@@ -83,4 +85,3 @@ export function useUpdatePassword() {
     reset: mutation.reset,
   } as const;
 }
-

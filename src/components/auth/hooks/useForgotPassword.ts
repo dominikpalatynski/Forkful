@@ -44,15 +44,18 @@ async function forgotPassword(emailData: ForgotPasswordSchemaType): Promise<void
  * ```
  */
 export function useForgotPassword() {
-  const mutation = useMutation({
-    mutationFn: forgotPassword,
-    onSuccess: () => {
-      toast.success("If an account with that email exists, we've sent you a password reset link.");
+  const mutation = useMutation(
+    {
+      mutationFn: forgotPassword,
+      onSuccess: () => {
+        toast.success("If an account with that email exists, we've sent you a password reset link.");
+      },
+      onError: (error: Error) => {
+        toast.error(`Password reset request failed: ${error.message}`);
+      },
     },
-    onError: (error: Error) => {
-      toast.error(`Password reset request failed: ${error.message}`);
-    },
-  }, queryClient);
+    queryClient
+  );
 
   return {
     mutate: mutation.mutate,
