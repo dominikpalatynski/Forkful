@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { AIFormActionButtonsProps } from "../types";
+import type { AIFormActionButtonsProps } from "../types/ai.types";
 
 /**
  * AIFormActionButtons Component

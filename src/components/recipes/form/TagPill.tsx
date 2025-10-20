@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
-import type { TagPillProps } from "../types";
+import type { TagPillProps } from "../types/form.types";
 
 /**
  * TagPill Component

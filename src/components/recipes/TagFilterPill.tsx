@@ -1,5 +1,5 @@
 import React from "react";
-import type { TagFilterPillProps } from "./types";
+import type { TagFilterPillProps } from "./types/list.types";
 import { Button } from "@/components/ui/button";
 
 export const TagFilterPill = React.memo(function TagFilterPill({

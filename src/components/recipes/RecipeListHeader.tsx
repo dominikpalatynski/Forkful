@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { SearchInput } from "./SearchInput";
 import { Button } from "@/components/ui/button";
-import type { RecipeListHeaderProps } from "./types";
+import type { RecipeListHeaderProps } from "./types/list.types";
 import { Plus, Sparkles } from "lucide-react";
 
 export function RecipeListHeader({ searchValue, onSearchChange }: RecipeListHeaderProps) {

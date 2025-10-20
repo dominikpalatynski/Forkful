@@ -9,7 +9,7 @@ import { EditableIngredientsList } from "./EditableIngredientsList";
 import { EditableStepsList } from "./EditableStepsList";
 import { TagInput } from "./TagInput";
 import { FormActionButtons } from "./FormActionButtons";
-import type { RecipeEditFormProps } from "../types";
+import type { RecipeEditFormProps } from "../types/form.types";
 import { Separator } from "@/components/ui/separator";
 import { CancelRecipeEditDialog } from "./CancelRecipeEditDialog";
 /**

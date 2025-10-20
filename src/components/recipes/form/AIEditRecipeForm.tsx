@@ -9,7 +9,7 @@ import { CreateRecipeStepsList } from "./CreateRecipeStepsList";
 import { CreateRecipeTagInput } from "./CreateRecipeTagInput";
 import { AIFormActionButtons } from "./AIFormActionButtons";
 import { useTags } from "../hooks/useTags";
-import type { AIEditRecipeFormProps } from "../types";
+import type { AIEditRecipeFormProps } from "../types/ai.types";
 import type { CreateRecipeCommand } from "@/types";
 
 /**

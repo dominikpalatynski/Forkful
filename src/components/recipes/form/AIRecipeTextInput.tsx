@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { CharacterCounter } from "./CharacterCounter";
-import type { AIRecipeTextInputProps } from "@/components/recipes/types";
+import type { AIRecipeTextInputProps } from "../types/ai.types";
 
 const MIN_CHARS = 100;
 const MAX_CHARS = 10000;

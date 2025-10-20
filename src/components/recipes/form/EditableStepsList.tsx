@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { EditableSectionHeader } from "./EditableSectionHeader";
 import { DraggableStepItem } from "./DraggableStepItem";
-import type { EditableStepsListProps } from "../types";
+import type { EditableStepsListProps } from "../types/form.types";
 
 /**
  * EditableStepsList Component

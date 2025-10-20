@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import type { FormActionButtonsProps } from "../types";
+import type { FormActionButtonsProps } from "../types/form.types";
 
 /**
  * FormActionButtons Component

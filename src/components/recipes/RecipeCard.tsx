@@ -1,5 +1,5 @@
 import React from "react";
-import type { RecipeCardProps } from "./types";
+import type { RecipeCardProps } from "./types/list.types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const RecipeCard = React.memo(function RecipeCard({ recipe }: RecipeCardProps): React.ReactElement {

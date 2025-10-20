@@ -2,7 +2,7 @@ import { useRecipeDetail } from "../hooks/useRecipeDetail";
 import { RecipeEditForm } from "./RecipeEditForm";
 import { EmptyState } from "../EmptyState";
 import { ErrorState } from "../ErrorState";
-import type { RecipeEditFormContainerProps } from "../types";
+import type { RecipeEditFormContainerProps } from "../types/form.types";
 
 /**
  * RecipeEditFormContainer Component

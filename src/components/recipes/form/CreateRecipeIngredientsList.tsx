@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { EditableSectionHeader } from "./EditableSectionHeader";
 import { DraggableCreateIngredientItem } from "./DraggableCreateIngredientItem";
-import type { CreateRecipeIngredientsListProps } from "../types";
+import type { CreateRecipeIngredientsListProps } from "../types/form.types";
 
 /**
  * CreateRecipeIngredientsList Component

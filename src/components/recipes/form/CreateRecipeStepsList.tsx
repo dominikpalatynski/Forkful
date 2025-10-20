@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { EditableSectionHeader } from "./EditableSectionHeader";
 import { DraggableCreateStepItem } from "./DraggableCreateStepItem";
-import type { CreateRecipeStepsListProps } from "../types";
+import type { CreateRecipeStepsListProps } from "../types/form.types";
 
 /**
  * CreateRecipeStepsList Component

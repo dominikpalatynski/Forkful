@@ -1,7 +1,7 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import type { RecipeBasicInfoSectionProps } from "../types";
+import type { RecipeBasicInfoSectionProps } from "../types/form.types";
 
 /**
  * RecipeBasicInfoSection Component

@@ -1,5 +1,5 @@
 import React from "react";
-import type { TagFilterProps } from "./types";
+import type { TagFilterProps } from "./types/list.types";
 import { TagFilterPill } from "./TagFilterPill";
 
 export function TagFilter({ tags, selectedTag, onTagSelect }: TagFilterProps): React.ReactElement | null {

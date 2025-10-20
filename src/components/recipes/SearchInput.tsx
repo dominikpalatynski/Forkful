@@ -1,7 +1,7 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
-import type { SearchInputProps } from "./types";
+import type { SearchInputProps } from "./types/list.types";
 import { Button } from "../ui/button";
 
 export function SearchInput({ value, onChange, placeholder }: SearchInputProps): React.ReactElement {

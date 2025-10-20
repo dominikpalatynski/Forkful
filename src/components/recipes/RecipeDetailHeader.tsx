@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import type { RecipeDetailHeaderProps } from "./types";
+import type { RecipeDetailHeaderProps } from "./types/detail.types";
 import { Badge } from "@/components/ui/badge";
 /**
  * Formats an ISO date string to a localized readable format (DD.MM.YYYY).

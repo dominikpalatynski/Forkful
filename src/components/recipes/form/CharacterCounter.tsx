@@ -1,5 +1,5 @@
 import React from "react";
-import type { CharacterCounterProps } from "@/components/recipes/types";
+import type { CharacterCounterProps } from "../types/ai.types";
 import { cn } from "@/utils/ui";
 /**
  * Komponent wyświetlający licznik znaków z kolorowym feedbackiem.

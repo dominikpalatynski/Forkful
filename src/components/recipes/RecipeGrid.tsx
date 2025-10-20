@@ -1,5 +1,5 @@
 import React from "react";
-import type { RecipeGridProps } from "./types";
+import type { RecipeGridProps } from "./types/list.types";
 import { RecipeCard } from "./RecipeCard";
 import { RecipeCardSkeleton } from "./RecipeCardSkeleton";
 import { EmptyState } from "./EmptyState";

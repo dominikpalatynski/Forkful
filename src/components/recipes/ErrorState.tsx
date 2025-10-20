@@ -1,5 +1,5 @@
 import React from "react";
-import type { ErrorStateProps } from "./types";
+import type { ErrorStateProps } from "./types/list.types";
 import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

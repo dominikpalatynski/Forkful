@@ -1,14 +1,11 @@
 import React from "react";
-import { useAIRecipeFormStore } from "@/store/ai-recipe-form.store";
-import { useGenerateRecipe } from "./hooks/useGenerateRecipe";
-import { useCreateRecipe } from "./hooks/useCreateRecipe";
+import { useAIRecipeFormFlow } from "./hooks/useAIRecipeFormFlow";
+import { useConfirmationDialogs } from "./AIRecipeForm/useConfirmationDialogs";
 import {
-  useConfirmationDialogs
-} from "./AIRecipeForm/useConfirmationDialogs";
-import { InputPhase } from "./AIRecipeForm/InputPhase";
-import { EditPhase } from "./AIRecipeForm/EditPhase";
-import { ConfirmationDialogs } from "./AIRecipeForm/ConfirmationDialogs";
-import type { CreateRecipeCommand } from "@/types";
+  AIRecipeFormInputPhase,
+  AIRecipeFormEditPhase,
+  AIRecipeFormConfirmationDialogs,
+} from "./AIRecipeForm/AIRecipeForm.Phases";
 
 /**
  * AIRecipeForm Component
@@ -30,8 +27,8 @@ import type { CreateRecipeCommand } from "@/types";
  *
  * Architecture:
  * - State managed by Zustand store with localStorage persistence
- * - State machine pattern via useAIRecipeFormMachine hook
- * - Separated concerns: InputPhase, EditPhase, ConfirmationDialogs
+ * - Custom hook (useAIRecipeFormFlow) extracts state management logic
+ * - Compound pattern: InputPhase, EditPhase, ConfirmationDialogs components
  * - Dialog management via useConfirmationDialogs hook
  *
  * @example
@@ -46,87 +43,18 @@ export function AIRecipeForm() {
     inputText,
     generationId,
     generatedData,
-    setInputText,
-    setGeneratedData,
-    goBackToInput,
-    reset,
-  } = useAIRecipeFormStore();
+    hasData,
+    handleGenerate,
+    handleInputChange,
+    handleBack,
+    handleSubmit,
+    handleConfirmCancel,
+    handleConfirmBackToText,
+    generateMutation,
+    createMutation,
+  } = useAIRecipeFormFlow();
 
   const dialogs = useConfirmationDialogs();
-  const generateMutation = useGenerateRecipe();
-  const createMutation = useCreateRecipe({
-    onSuccessBeforeRedirect: () => {
-      reset();
-    },
-  });
-
-  /**
-   * Derived state: Check if user has any data entered
-   */
-  const hasData = React.useMemo(() => {
-    return inputText.trim().length > 0 || generatedData !== null;
-  }, [inputText, generatedData]);
-
-  /**
-   * Handler for AI recipe generation
-   */
-  const handleGenerate = React.useCallback(
-    (text: string) => {
-      generateMutation.mutate(
-        { inputText: text },
-        {
-          onSuccess: (data) => {
-            setGeneratedData(data, data.generationId);
-          },
-        }
-      );
-    },
-    [generateMutation, setGeneratedData]
-  );
-
-  /**
-   * Handler for input text changes
-   */
-  const handleInputChange = React.useCallback(
-    (text: string) => {
-      setInputText(text);
-    },
-    [setInputText]
-  );
-
-  /**
-   * Handler for navigating back to home
-   */
-  const handleBack = React.useCallback(() => {
-    reset();
-    window.location.href = "/";
-  }, [reset]);
-
-  /**
-   * Handler for recipe submission
-   */
-  const handleSubmit = React.useCallback(
-    (data: CreateRecipeCommand) => {
-      createMutation.mutate(data);
-    },
-    [createMutation]
-  );
-
-  /**
-   * Handler for cancel confirmation
-   */
-  const handleConfirmCancel = React.useCallback(() => {
-    reset();
-    window.location.href = "/";
-  }, [reset]);
-
-  /**
-   * Handler for back to text confirmation
-   */
-  const handleConfirmBackToText = React.useCallback(() => {
-    goBackToInput();
-    dialogs.backToText.close();
-  }, [goBackToInput, dialogs.backToText]);
 
   /**
    * Render Input Phase
@@ -134,7 +62,7 @@ export function AIRecipeForm() {
   if (phase === "input") {
     return (
       <>
-        <InputPhase
+        <AIRecipeFormInputPhase
           inputText={inputText}
           onInputChange={handleInputChange}
           onGenerate={handleGenerate}
@@ -144,7 +72,7 @@ export function AIRecipeForm() {
           confirmCancelDialog={dialogs.confirmCancel}
         />
 
-        <ConfirmationDialogs
+        <AIRecipeFormConfirmationDialogs
           phase="input"
           confirmCancelDialog={dialogs.confirmCancel}
           backToTextDialog={dialogs.backToText}
@@ -162,7 +90,7 @@ export function AIRecipeForm() {
   if (phase === "edit" && generatedData && generationId) {
     return (
       <>
-        <EditPhase
+        <AIRecipeFormEditPhase
           generatedData={generatedData}
           generationId={generationId}
           onSubmit={handleSubmit}
@@ -174,7 +102,7 @@ export function AIRecipeForm() {
           backToTextDialog={dialogs.backToText}
         />
 
-        <ConfirmationDialogs
+        <AIRecipeFormConfirmationDialogs
           phase="edit"
           confirmCancelDialog={dialogs.confirmCancel}
           backToTextDialog={dialogs.backToText}

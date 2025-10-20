@@ -1,5 +1,5 @@
 import React from "react";
-import type { PaginationControlsProps } from "./types";
+import type { PaginationControlsProps } from "./types/list.types";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 

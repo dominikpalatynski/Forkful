@@ -1,5 +1,5 @@
 import { SectionHeader } from "./SectionHeader";
-import type { RecipeStepsSectionProps } from "./types";
+import type { RecipeStepsSectionProps } from "./types/detail.types";
 
 /**
  * RecipeStepsSection component displays a numbered list of recipe preparation steps.

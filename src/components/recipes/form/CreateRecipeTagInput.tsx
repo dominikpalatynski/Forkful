@@ -7,7 +7,7 @@ import { TagPill } from "./TagPill";
 import { Plus } from "lucide-react";
 import { useTags } from "../hooks/useTags";
 import { useDebounce } from "../hooks/useDebounce";
-import type { CreateRecipeTagInputProps } from "../types";
+import type { CreateRecipeTagInputProps } from "../types/form.types";
 
 /**
  * CreateRecipeTagInput Component

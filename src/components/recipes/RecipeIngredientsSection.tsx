@@ -1,5 +1,5 @@
 import { Card, CardContent } from "../ui/card";
-import type { RecipeIngredientsSectionProps } from "./types";
+import type { RecipeIngredientsSectionProps } from "./types/detail.types";
 import { SectionHeader } from "./SectionHeader";
 /**
  * RecipeIngredientsSection component displays a list of recipe ingredients

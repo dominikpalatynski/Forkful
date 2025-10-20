@@ -5,7 +5,7 @@ import { RecipeMetadata } from "./RecipeMetadata";
 import { RecipeContentLayout } from "./RecipeContentLayout";
 import { DeleteRecipeDialog } from "./DeleteRecipeDialog";
 import { ErrorState } from "./ErrorState";
-import type { RecipeDetailViewProps } from "./types";
+import type { RecipeDetailViewProps } from "./types/detail.types";
 
 /**
  * LoadingState component displays a loading skeleton while recipe data is being fetched.

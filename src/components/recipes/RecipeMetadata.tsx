@@ -1,4 +1,4 @@
-import type { RecipeMetadataProps } from "./types";
+import type { RecipeMetadataProps } from "./types/detail.types";
 import { SectionHeader } from "./SectionHeader";
 import { Card, CardContent } from "../ui/card";
 /**

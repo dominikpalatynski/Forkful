@@ -1,5 +1,5 @@
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import type { DeleteRecipeDialogProps } from "./types";
+import type { DeleteRecipeDialogProps } from "./types/detail.types";
 
 /**
  * DeleteRecipeDialog component displays a confirmation modal for recipe deletion.

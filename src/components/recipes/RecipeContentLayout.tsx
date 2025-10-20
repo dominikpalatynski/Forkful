@@ -1,6 +1,6 @@
 import { RecipeIngredientsSection } from "./RecipeIngredientsSection";
 import { RecipeStepsSection } from "./RecipeStepsSection";
-import type { RecipeContentLayoutProps } from "./types";
+import type { RecipeContentLayoutProps } from "./types/detail.types";
 
 /**
  * RecipeContentLayout component provides a responsive layout for recipe ingredients

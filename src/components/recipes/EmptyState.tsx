@@ -1,5 +1,5 @@
 import React from "react";
-import type { EmptyStateProps } from "./types";
+import type { EmptyStateProps } from "./types/list.types";
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { ChefHat, Search } from "lucide-react";
