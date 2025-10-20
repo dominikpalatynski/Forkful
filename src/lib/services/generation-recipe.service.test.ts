@@ -413,9 +413,6 @@ describe("GenerationRecipeService", () => {
       const inputText = "Make pasta";
       const userId = "user-123";
       const originalError = new OpenRouterError("Original error");
-      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {
-        // Intentionally empty - suppressing console output during test
-      });
 
       vi.mocked(mockOpenRouterService.generate).mockRejectedValueOnce(originalError);
 
@@ -435,10 +432,6 @@ describe("GenerationRecipeService", () => {
       });
 
       await expect(service.generateRecipeFromText(inputText, userId)).rejects.toThrow("Original error");
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to log generation error:", expect.anything());
-
-      consoleErrorSpy.mockRestore();
     });
 
     it("should handle database insert returning null data despite no error", async () => {

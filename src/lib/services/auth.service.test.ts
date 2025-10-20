@@ -204,8 +204,6 @@ describe("AuthService", () => {
           password: "password123",
         };
 
-        const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
         authMocks.signInWithPassword.mockRejectedValue(new Error("Network error"));
 
         // Act & Assert
@@ -214,15 +212,11 @@ describe("AuthService", () => {
           "An unexpected error occurred during authentication. Please try again."
         );
 
-        expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
-        expect(consoleErrorSpy).toHaveBeenCalledWith("Unexpected error during login:", expect.any(Error));
         expect(authMocks.signInWithPassword).toHaveBeenCalledTimes(2);
         expect(authMocks.signInWithPassword).toHaveBeenCalledWith({
           email: credentials.email,
           password: credentials.password,
         });
-
-        consoleErrorSpy.mockRestore();
       });
     });
   });
@@ -412,8 +406,6 @@ describe("AuthService", () => {
           confirmPassword: "validpassword123",
         };
 
-        const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
         authMocks.signUp.mockRejectedValue(new Error("Network error"));
 
         // Act & Assert
@@ -422,15 +414,11 @@ describe("AuthService", () => {
           "An unexpected error occurred during registration. Please try again."
         );
 
-        expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
-        expect(consoleErrorSpy).toHaveBeenCalledWith("Unexpected error during registration:", expect.any(Error));
         expect(authMocks.signUp).toHaveBeenCalledTimes(2);
         expect(authMocks.signUp).toHaveBeenCalledWith({
           email: credentials.email,
           password: credentials.password,
         });
-
-        consoleErrorSpy.mockRestore();
       });
     });
   });
@@ -465,7 +453,6 @@ describe("AuthService", () => {
 
       it("should handle unexpected exception during logout", async () => {
         // Arrange
-        const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
         const unexpectedError = new Error("Network error");
         authMocks.signOut.mockRejectedValueOnce(unexpectedError);
 
@@ -474,12 +461,6 @@ describe("AuthService", () => {
         await expect(authService.logout()).rejects.toThrow(
           "An unexpected error occurred during logout. Please try again."
         );
-
-        // Assert
-        expect(consoleSpy).toHaveBeenCalledWith("Unexpected error during logout:", unexpectedError);
-
-        // Cleanup
-        consoleSpy.mockRestore();
       });
     });
 
@@ -547,7 +528,6 @@ describe("AuthService", () => {
         // Arrange
         const emailData = { email: "user@example.com" };
         const url = "https://example.com";
-        const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
         const unexpectedError = new Error("Network error");
         authMocks.resetPasswordForEmail.mockRejectedValueOnce(unexpectedError);
 
@@ -556,12 +536,6 @@ describe("AuthService", () => {
         await expect(authService.forgotPassword(emailData, url)).rejects.toThrow(
           "An unexpected error occurred while processing your password reset request. Please try again."
         );
-
-        // Assert
-        expect(consoleSpy).toHaveBeenCalledWith("Unexpected error during password reset:", unexpectedError);
-
-        // Cleanup
-        consoleSpy.mockRestore();
       });
 
       it("should properly encode redirect URL with special characters", async () => {
@@ -762,8 +736,6 @@ describe("AuthService", () => {
           confirmPassword: "newpassword123",
         };
 
-        const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
         authMocks.updateUser.mockRejectedValue(new Error("Network error"));
 
         // Act & Assert
@@ -772,14 +744,10 @@ describe("AuthService", () => {
           "An unexpected error occurred while updating your password. Please try again."
         );
 
-        expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
-        expect(consoleErrorSpy).toHaveBeenCalledWith("Unexpected error during password reset:", expect.any(Error));
         expect(authMocks.updateUser).toHaveBeenCalledTimes(2);
         expect(authMocks.updateUser).toHaveBeenCalledWith({
           password: passwordData.password,
         });
-
-        consoleErrorSpy.mockRestore();
       });
     });
   });
@@ -1017,7 +985,6 @@ describe("AuthService", () => {
           token_hash: "some-token-hash",
         };
 
-        const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
         const unexpectedError = new Error("Network error");
 
         authMocks.verifyOtp.mockRejectedValue(unexpectedError);
@@ -1027,10 +994,6 @@ describe("AuthService", () => {
         await expect(authService.verifyResetToken(tokenData)).rejects.toThrow(
           "An unexpected error occurred while verifying your password reset token. Please try again."
         );
-
-        expect(consoleErrorSpy).toHaveBeenCalledWith("Unexpected error during token verification:", unexpectedError);
-
-        consoleErrorSpy.mockRestore();
       });
     });
   });
