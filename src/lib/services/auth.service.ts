@@ -175,7 +175,7 @@ export class AuthService {
   async forgotPassword(emailData: ForgotPasswordSchemaType, url: string): Promise<void> {
     try {
       const { error } = await this.supabase.auth.resetPasswordForEmail(emailData.email, {
-        redirectTo: `${url}/auth/reset-password`,
+        redirectTo: `${url}/auth/update-password`,
       });
 
       if (error) {

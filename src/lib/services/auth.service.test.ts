@@ -509,7 +509,7 @@ describe("AuthService", () => {
         // Assert
         expect(authMocks.resetPasswordForEmail).toHaveBeenCalledTimes(1);
         expect(authMocks.resetPasswordForEmail).toHaveBeenCalledWith(emailData.email, {
-          redirectTo: `${url}/auth/reset-password`,
+          redirectTo: `${url}/auth/update-password`,
         });
       });
 
@@ -582,7 +582,7 @@ describe("AuthService", () => {
         // Assert
         expect(authMocks.resetPasswordForEmail).toHaveBeenCalledTimes(1);
         expect(authMocks.resetPasswordForEmail).toHaveBeenCalledWith(emailData.email, {
-          redirectTo: `${url}/auth/reset-password`,
+          redirectTo: `${url}/auth/update-password`,
         });
       });
     });
