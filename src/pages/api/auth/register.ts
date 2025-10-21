@@ -21,7 +21,7 @@ export const prerender = false;
  * Returns 400 Bad Request for validation errors.
  * Returns 409 Conflict when user already exists.
  */
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals, url }) => {
   try {
     // Parse request body
     let requestBody: unknown;
@@ -69,7 +69,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Attempt registration
     try {
-      await authService.register(validatedData);
+      await authService.register(validatedData, url.origin);
     } catch (authError) {
       // Handle authentication-specific errors (user already exists)
       if (authError instanceof AuthenticationError) {

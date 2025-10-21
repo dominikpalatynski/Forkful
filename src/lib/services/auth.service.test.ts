@@ -230,6 +230,7 @@ describe("AuthService", () => {
           password: "validpassword123",
           confirmPassword: "validpassword123",
         };
+        const url = "https://example.com";
 
         const mockUser = {
           id: "user-123",
@@ -242,13 +243,16 @@ describe("AuthService", () => {
         });
 
         // Act & Assert
-        await expect(authService.register(validCredentials)).resolves.not.toThrow();
+        await expect(authService.register(validCredentials, url)).resolves.not.toThrow();
 
         // Assert
         expect(authMocks.signUp).toHaveBeenCalledTimes(1);
         expect(authMocks.signUp).toHaveBeenCalledWith({
           email: validCredentials.email,
           password: validCredentials.password,
+          options: {
+            emailRedirectTo: `${url}/auth/login`,
+          },
         });
       });
     });
@@ -261,6 +265,7 @@ describe("AuthService", () => {
           password: "password123",
           confirmPassword: "password123",
         };
+        const url = "https://example.com";
 
         authMocks.signUp.mockResolvedValue({
           data: null,
@@ -268,13 +273,16 @@ describe("AuthService", () => {
         });
 
         // Act & Assert
-        await expect(authService.register(credentials)).rejects.toThrow(AuthenticationError);
-        await expect(authService.register(credentials)).rejects.toThrow("A user with this email already exists");
+        await expect(authService.register(credentials, url)).rejects.toThrow(AuthenticationError);
+        await expect(authService.register(credentials, url)).rejects.toThrow("A user with this email already exists");
 
         expect(authMocks.signUp).toHaveBeenCalledTimes(2);
         expect(authMocks.signUp).toHaveBeenCalledWith({
           email: credentials.email,
           password: credentials.password,
+          options: {
+            emailRedirectTo: `${url}/auth/login`,
+          },
         });
       });
 
@@ -285,6 +293,7 @@ describe("AuthService", () => {
           password: "password123",
           confirmPassword: "password123",
         };
+        const url = "https://example.com";
 
         authMocks.signUp.mockResolvedValue({
           data: null,
@@ -292,13 +301,16 @@ describe("AuthService", () => {
         });
 
         // Act & Assert
-        await expect(authService.register(credentials)).rejects.toThrow(AuthenticationError);
-        await expect(authService.register(credentials)).rejects.toThrow("A user with this email already exists");
+        await expect(authService.register(credentials, url)).rejects.toThrow(AuthenticationError);
+        await expect(authService.register(credentials, url)).rejects.toThrow("A user with this email already exists");
 
         expect(authMocks.signUp).toHaveBeenCalledTimes(2);
         expect(authMocks.signUp).toHaveBeenCalledWith({
           email: credentials.email,
           password: credentials.password,
+          options: {
+            emailRedirectTo: `${url}/auth/login`,
+          },
         });
       });
 
@@ -309,6 +321,7 @@ describe("AuthService", () => {
           password: "weak",
           confirmPassword: "weak",
         };
+        const url = "https://example.com";
 
         authMocks.signUp.mockResolvedValue({
           data: null,
@@ -316,13 +329,16 @@ describe("AuthService", () => {
         });
 
         // Act & Assert
-        await expect(authService.register(credentials)).rejects.toThrow(ValidationError);
-        await expect(authService.register(credentials)).rejects.toThrow("Password does not meet requirements");
+        await expect(authService.register(credentials, url)).rejects.toThrow(ValidationError);
+        await expect(authService.register(credentials, url)).rejects.toThrow("Password does not meet requirements");
 
         expect(authMocks.signUp).toHaveBeenCalledTimes(2);
         expect(authMocks.signUp).toHaveBeenCalledWith({
           email: credentials.email,
           password: credentials.password,
+          options: {
+            emailRedirectTo: `${url}/auth/login`,
+          },
         });
       });
 
@@ -333,6 +349,7 @@ describe("AuthService", () => {
           password: "validpassword123",
           confirmPassword: "validpassword123",
         };
+        const url = "https://example.com";
 
         authMocks.signUp.mockResolvedValue({
           data: null,
@@ -340,13 +357,16 @@ describe("AuthService", () => {
         });
 
         // Act & Assert
-        await expect(authService.register(credentials)).rejects.toThrow(ValidationError);
-        await expect(authService.register(credentials)).rejects.toThrow("Invalid email format");
+        await expect(authService.register(credentials, url)).rejects.toThrow(ValidationError);
+        await expect(authService.register(credentials, url)).rejects.toThrow("Invalid email format");
 
         expect(authMocks.signUp).toHaveBeenCalledTimes(2);
         expect(authMocks.signUp).toHaveBeenCalledWith({
           email: credentials.email,
           password: credentials.password,
+          options: {
+            emailRedirectTo: `${url}/auth/login`,
+          },
         });
       });
 
@@ -357,6 +377,7 @@ describe("AuthService", () => {
           password: "validpassword123",
           confirmPassword: "validpassword123",
         };
+        const url = "https://example.com";
 
         authMocks.signUp.mockResolvedValue({
           data: null,
@@ -364,13 +385,16 @@ describe("AuthService", () => {
         });
 
         // Act & Assert
-        await expect(authService.register(credentials)).rejects.toThrow(AuthenticationError);
-        await expect(authService.register(credentials)).rejects.toThrow("Registration is currently disabled");
+        await expect(authService.register(credentials, url)).rejects.toThrow(AuthenticationError);
+        await expect(authService.register(credentials, url)).rejects.toThrow("Registration is currently disabled");
 
         expect(authMocks.signUp).toHaveBeenCalledTimes(2);
         expect(authMocks.signUp).toHaveBeenCalledWith({
           email: credentials.email,
           password: credentials.password,
+          options: {
+            emailRedirectTo: `${url}/auth/login`,
+          },
         });
       });
 
@@ -381,6 +405,7 @@ describe("AuthService", () => {
           password: "validpassword123",
           confirmPassword: "validpassword123",
         };
+        const url = "https://example.com";
 
         authMocks.signUp.mockResolvedValue({
           data: null,
@@ -388,13 +413,16 @@ describe("AuthService", () => {
         });
 
         // Act & Assert
-        await expect(authService.register(credentials)).rejects.toThrow(AuthenticationError);
-        await expect(authService.register(credentials)).rejects.toThrow("Registration failed. Please try again.");
+        await expect(authService.register(credentials, url)).rejects.toThrow(AuthenticationError);
+        await expect(authService.register(credentials, url)).rejects.toThrow("Registration failed. Please try again.");
 
         expect(authMocks.signUp).toHaveBeenCalledTimes(2);
         expect(authMocks.signUp).toHaveBeenCalledWith({
           email: credentials.email,
           password: credentials.password,
+          options: {
+            emailRedirectTo: `${url}/auth/login`,
+          },
         });
       });
 
@@ -405,12 +433,13 @@ describe("AuthService", () => {
           password: "validpassword123",
           confirmPassword: "validpassword123",
         };
+        const url = "https://example.com";
 
         authMocks.signUp.mockRejectedValue(new Error("Network error"));
 
         // Act & Assert
-        await expect(authService.register(credentials)).rejects.toThrow(Error);
-        await expect(authService.register(credentials)).rejects.toThrow(
+        await expect(authService.register(credentials, url)).rejects.toThrow(Error);
+        await expect(authService.register(credentials, url)).rejects.toThrow(
           "An unexpected error occurred during registration. Please try again."
         );
 
@@ -418,6 +447,9 @@ describe("AuthService", () => {
         expect(authMocks.signUp).toHaveBeenCalledWith({
           email: credentials.email,
           password: credentials.password,
+          options: {
+            emailRedirectTo: `${url}/auth/login`,
+          },
         });
       });
     });

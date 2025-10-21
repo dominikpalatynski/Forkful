@@ -91,11 +91,14 @@ export class AuthService {
    * @throws AuthenticationError when user already exists or other auth errors
    * @throws Error for other unexpected registration errors
    */
-  async register(credentials: RegisterSchemaType): Promise<void> {
+  async register(credentials: RegisterSchemaType, url: string): Promise<void> {
     try {
       const { error } = await this.supabase.auth.signUp({
         email: credentials.email,
         password: credentials.password,
+        options: {
+          emailRedirectTo: `${url}/auth/login`,
+        },
       });
 
       if (error) {

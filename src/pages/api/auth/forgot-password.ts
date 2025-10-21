@@ -18,7 +18,7 @@ export const prerender = false;
  * Returns 200 OK on success (email sent if account exists).
  * Returns 400 Bad Request for validation errors.
  */
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals, url }) => {
   try {
     // Parse request body
     let requestBody: unknown;
@@ -66,7 +66,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Attempt to initiate password reset
     try {
-      await authService.forgotPassword(validatedData, request.url);
+      await authService.forgotPassword(validatedData, url.origin);
     } catch (authError) {
       // Handle validation errors
       if (authError instanceof ValidationError) {
