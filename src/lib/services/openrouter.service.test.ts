@@ -1,6 +1,20 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { OpenRouterService, OpenRouterError, type OpenRouterServiceConfig } from "./openrouter.service";
 
+// Complete mock recipe object matching GeneratedRecipeSchema
+const validRecipeResponse = {
+  name: "Test Recipe",
+  description: "A delicious test recipe",
+  ingredients: [
+    { content: "Test ingredient 1", position: 1 },
+    { content: "Test ingredient 2", position: 2 },
+  ],
+  steps: [
+    { content: "Test step 1", position: 1 },
+    { content: "Test step 2", position: 2 },
+  ],
+};
+
 describe("OpenRouterService", () => {
   let mockFetch: ReturnType<typeof vi.fn>;
   let validConfig: OpenRouterServiceConfig;
@@ -13,16 +27,6 @@ describe("OpenRouterService", () => {
       apiKey: "test-api-key",
       model: "test-model",
       systemPrompt: "You are a test assistant",
-      jsonSchema: {
-        name: "test-schema",
-        schema: {
-          type: "object",
-          properties: {
-            name: { type: "string" },
-          },
-          required: ["name"],
-        },
-      },
     };
   });
 
@@ -64,7 +68,7 @@ describe("OpenRouterService", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
@@ -80,7 +84,7 @@ describe("OpenRouterService", () => {
       customFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
@@ -98,7 +102,7 @@ describe("OpenRouterService", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
@@ -117,8 +121,8 @@ describe("OpenRouterService", () => {
       expect(payload.response_format).toEqual({
         type: "json_schema",
         json_schema: {
-          name: "test-schema",
-          schema: validConfig.jsonSchema.schema,
+          name: "RecipeResponse",
+          schema: expect.any(Object),
           strict: true,
         },
       });
@@ -138,7 +142,7 @@ describe("OpenRouterService", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
@@ -153,39 +157,13 @@ describe("OpenRouterService", () => {
       expect(payload.top_p).toBe(0.9);
     });
 
-    it("should respect custom strict mode setting", async () => {
-      const configWithStrictFalse = {
-        ...validConfig,
-        jsonSchema: {
-          ...validConfig.jsonSchema,
-          strict: false,
-        },
-      };
-      const service = new OpenRouterService(configWithStrictFalse, mockFetch);
-
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
-        }),
-      });
-
-      await service.generate({ userMessage: "test" });
-
-      const callArgs = mockFetch.mock.calls[0];
-      const [, options] = callArgs;
-      const payload = JSON.parse(options.body);
-
-      expect(payload.response_format.json_schema.strict).toBe(false);
-    });
-
-    it("should default strict mode to true", async () => {
+    it("should always use strict mode", async () => {
       const service = new OpenRouterService(validConfig, mockFetch);
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
@@ -206,7 +184,7 @@ describe("OpenRouterService", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
@@ -228,7 +206,7 @@ describe("OpenRouterService", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
@@ -246,7 +224,7 @@ describe("OpenRouterService", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
@@ -264,7 +242,7 @@ describe("OpenRouterService", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
@@ -285,7 +263,7 @@ describe("OpenRouterService", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
@@ -307,7 +285,7 @@ describe("OpenRouterService", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
@@ -400,7 +378,7 @@ describe("OpenRouterService", () => {
         choices: [
           {
             message: {
-              content: JSON.stringify({ name: "Test Recipe" }),
+              content: JSON.stringify(validRecipeResponse),
             },
           },
         ],
@@ -414,7 +392,7 @@ describe("OpenRouterService", () => {
       const result = await service.generate({ userMessage: "test" });
 
       expect(result.raw).toEqual(apiResponse);
-      expect(result.json).toEqual({ name: "Test Recipe" });
+      expect(result.json).toEqual(validRecipeResponse);
     });
 
     it("should throw error when choices is missing", async () => {
@@ -511,13 +489,13 @@ describe("OpenRouterService", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: '{"name": "Pasta"}' } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
       const result = await service.generate({ userMessage: "test" });
 
-      expect(result.json).toEqual({ name: "Pasta" });
+      expect(result.json).toEqual(validRecipeResponse);
     });
 
     it("should handle non-string content (already parsed)", async () => {
@@ -526,13 +504,13 @@ describe("OpenRouterService", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: { name: "Pasta" } } }],
+          choices: [{ message: { content: validRecipeResponse } }],
         }),
       });
 
       const result = await service.generate({ userMessage: "test" });
 
-      expect(result.json).toEqual({ name: "Pasta" });
+      expect(result.json).toEqual(validRecipeResponse);
     });
 
     it("should throw error for malformed JSON", async () => {
@@ -564,50 +542,24 @@ describe("OpenRouterService", () => {
 
   describe("Schema Validation", () => {
     it("should accept response matching schema", async () => {
-      const configWithSchema = {
-        ...validConfig,
-        jsonSchema: {
-          name: "test-schema",
-          schema: {
-            type: "object",
-            properties: {
-              name: { type: "string" },
-            },
-            required: ["name"],
-          },
-        },
-      };
-      const service = new OpenRouterService(configWithSchema, mockFetch);
+      const service = new OpenRouterService(validConfig, mockFetch);
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Pasta" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
       const result = await service.generate({ userMessage: "test" });
 
-      expect(result.json).toEqual({ name: "Pasta" });
+      expect(result.json).toEqual(validRecipeResponse);
     });
 
     it("should reject response missing required schema field", async () => {
-      const configWithSchema = {
-        ...validConfig,
-        jsonSchema: {
-          name: "test-schema",
-          schema: {
-            type: "object",
-            properties: {
-              name: { type: "string" },
-              description: { type: "string" },
-            },
-            required: ["name", "description"],
-          },
-        },
-      };
-      const service = new OpenRouterService(configWithSchema, mockFetch);
+      const service = new OpenRouterService(validConfig, mockFetch);
 
+      // Missing description, ingredients, and steps
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -619,25 +571,20 @@ describe("OpenRouterService", () => {
     });
 
     it("should reject response with incorrect field type", async () => {
-      const configWithSchema = {
-        ...validConfig,
-        jsonSchema: {
-          name: "test-schema",
-          schema: {
-            type: "object",
-            properties: {
-              temperature: { type: "number" },
-            },
-            required: ["temperature"],
-          },
-        },
+      const service = new OpenRouterService(validConfig, mockFetch);
+
+      // Steps should be an array but passing a string
+      const invalidResponse = {
+        name: "Pasta",
+        description: "A pasta recipe",
+        ingredients: [{ content: "Pasta", position: 1 }],
+        steps: "Mix everything", // Invalid: should be an array
       };
-      const service = new OpenRouterService(configWithSchema, mockFetch);
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ temperature: "high" }) } }],
+          choices: [{ message: { content: JSON.stringify(invalidResponse) } }],
         }),
       });
 
@@ -645,23 +592,9 @@ describe("OpenRouterService", () => {
     });
 
     it("should include all validation errors in context", async () => {
-      const configWithSchema = {
-        ...validConfig,
-        jsonSchema: {
-          name: "test-schema",
-          schema: {
-            type: "object",
-            properties: {
-              name: { type: "string" },
-              description: { type: "string" },
-              calories: { type: "number" },
-            },
-            required: ["name", "description", "calories"],
-          },
-        },
-      };
-      const service = new OpenRouterService(configWithSchema, mockFetch);
+      const service = new OpenRouterService(validConfig, mockFetch);
 
+      // Missing multiple required fields
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -686,14 +619,14 @@ describe("OpenRouterService", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{ message: { content: JSON.stringify({ name: "Test" }) } }],
+          choices: [{ message: { content: JSON.stringify(validRecipeResponse) } }],
         }),
       });
 
       const result = await service.generate({ userMessage: "test message" });
 
       expect(result.raw).toBeDefined();
-      expect(result.json).toEqual({ name: "Test" });
+      expect(result.json).toEqual(validRecipeResponse);
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
 

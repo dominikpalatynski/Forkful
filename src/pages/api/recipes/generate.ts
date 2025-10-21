@@ -3,7 +3,6 @@ import { OPENROUTER_API_KEY } from "astro:env/server";
 import { GenerationRecipeService } from "../../../lib/services/generation-recipe.service";
 import { OpenRouterService } from "../../../lib/services/openrouter.service";
 import { systemPrompt } from "../../../lib/services/prompt";
-import { GeneratedRecipeJsonSchemaFull } from "../../../lib/services/generation-recipe.service";
 import { GenerateRecipeSchema } from "../../../lib/schemas/recipe.schema";
 import { getAuthenticatedUserId } from "../../../lib/utils";
 import z from "zod";
@@ -75,11 +74,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       apiKey: OPENROUTER_API_KEY,
       model: "anthropic/claude-3-haiku",
       systemPrompt: systemPrompt,
-      jsonSchema: {
-        name: "RecipeResponse",
-        schema: GeneratedRecipeJsonSchemaFull,
-        strict: true,
-      },
       modelParameters: { temperature: 0.3, max_tokens: 10000 },
     });
 

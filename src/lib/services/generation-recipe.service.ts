@@ -1,35 +1,7 @@
 import type { SupabaseClientType } from "../../db/supabase.client";
 import type { GeneratedRecipeDto } from "../../types";
-import { z } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
 import { OpenRouterService } from "./openrouter.service";
 import { getUserPrompt } from "./prompt";
-// Schema for AI-generated recipe
-export const GeneratedRecipeSchema = z.object({
-  name: z.string().min(1, "Recipe name is required"),
-  description: z.string().min(1, "Recipe description is required"),
-  ingredients: z
-    .array(
-      z.object({
-        content: z.string().min(1, "Ingredient content cannot be empty"),
-        position: z.number().int().positive("Position must be a positive integer"),
-      })
-    )
-    .min(1, "Recipe must have at least one ingredient"),
-  steps: z
-    .array(
-      z.object({
-        content: z.string().min(1, "Step content cannot be empty"),
-        position: z.number().int().positive("Position must be a positive integer"),
-      })
-    )
-    .min(1, "Recipe must have at least one step"),
-});
-
-// Convert Zod schema to JSON Schema for OpenRouter
-export const GeneratedRecipeJsonSchemaFull = zodToJsonSchema(GeneratedRecipeSchema, {
-  name: "RecipeResponse",
-});
 
 /**
  * Service for handling AI-powered recipe generation from text input.
@@ -52,13 +24,13 @@ export class GenerationRecipeService {
    */
   async generateRecipeFromText(inputText: string, userId: string): Promise<GeneratedRecipeDto> {
     try {
-      // Step 1: Generate recipe using OpenRouter AI
+      // Step 1: Generate recipe using OpenRouter AI (validation happens in OpenRouterService now)
       const result = await this.openRouterService.generate({
         userMessage: getUserPrompt(inputText),
       });
 
-      // Step 2: Validate the returned JSON against the Zod schema
-      const parsedRecipe = await this.validateRecipe(result.json);
+      // Step 2: The JSON is already validated by the Zod schema in OpenRouterService
+      const parsedRecipe = result.json;
 
       // Step 3: Create generation record in database
       const { data: generationData, error: generationError } = await this.supabase
@@ -92,15 +64,6 @@ export class GenerationRecipeService {
 
       // Re-throw the error for the caller to handle
       throw error;
-    }
-  }
-
-  private async validateRecipe(json: unknown): Promise<z.infer<typeof GeneratedRecipeSchema>> {
-    try {
-      const parsedRecipe = GeneratedRecipeSchema.parse(json);
-      return parsedRecipe;
-    } catch (error) {
-      throw new Error(`Failed to validate recipe: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   }
 

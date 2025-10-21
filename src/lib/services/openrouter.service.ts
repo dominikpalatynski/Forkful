@@ -1,8 +1,9 @@
-import Ajv from "ajv";
+import { z } from "zod";
+import { zodToJsonSchema } from "zod-to-json-schema";
+
 export interface OpenRouterServiceConfig {
   model: string;
   systemPrompt: string;
-  jsonSchema: { name: string; schema: Record<string, unknown>; strict?: boolean };
   modelParameters?: {
     temperature?: number;
     top_p?: number;
@@ -14,6 +15,31 @@ export interface OpenRouterServiceConfig {
   apiKey: string;
   baseUrl?: string;
 }
+
+export const GeneratedRecipeSchema = z.object({
+  name: z.string().min(1, "Recipe name is required"),
+  description: z.string().min(1, "Recipe description is required"),
+  ingredients: z
+    .array(
+      z.object({
+        content: z.string().min(1, "Ingredient content cannot be empty"),
+        position: z.number().int().positive("Position must be a positive integer"),
+      })
+    )
+    .min(1, "Recipe must have at least one ingredient"),
+  steps: z
+    .array(
+      z.object({
+        content: z.string().min(1, "Step content cannot be empty"),
+        position: z.number().int().positive("Position must be a positive integer"),
+      })
+    )
+    .min(1, "Recipe must have at least one step"),
+});
+
+export const GeneratedRecipeJsonSchema = zodToJsonSchema(GeneratedRecipeSchema, {
+  name: "RecipeResponse",
+});
 
 export class OpenRouterError extends Error {
   constructor(
@@ -45,14 +71,16 @@ export class OpenRouterService {
     this.baseUrl = (config.baseUrl ?? "https://openrouter.ai/api/v1").replace(/\/$/, "");
   }
 
-  async generate(args: { userMessage: string }): Promise<{ raw: unknown; json: unknown }> {
+  async generate(args: {
+    userMessage: string;
+  }): Promise<{ raw: unknown; json: z.infer<typeof GeneratedRecipeSchema> }> {
     const payload = this.buildPayload(args.userMessage);
     const responseJson = await this.send(payload);
     return this.validateResponse(responseJson);
   }
 
   private buildPayload(userMessage: string): Record<string, unknown> {
-    const { model, systemPrompt, jsonSchema, modelParameters } = this.config;
+    const { model, systemPrompt, modelParameters } = this.config;
 
     const messages = [
       { role: "system", content: systemPrompt },
@@ -69,9 +97,9 @@ export class OpenRouterService {
     payload.response_format = {
       type: "json_schema",
       json_schema: {
-        name: jsonSchema.name,
-        schema: jsonSchema.schema,
-        strict: jsonSchema.strict ?? true,
+        name: "RecipeResponse",
+        schema: GeneratedRecipeJsonSchema,
+        strict: true,
       },
     };
 
@@ -125,7 +153,7 @@ export class OpenRouterService {
     }
   }
 
-  private validateResponse(responseJson: any): { raw: unknown; json: unknown } {
+  private validateResponse(responseJson: any): { raw: unknown; json: z.infer<typeof GeneratedRecipeSchema> } {
     if (!responseJson || !Array.isArray(responseJson.choices) || !responseJson.choices[0]) {
       throw new OpenRouterError("OpenRouterService: invalid response shape (missing choices)", { responseJson });
     }
@@ -142,22 +170,19 @@ export class OpenRouterService {
       throw new OpenRouterError("OpenRouterService: content is not valid JSON", { content });
     }
 
-    // Validate against the provided JSON schema
-    const ajv = new Ajv();
-    const validate = ajv.compile(this.config.jsonSchema.schema);
-    const isValid = validate(parsed);
-
-    if (!isValid) {
-      const errors =
-        validate.errors?.map((err: any) => `${err.instancePath}: ${err.message}`).join(", ") ??
-        "Unknown validation error";
-      throw new OpenRouterError(`OpenRouterService: response does not match schema: ${errors}`, {
-        parsed,
-        schema: this.config.jsonSchema.schema,
-        validationErrors: validate.errors,
-      });
+    try {
+      parsed = GeneratedRecipeSchema.parse(parsed);
+    } catch (error) {
+      throw new OpenRouterError(
+        `OpenRouterService: response does not match schema: ${error instanceof Error ? error.message : "Unknown error"}`,
+        {
+          parsed,
+          schema: GeneratedRecipeSchema,
+          validationErrors: error instanceof Error ? [error.message] : ["Unknown validation error"],
+        }
+      );
     }
 
-    return { raw: responseJson, json: parsed };
+    return { raw: responseJson, json: parsed as z.infer<typeof GeneratedRecipeSchema> };
   }
 }

@@ -32,13 +32,8 @@ const createValidRecipe = () => ({
   ],
 });
 
-// Custom error class for OpenRouter
-class OpenRouterError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "OpenRouterError";
-  }
-}
+// Import OpenRouterError from the actual service
+import { OpenRouterError } from "./openrouter.service";
 
 describe("GenerationRecipeService", () => {
   let service: GenerationRecipeService;
@@ -194,17 +189,12 @@ describe("GenerationRecipeService", () => {
     it("should validate returned recipe against Zod schema and reject invalid data", async () => {
       const inputText = "Make pasta";
       const userId = "user-123";
-      const invalidRecipe = {
-        name: "Test Recipe",
-        // Missing description
-        ingredients: [{ content: "Ingredient 1", position: 1 }],
-        steps: [{ content: "Step 1", position: 1 }],
-      };
 
-      vi.mocked(mockOpenRouterService.generate).mockResolvedValueOnce({
-        raw: {},
-        json: invalidRecipe,
-      });
+      // Mock OpenRouter to throw validation error (as it would with invalid data)
+      const validationError = new OpenRouterError(
+        "OpenRouterService: response does not match schema: Recipe description is required"
+      );
+      vi.mocked(mockOpenRouterService.generate).mockRejectedValueOnce(validationError);
 
       const mockErrorInsert = vi.fn().mockResolvedValue({ error: null });
       supabaseMocks.from.mockImplementation((tableName: string) => {
@@ -220,7 +210,9 @@ describe("GenerationRecipeService", () => {
         };
       });
 
-      await expect(service.generateRecipeFromText(inputText, userId)).rejects.toThrow(/Failed to validate recipe/);
+      await expect(service.generateRecipeFromText(inputText, userId)).rejects.toThrow(
+        /OpenRouterService: response does not match schema/
+      );
 
       expect(mockErrorInsert).toHaveBeenCalled();
       expect(supabaseMocks.insert).not.toHaveBeenCalled();
@@ -229,17 +221,12 @@ describe("GenerationRecipeService", () => {
     it("should reject recipe with no ingredients", async () => {
       const inputText = "Make pasta";
       const userId = "user-123";
-      const invalidRecipe = {
-        name: "Test Recipe",
-        description: "Test description",
-        ingredients: [],
-        steps: [{ content: "Step 1", position: 1 }],
-      };
 
-      vi.mocked(mockOpenRouterService.generate).mockResolvedValueOnce({
-        raw: {},
-        json: invalidRecipe,
-      });
+      // Mock OpenRouter to throw validation error for empty ingredients
+      const validationError = new OpenRouterError(
+        "OpenRouterService: response does not match schema: Recipe must have at least one ingredient"
+      );
+      vi.mocked(mockOpenRouterService.generate).mockRejectedValueOnce(validationError);
 
       const mockErrorInsert = vi.fn().mockResolvedValue({ error: null });
       supabaseMocks.from.mockImplementation((tableName: string) => {
@@ -255,7 +242,9 @@ describe("GenerationRecipeService", () => {
         };
       });
 
-      await expect(service.generateRecipeFromText(inputText, userId)).rejects.toThrow(/Failed to validate recipe/);
+      await expect(service.generateRecipeFromText(inputText, userId)).rejects.toThrow(
+        /OpenRouterService: response does not match schema/
+      );
 
       expect(mockErrorInsert).toHaveBeenCalled();
       const errorCall = mockErrorInsert.mock.calls[0][0];
@@ -265,17 +254,12 @@ describe("GenerationRecipeService", () => {
     it("should reject recipe with no steps", async () => {
       const inputText = "Make pasta";
       const userId = "user-123";
-      const invalidRecipe = {
-        name: "Test Recipe",
-        description: "Test description",
-        ingredients: [{ content: "Ingredient 1", position: 1 }],
-        steps: [],
-      };
 
-      vi.mocked(mockOpenRouterService.generate).mockResolvedValueOnce({
-        raw: {},
-        json: invalidRecipe,
-      });
+      // Mock OpenRouter to throw validation error for empty steps
+      const validationError = new OpenRouterError(
+        "OpenRouterService: response does not match schema: Recipe must have at least one step"
+      );
+      vi.mocked(mockOpenRouterService.generate).mockRejectedValueOnce(validationError);
 
       const mockErrorInsert = vi.fn().mockResolvedValue({ error: null });
       supabaseMocks.from.mockImplementation((tableName: string) => {
@@ -291,7 +275,9 @@ describe("GenerationRecipeService", () => {
         };
       });
 
-      await expect(service.generateRecipeFromText(inputText, userId)).rejects.toThrow(/Failed to validate recipe/);
+      await expect(service.generateRecipeFromText(inputText, userId)).rejects.toThrow(
+        /OpenRouterService: response does not match schema/
+      );
 
       expect(mockErrorInsert).toHaveBeenCalled();
       const errorCall = mockErrorInsert.mock.calls[0][0];
@@ -301,17 +287,12 @@ describe("GenerationRecipeService", () => {
     it("should reject ingredient without valid position field", async () => {
       const inputText = "Make pasta";
       const userId = "user-123";
-      const invalidRecipe = {
-        name: "Test Recipe",
-        description: "Test description",
-        ingredients: [{ content: "Ingredient 1" }], // Missing position
-        steps: [{ content: "Step 1", position: 1 }],
-      };
 
-      vi.mocked(mockOpenRouterService.generate).mockResolvedValueOnce({
-        raw: {},
-        json: invalidRecipe,
-      });
+      // Mock OpenRouter to throw validation error for missing position
+      const validationError = new OpenRouterError(
+        "OpenRouterService: response does not match schema: Position must be a positive integer"
+      );
+      vi.mocked(mockOpenRouterService.generate).mockRejectedValueOnce(validationError);
 
       const mockErrorInsert = vi.fn().mockResolvedValue({ error: null });
       supabaseMocks.from.mockImplementation((tableName: string) => {
@@ -327,7 +308,9 @@ describe("GenerationRecipeService", () => {
         };
       });
 
-      await expect(service.generateRecipeFromText(inputText, userId)).rejects.toThrow(/Failed to validate recipe/);
+      await expect(service.generateRecipeFromText(inputText, userId)).rejects.toThrow(
+        /OpenRouterService: response does not match schema/
+      );
 
       expect(mockErrorInsert).toHaveBeenCalled();
     });
@@ -335,17 +318,12 @@ describe("GenerationRecipeService", () => {
     it("should reject step without valid position field", async () => {
       const inputText = "Make pasta";
       const userId = "user-123";
-      const invalidRecipe = {
-        name: "Test Recipe",
-        description: "Test description",
-        ingredients: [{ content: "Ingredient 1", position: 1 }],
-        steps: [{ content: "Step 1" }], // Missing position
-      };
 
-      vi.mocked(mockOpenRouterService.generate).mockResolvedValueOnce({
-        raw: {},
-        json: invalidRecipe,
-      });
+      // Mock OpenRouter to throw validation error for missing position
+      const validationError = new OpenRouterError(
+        "OpenRouterService: response does not match schema: Position must be a positive integer"
+      );
+      vi.mocked(mockOpenRouterService.generate).mockRejectedValueOnce(validationError);
 
       const mockErrorInsert = vi.fn().mockResolvedValue({ error: null });
       supabaseMocks.from.mockImplementation((tableName: string) => {
@@ -361,7 +339,9 @@ describe("GenerationRecipeService", () => {
         };
       });
 
-      await expect(service.generateRecipeFromText(inputText, userId)).rejects.toThrow(/Failed to validate recipe/);
+      await expect(service.generateRecipeFromText(inputText, userId)).rejects.toThrow(
+        /OpenRouterService: response does not match schema/
+      );
 
       expect(mockErrorInsert).toHaveBeenCalled();
     });
