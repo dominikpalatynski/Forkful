@@ -14,19 +14,15 @@ interface DashboardBreadcrumbsProps {
   isLoadingRecipe?: boolean;
 }
 
-export function DashboardBreadcrumbs({
-  currentPath,
-  recipeTitle,
-  isLoadingRecipe = false,
-}: DashboardBreadcrumbsProps) {
+export function DashboardBreadcrumbs({ currentPath, recipeTitle, isLoadingRecipe = false }: DashboardBreadcrumbsProps) {
   // Parse the current path to determine breadcrumb items
   const getBreadcrumbItems = () => {
-    const items: Array<{
+    const items: {
       label: string;
       href?: string;
       isLast: boolean;
       showSkeleton?: boolean;
-    }> = [];
+    }[] = [];
 
     // Always include "Przepisy" as the first item
     const isOnRecipesIndex = currentPath === "/recipes";
