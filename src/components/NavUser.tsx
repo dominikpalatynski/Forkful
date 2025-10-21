@@ -13,18 +13,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { useLogout } from "@/components/auth/hooks/useLogout";
+import { useAuthStore } from "@/store/auth.store";
+import { NavUserSkeleton } from "@/components/NavUserSkeleton";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+export function NavUser() {
   const { isMobile } = useSidebar();
   const logoutMutation = useLogout();
+  const user = useAuthStore((state) => state.user);
+
+  if (!user) {
+    return <NavUserSkeleton />;
+  }
 
   return (
     <SidebarMenu>
@@ -53,7 +52,7 @@ export function NavUser({
                   <User className="size-6" />
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>

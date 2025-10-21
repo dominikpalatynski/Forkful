@@ -1,12 +1,24 @@
+import { useEffect } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import { Toaster } from "@/components/ui/sonner";
+import { useAuthStore } from "@/store/auth.store";
+import type { UserDto } from "@/types";
 
 interface LayoutWrapperProps {
   children: React.ReactNode;
+  user?: UserDto | null;
 }
 
-export function LayoutWrapper({ children }: LayoutWrapperProps) {
+export function LayoutWrapper({ children, user }: LayoutWrapperProps) {
+  const setUser = useAuthStore((state) => state.setUser);
+
+  useEffect(() => {
+    if (user) {
+      setUser(user);
+    }
+  }, [user, setUser]);
+
   return (
     <SidebarProvider>
       <AppSidebar />

@@ -19,11 +19,7 @@ const items = [
     icon: Utensils,
   },
 ];
-const mockUser = {
-  name: "John Doe",
-  email: "john.doe@example.com",
-  avatar: "https://github.com/shadcn.png",
-};
+
 export function AppSidebar() {
   return (
     <Sidebar>
@@ -77,7 +73,7 @@ export function AppSidebar() {
         <SidebarGroup />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={mockUser} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );

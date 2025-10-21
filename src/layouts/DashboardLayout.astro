@@ -8,10 +8,11 @@ interface Props {
 }
 
 const { title } = Astro.props as Props;
+const user = Astro.locals.user;
 ---
 
 <BaseLayout title={title}>
-  <LayoutWrapper client:idle>
+  <LayoutWrapper client:idle user={user}>
     <slot />
   </LayoutWrapper>
 </BaseLayout>

@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { queryClient } from "@/store/query";
+import { useAuthStore } from "@/store/auth.store";
 
 /**
  * Signs out the current user and clears the session.
@@ -41,10 +42,13 @@ async function logoutUser(): Promise<void> {
  * ```
  */
 export function useLogout() {
+  const clearUser = useAuthStore((state) => state.clearUser);
+
   const mutation = useMutation(
     {
       mutationFn: logoutUser,
       onSuccess: () => {
+        clearUser();
         window.location.href = "/auth/login";
       },
       onError: (error: Error) => {

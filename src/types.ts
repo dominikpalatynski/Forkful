@@ -133,3 +133,13 @@ export interface VerifiedUserDto {
   id: string;
   email: string;
 }
+
+/**
+ * DTO for authenticated user data.
+ * Used in auth store and passed from middleware via Astro.locals.
+ */
+export interface UserDto {
+  id: string;
+  email: string | null;
+  name?: string;
+}
