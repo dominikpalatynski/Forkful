@@ -30,6 +30,7 @@ export function CreateRecipeBasicInfoSection({ control }: CreateRecipeBasicInfoS
                 autoComplete="off"
                 className="text-lg font-medium"
                 {...field}
+                data-testid="recipe-input-name"
               />
             </FormControl>
             <FormMessage />
@@ -51,6 +52,7 @@ export function CreateRecipeBasicInfoSection({ control }: CreateRecipeBasicInfoS
                 className="resize-none"
                 {...field}
                 value={field.value ?? ""}
+                data-testid="recipe-input-description"
               />
             </FormControl>
             <FormMessage />

@@ -20,11 +20,23 @@ export function FormActionButtons({
 }: FormActionButtonsProps) {
   return (
     <div className="flex items-center justify-end gap-4 pt-6 border-t">
-      <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting} className="px-6">
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onCancel}
+        disabled={isSubmitting}
+        className="px-6"
+        data-testid="recipe-button-cancel"
+      >
         Anuluj
       </Button>
 
-      <Button type="submit" disabled={!isDirty || isSubmitting} className="px-6">
+      <Button
+        type="submit"
+        disabled={!isDirty || isSubmitting}
+        className="px-6"
+        data-testid="recipe-button-submit"
+      >
         {isSubmitting ? "Zapisywanie..." : submitButtonText}
       </Button>
     </div>

@@ -96,6 +96,7 @@ export function DraggableCreateIngredientItem({
                   {...inputField}
                   disabled={isDragging}
                   className={isDragging ? "opacity-50" : ""}
+                  data-testid={`recipe-input-ingredient-${index}`}
                 />
               </FormControl>
               <FormMessage />

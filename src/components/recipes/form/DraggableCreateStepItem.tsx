@@ -114,6 +114,7 @@ export function DraggableCreateStepItem({
                 className="resize-none"
                 disabled={isDragging}
                 {...textareaField}
+                data-testid={`recipe-input-step-${index}`}
               />
             </FormControl>
             <FormMessage />

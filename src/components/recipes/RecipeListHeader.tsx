@@ -19,10 +19,10 @@ export function RecipeListHeader({ searchValue, onSearchChange }: RecipeListHead
         <SearchInput value={searchValue} onChange={onSearchChange} placeholder="Szukaj przepisów..." />
       </div>
       <div className="flex gap-2">
-        <Button variant="outline" onClick={handleNewAI}>
+        <Button variant="outline" onClick={handleNewAI} data-testid="recipe-new-ai-button">
           <Sparkles className="mr-2 h-4 w-4" /> Z AI
         </Button>
-        <Button onClick={handleNew}>
+        <Button onClick={handleNew} data-testid="recipe-new-button">
           <Plus className="mr-2 h-4 w-4" /> Nowy przepis
         </Button>
       </div>
