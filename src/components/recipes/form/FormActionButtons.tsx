@@ -31,12 +31,7 @@ export function FormActionButtons({
         Anuluj
       </Button>
 
-      <Button
-        type="submit"
-        disabled={!isDirty || isSubmitting}
-        className="px-6"
-        data-testid="recipe-button-submit"
-      >
+      <Button type="submit" disabled={!isDirty || isSubmitting} className="px-6" data-testid="recipe-button-submit">
         {isSubmitting ? "Zapisywanie..." : submitButtonText}
       </Button>
     </div>

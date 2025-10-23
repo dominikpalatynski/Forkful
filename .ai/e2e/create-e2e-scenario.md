@@ -21,6 +21,7 @@ Here are the specific test scenario steps you need to implement:
 Your task is to create a complete e2e test file that implements the test scenario steps provided above. The test file should follow these requirements:
 
 **Core Requirements:**
+
 - Do NOT create any authentication setup - use the existing auth setup referenced above
 - Follow the patterns and conventions shown in the implementation summary
 - Use proper Playwright testing practices
@@ -29,6 +30,7 @@ Your task is to create a complete e2e test file that implements the test scenari
 - Test both form validation and successful submission flows where applicable
 
 **Test Structure Requirements:**
+
 - Include all necessary imports at the top of the file
 - Create a test suite using `test.describe()`
 - Implement individual test cases using `test()`
@@ -38,6 +40,7 @@ Your task is to create a complete e2e test file that implements the test scenari
 - Include proper test cleanup if needed
 
 **Code Quality Requirements:**
+
 - Follow the existing code patterns for page navigation, form handling, and element interaction
 - Use appropriate selectors and locators based on the implementation patterns
 - Include proper error handling and timeout configurations
@@ -56,6 +59,7 @@ Before writing the test file, work through your analysis in <planning> tags insi
 5. **Note Authentication Details**: Quote the relevant authentication setup details that you'll need to integrate with.
 
 After your planning, provide the complete test file content. Format your output as a complete TypeScript file that is ready to use, including:
+
 - All necessary imports
 - Proper test suite structure
 - Complete implementation of all test scenario steps
@@ -63,16 +67,17 @@ After your planning, provide the complete test file content. Format your output 
 - Clear code organization and comments
 
 Example test file structure:
+
 ```typescript
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 // Additional imports as needed
 
-test.describe('Test Suite Name', () => {
-  test('descriptive test name', async ({ page }) => {
+test.describe("Test Suite Name", () => {
+  test("descriptive test name", async ({ page }) => {
     // Test implementation
     // Navigation, interactions, assertions
   });
-  
+
   // Additional test cases as needed
 });
 ```

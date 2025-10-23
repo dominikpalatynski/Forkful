@@ -3,29 +3,35 @@
 ## What We Achieved
 
 ### 1. Created Authentication Setup System
+
 - ✅ Single authentication that runs once before all tests
 - ✅ Session state stored and reused across all test suites
 - ✅ Faster test execution (no repeated logins)
 - ✅ Stored in `playwright/.auth/user.json`
 
 ### 2. Added Test Selectors
+
 Added `data-testid` attributes to login form components:
+
 - `auth-input-email` → Email input field
 - `auth-input-password` → Password input field
 - `auth-submit-button` → Submit button
 
 ### 3. Updated Playwright Configuration
+
 - Configured setup project to run before tests
 - Enabled storage state for session persistence
 - Set up dependency chain (tests depend on auth setup)
 
 ### 4. Environment Configuration
+
 - E2E credentials stored in `.env.integration`
 - Variables: `E2E_USERNAME`, `E2E_PASSWORD`
 
 ## Key Technical Solutions
 
 ### Problem 1: React Hook Form Button Disabled
+
 **Issue:** Submit button disabled due to `!form.formState.isDirty`
 
 **Solution:** Use `pressSequentially()` instead of `fill()` to trigger onChange events properly
@@ -39,6 +45,7 @@ await input.fill(value);
 ```
 
 ### Problem 2: Browser Autocomplete Interference
+
 **Issue:** Autocomplete was causing partial values ("t@mail.com" instead of "e2e_test@mail.com")
 
 **Solution:** Triple-click to select all, then type
@@ -52,12 +59,13 @@ await input.pressSequentially(value, { delay: 30 });
 ```
 
 ### Problem 3: React Hydration Timing
+
 **Issue:** Form not ready immediately after page load
 
 **Solution:** Wait for network idle + additional timeout
 
 ```typescript
-await page.goto(url, { waitUntil: 'networkidle' });
+await page.goto(url, { waitUntil: "networkidle" });
 await page.waitForTimeout(500); // Safety margin for hydration
 ```
 
@@ -83,27 +91,27 @@ await page.waitForTimeout(500); // Safety margin for hydration
 
 ### ✅ DO These in Future E2E Tests:
 
-| Practice | Why |
-|----------|-----|
-| Use `data-testid` attributes | Stable selectors that won't break with UI changes |
-| Use `waitUntil: 'networkidle'` for React/Astro pages | Ensures full hydration before interaction |
-| Use `pressSequentially()` with React Hook Form | Properly triggers onChange and dirty state |
-| Triple-click before typing in inputs | Handles autocomplete reliably |
-| Wait for element state before interaction | Prevents "element not enabled" errors |
-| Store auth state and reuse | Faster tests, runs login once |
-| Use environment variables for credentials | Security and flexibility |
+| Practice                                             | Why                                               |
+| ---------------------------------------------------- | ------------------------------------------------- |
+| Use `data-testid` attributes                         | Stable selectors that won't break with UI changes |
+| Use `waitUntil: 'networkidle'` for React/Astro pages | Ensures full hydration before interaction         |
+| Use `pressSequentially()` with React Hook Form       | Properly triggers onChange and dirty state        |
+| Triple-click before typing in inputs                 | Handles autocomplete reliably                     |
+| Wait for element state before interaction            | Prevents "element not enabled" errors             |
+| Store auth state and reuse                           | Faster tests, runs login once                     |
+| Use environment variables for credentials            | Security and flexibility                          |
 
 ### ❌ AVOID These:
 
-| Anti-Pattern | Problem | Better Approach |
-|-------------|---------|-----------------|
-| `fill()` with React Hook Form | Doesn't trigger dirty state | `pressSequentially()` |
-| Text-based selectors | Breaks with copy changes | `data-testid` attributes |
-| Skipping page readiness waits | Race conditions, flaky tests | `waitUntil: 'networkidle'` |
-| Platform-specific shortcuts (`Control+a`) | Fails on different OS | `click({ clickCount: 3 })` |
-| Hardcoded credentials | Security risk | Environment variables |
-| Login in every test | Slow test suite | Setup project + storage state |
-| Ignoring timing issues | Flaky tests | Explicit waits and assertions |
+| Anti-Pattern                              | Problem                      | Better Approach               |
+| ----------------------------------------- | ---------------------------- | ----------------------------- |
+| `fill()` with React Hook Form             | Doesn't trigger dirty state  | `pressSequentially()`         |
+| Text-based selectors                      | Breaks with copy changes     | `data-testid` attributes      |
+| Skipping page readiness waits             | Race conditions, flaky tests | `waitUntil: 'networkidle'`    |
+| Platform-specific shortcuts (`Control+a`) | Fails on different OS        | `click({ clickCount: 3 })`    |
+| Hardcoded credentials                     | Security risk                | Environment variables         |
+| Login in every test                       | Slow test suite              | Setup project + storage state |
+| Ignoring timing issues                    | Flaky tests                  | Explicit waits and assertions |
 
 ## Quick Reference: Authentication Setup Flow
 

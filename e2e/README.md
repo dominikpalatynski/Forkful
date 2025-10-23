@@ -11,6 +11,7 @@ This document summarizes the E2E testing setup for the Forkful application using
 Created a robust authentication setup that runs once before all tests, storing the authenticated session for reuse across test suites.
 
 **Files Created/Modified:**
+
 - `e2e/auth.setup.ts` - Authentication setup script
 - `playwright.config.js` - Updated configuration to use setup project
 - Login form components - Added `data-testid` attributes for reliable test selectors
@@ -31,6 +32,7 @@ Added test-specific attributes to login form components for reliable element tar
 ```
 
 **Why `data-testid`?**
+
 - More stable than CSS classes (which may change for styling)
 - More reliable than text content (which may be translated or changed)
 - Clear intent: these are for testing purposes
@@ -39,6 +41,7 @@ Added test-specific attributes to login form components for reliable element tar
 ### 3. Playwright Configuration
 
 Updated `playwright.config.js` to include:
+
 - Setup project that runs before tests
 - Storage state configuration for session reuse
 - Dependency chain (chromium depends on setup)
@@ -46,23 +49,24 @@ Updated `playwright.config.js` to include:
 ```javascript
 projects: [
   {
-    name: 'setup',
+    name: "setup",
     testMatch: /.*\.setup\.ts/,
   },
   {
-    name: 'chromium',
+    name: "chromium",
     use: {
-      ...devices['Desktop Chrome'],
-      storageState: 'playwright/.auth/user.json',
+      ...devices["Desktop Chrome"],
+      storageState: "playwright/.auth/user.json",
     },
-    dependencies: ['setup'],
+    dependencies: ["setup"],
   },
-]
+];
 ```
 
 ### 4. Environment Variables
 
 Authentication credentials are stored in `.env.integration`:
+
 ```env
 E2E_USERNAME=your-test-user@email.com
 E2E_PASSWORD=your-test-password
@@ -91,14 +95,17 @@ E2E_PASSWORD=your-test-password
 
 **Problem:**
 Submit button was disabled due to React Hook Form's `isDirty` check:
+
 ```tsx
 disabled={!form.formState.isDirty || isPending}
 ```
 
 **Initial Approach (Failed):**
+
 - Used `fill()` method - didn't trigger form's dirty state
 
 **Solution:**
+
 - Use `pressSequentially()` to simulate actual typing
 - Triggers proper onChange events
 - React Hook Form detects changes and enables button
@@ -107,15 +114,18 @@ disabled={!form.formState.isDirty || isPending}
 
 **Problem:**
 Browser autocomplete was filling fields with partial/cached values, causing incorrect values:
+
 - Expected: `e2e_test@mail.com`
 - Received: `est@mail.com` or `t@mail.com`
 
 **Failed Approaches:**
+
 1. `fill()` alone - autocomplete overrode values
 2. `clear()` + `pressSequentially()` - race condition with autocomplete
 3. `click()` + `clear()` + `pressSequentially()` - still had timing issues
 
 **Working Solution:**
+
 ```typescript
 // Triple-click selects all text (including autocomplete)
 await emailInput.click({ clickCount: 3 });
@@ -130,12 +140,14 @@ await emailInput.pressSequentially(E2E_USERNAME, { delay: 30 });
 Form wasn't ready for interaction immediately after page load.
 
 **Solution:**
+
 ```typescript
-await page.goto(`${baseURL}/auth/login`, { waitUntil: 'networkidle' });
+await page.goto(`${baseURL}/auth/login`, { waitUntil: "networkidle" });
 await page.waitForTimeout(500); // Additional safety margin
 ```
 
 **Why `networkidle`?**
+
 - Waits for all network requests to finish (500ms of no activity)
 - Ensures React components are fully hydrated
 - React Hook Form is initialized and ready
@@ -148,29 +160,34 @@ await page.waitForTimeout(500); // Additional safety margin
 1. **Use `data-testid` attributes** for test selectors
    - Stable and explicit
    - Won't break when styling changes
+
    ```tsx
    <Button data-testid="submit-button">Submit</Button>
    ```
 
 2. **Wait for `networkidle` for React/Astro pages**
+
    ```typescript
-   await page.goto(url, { waitUntil: 'networkidle' });
+   await page.goto(url, { waitUntil: "networkidle" });
    ```
 
 3. **Use `pressSequentially()` for form inputs with React Hook Form**
    - Triggers proper onChange events
    - Marks form as dirty
+
    ```typescript
    await input.pressSequentially(value, { delay: 30 });
    ```
 
 4. **Handle autocomplete with triple-click**
+
    ```typescript
    await input.click({ clickCount: 3 }); // Select all
    await input.pressSequentially(value);
    ```
 
 5. **Verify element state before interaction**
+
    ```typescript
    await expect(button).toBeEnabled({ timeout: 5000 });
    await button.click();
@@ -192,30 +209,33 @@ await page.waitForTimeout(500); // Additional safety margin
    - Form might not recognize as "dirty"
 
 2. **Don't rely on text content for selectors**
+
    ```typescript
    // ❌ BAD - breaks with translations/copy changes
-   page.getByText('Sign in')
+   page.getByText("Sign in");
 
    // ✅ GOOD - stable selector
-   page.locator('[data-testid="auth-submit-button"]')
+   page.locator('[data-testid="auth-submit-button"]');
    ```
 
 3. **Don't skip waiting for page readiness**
+
    ```typescript
    // ❌ BAD - might interact before React hydrates
    await page.goto(url);
    await input.click();
 
    // ✅ GOOD - wait for full readiness
-   await page.goto(url, { waitUntil: 'networkidle' });
+   await page.goto(url, { waitUntil: "networkidle" });
    await page.waitForTimeout(500);
    await input.click();
    ```
 
 4. **Don't use platform-specific keyboard shortcuts**
+
    ```typescript
    // ❌ BAD - only works on Windows/Linux
-   await input.press('Control+a');
+   await input.press("Control+a");
 
    // ✅ GOOD - works cross-platform
    await input.click({ clickCount: 3 });
@@ -278,27 +298,35 @@ npx playwright show-report
 ## Common Issues & Solutions
 
 ### Issue: "Element is not enabled"
+
 **Solution:** Wait for button to be enabled before clicking
+
 ```typescript
 await expect(button).toBeEnabled({ timeout: 5000 });
 await button.click();
 ```
 
 ### Issue: "Timeout waiting for element"
+
 **Solution:** Increase timeout or check selector
+
 ```typescript
-await element.waitFor({ state: 'visible', timeout: 10000 });
+await element.waitFor({ state: "visible", timeout: 10000 });
 ```
 
 ### Issue: "Unexpected value in input field"
+
 **Solution:** Use triple-click + pressSequentially to handle autocomplete
+
 ```typescript
 await input.click({ clickCount: 3 });
 await input.pressSequentially(value, { delay: 30 });
 ```
 
 ### Issue: Authentication state not persisting
+
 **Solution:** Ensure setup project runs and saves state
+
 ```typescript
 await page.context().storageState({ path: authFile });
 ```

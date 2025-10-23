@@ -1,16 +1,16 @@
-import { test, expect } from 'playwright/test';
+import { test, expect } from "playwright/test";
 
-test.describe('AI Recipe Creation Flow', () => {
-  test('should successfully create a recipe using AI generation', async ({ page, baseURL }) => {
+test.describe("AI Recipe Creation Flow", () => {
+  test("should successfully create a recipe using AI generation", async ({ page, baseURL }) => {
     // Step 1: Navigate to recipes page
-    await page.goto(`${baseURL}/recipes`, { waitUntil: 'networkidle' });
+    await page.goto(`${baseURL}/recipes`, { waitUntil: "networkidle" });
 
     // Verify we're on the recipes page and authenticated
-    await expect(page.getByRole('button', { name: /Nowy przepis/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Nowy przepis/i })).toBeVisible();
 
     // Step 2: Click "Z AI" button to navigate to AI recipe creation page
     const newAIButton = page.locator('button[data-testid="recipe-new-ai-button"]');
-    await newAIButton.waitFor({ state: 'visible' });
+    await newAIButton.waitFor({ state: "visible" });
     await newAIButton.click();
 
     // Wait for navigation to /recipes/new-ai
@@ -21,7 +21,7 @@ test.describe('AI Recipe Creation Flow', () => {
 
     // Step 3: Fill in the AI text input with recipe description
     const textInput = page.locator('textarea[data-testid="ai-recipe-input-text"]');
-    await textInput.waitFor({ state: 'visible' });
+    await textInput.waitFor({ state: "visible" });
 
     // Create a recipe description (minimum 100 characters required)
     const recipeDescription = `Chcę stworzyć przepis na pyszne spaghetti carbonara.
@@ -39,7 +39,7 @@ Sos powinien być kremowy i dobrze pokrywać makaron. To klasyczny włoski przep
 
     // Step 4: Click "Generuj przepis" button
     const generateButton = page.locator('button[data-testid="ai-recipe-button-generate"]');
-    await generateButton.waitFor({ state: 'visible' });
+    await generateButton.waitFor({ state: "visible" });
 
     // Wait for button to be enabled (form validation)
     await expect(generateButton).toBeEnabled({ timeout: 5000 });
@@ -53,12 +53,12 @@ Sos powinien być kremowy i dobrze pokrywać makaron. To klasyczny włoski przep
 
     // Step 5: Verify we're now in the edit phase
     // Look for the edit form header
-    await expect(page.getByText('Edytuj wygenerowany przepis')).toBeVisible({ timeout: 30000 });
+    await expect(page.getByText("Edytuj wygenerowany przepis")).toBeVisible({ timeout: 30000 });
 
     // Verify that generated data is present in the form
     // Check that the recipe name input has a value
     const nameInput = page.locator('input[data-testid="recipe-input-name"]');
-    await nameInput.waitFor({ state: 'visible' });
+    await nameInput.waitFor({ state: "visible" });
 
     // Get the generated recipe name (we'll verify it later on detail page)
     const generatedRecipeName = await nameInput.inputValue();
@@ -66,13 +66,13 @@ Sos powinien być kremowy i dobrze pokrywać makaron. To klasyczny włoski przep
 
     // Verify ingredients section is populated
     const ingredient0Input = page.locator('input[data-testid="recipe-input-ingredient-0"]');
-    await ingredient0Input.waitFor({ state: 'visible' });
+    await ingredient0Input.waitFor({ state: "visible" });
     const firstIngredient = await ingredient0Input.inputValue();
     expect(firstIngredient.length).toBeGreaterThan(0);
 
     // Verify steps section is populated
     const step0Input = page.locator('textarea[data-testid="recipe-input-step-0"]');
-    await step0Input.waitFor({ state: 'visible' });
+    await step0Input.waitFor({ state: "visible" });
     const firstStep = await step0Input.inputValue();
     expect(firstStep.length).toBeGreaterThan(0);
 
@@ -81,7 +81,7 @@ Sos powinien być kremowy i dobrze pokrywać makaron. To klasyczny włoski przep
 
     // Step 6: Submit the form
     const submitButton = page.locator('button[data-testid="ai-recipe-button-submit"]');
-    await submitButton.waitFor({ state: 'visible' });
+    await submitButton.waitFor({ state: "visible" });
     await expect(submitButton).toBeEnabled();
 
     // Click submit button
@@ -100,7 +100,7 @@ Sos powinien być kremowy i dobrze pokrywać makaron. To klasyczny włoski przep
 
     // Step 8: Verify the recipe content is displayed on detail page
     // Verify the recipe name is displayed (as a heading)
-    await expect(page.getByRole('heading', { name: generatedRecipeName })).toBeVisible({
+    await expect(page.getByRole("heading", { name: generatedRecipeName })).toBeVisible({
       timeout: 10000,
     });
 
@@ -111,24 +111,24 @@ Sos powinien być kremowy i dobrze pokrywać makaron. To klasyczny włoski przep
     await expect(page.getByText(firstStep)).toBeVisible();
   });
 
-  test('should require minimum character count before generating', async ({ page, baseURL }) => {
+  test("should require minimum character count before generating", async ({ page, baseURL }) => {
     // Navigate to AI recipe creation page
-    await page.goto(`${baseURL}/recipes/new-ai`, { waitUntil: 'networkidle' });
+    await page.goto(`${baseURL}/recipes/new-ai`, { waitUntil: "networkidle" });
     await page.waitForTimeout(500);
 
     // Get the text input
     const textInput = page.locator('textarea[data-testid="ai-recipe-input-text"]');
-    await textInput.waitFor({ state: 'visible' });
+    await textInput.waitFor({ state: "visible" });
 
     // Get the generate button
     const generateButton = page.locator('button[data-testid="ai-recipe-button-generate"]');
-    await generateButton.waitFor({ state: 'visible' });
+    await generateButton.waitFor({ state: "visible" });
 
     // Initially, button should be disabled (no text entered)
     await expect(generateButton).toBeDisabled();
 
     // Enter text that's too short (less than 100 characters)
-    const shortText = 'Makaron carbonara';
+    const shortText = "Makaron carbonara";
     await textInput.click({ clickCount: 3 });
     await textInput.pressSequentially(shortText, { delay: 30 });
 
@@ -146,9 +146,9 @@ Składniki powinny zawierać makaron spaghetti, boczek lub pancetta, jajka, parm
     await expect(generateButton).toBeEnabled({ timeout: 5000 });
   });
 
-  test('should allow editing generated recipe before submission', async ({ page, baseURL }) => {
+  test("should allow editing generated recipe before submission", async ({ page, baseURL }) => {
     // Navigate to recipes page and click AI button
-    await page.goto(`${baseURL}/recipes`, { waitUntil: 'networkidle' });
+    await page.goto(`${baseURL}/recipes`, { waitUntil: "networkidle" });
     await page.locator('button[data-testid="recipe-new-ai-button"]').click();
     await page.waitForURL(`${baseURL}/recipes/new-ai`, { timeout: 10000 });
     await page.waitForTimeout(500);
@@ -166,29 +166,29 @@ bulion warzywny, śmietana, bazylia. Zupa powinna być kremowa i aromatyczna. To
     await generateButton.click();
 
     // Wait for edit phase
-    await expect(page.getByText('Edytuj wygenerowany przepis')).toBeVisible({ timeout: 30000 });
+    await expect(page.getByText("Edytuj wygenerowany przepis")).toBeVisible({ timeout: 30000 });
 
     // Verify we're in edit mode with generated data
     const nameInput = page.locator('input[data-testid="recipe-input-name"]');
-    await nameInput.waitFor({ state: 'visible' });
+    await nameInput.waitFor({ state: "visible" });
 
     // Edit the recipe name
     await nameInput.click({ clickCount: 3 });
-    await nameInput.pressSequentially('Moja Zupa Pomidorowa', { delay: 30 });
-    await expect(nameInput).toHaveValue('Moja Zupa Pomidorowa');
+    await nameInput.pressSequentially("Moja Zupa Pomidorowa", { delay: 30 });
+    await expect(nameInput).toHaveValue("Moja Zupa Pomidorowa");
 
     // Edit the first ingredient
     const ingredient0Input = page.locator('input[data-testid="recipe-input-ingredient-0"]');
-    await ingredient0Input.waitFor({ state: 'visible' });
+    await ingredient0Input.waitFor({ state: "visible" });
     await ingredient0Input.click({ clickCount: 3 });
-    await ingredient0Input.pressSequentially('1kg dojrzałych pomidorów', { delay: 30 });
-    await expect(ingredient0Input).toHaveValue('1kg dojrzałych pomidorów');
+    await ingredient0Input.pressSequentially("1kg dojrzałych pomidorów", { delay: 30 });
+    await expect(ingredient0Input).toHaveValue("1kg dojrzałych pomidorów");
 
     // Add a tag
     const tagInput = page.locator('input[data-testid="recipe-input-tag"]');
-    await tagInput.waitFor({ state: 'visible' });
+    await tagInput.waitFor({ state: "visible" });
     await tagInput.click({ clickCount: 3 });
-    await tagInput.pressSequentially('zupy', { delay: 30 });
+    await tagInput.pressSequentially("zupy", { delay: 30 });
 
     const addTagButton = page.locator('button[data-testid="recipe-button-add-tag"]');
     await expect(addTagButton).toBeEnabled();
@@ -203,24 +203,24 @@ bulion warzywny, śmietana, bazylia. Zupa powinna być kremowa i aromatyczna. To
     await page.waitForURL(/\/recipes\/[a-f0-9-]{36}$/, { timeout: 15000 });
 
     // Verify edited content is displayed
-    await expect(page.getByRole('heading', { name: 'Moja Zupa Pomidorowa' })).toBeVisible({
+    await expect(page.getByRole("heading", { name: "Moja Zupa Pomidorowa" })).toBeVisible({
       timeout: 10000,
     });
-    await expect(page.getByText('1kg dojrzałych pomidorów')).toBeVisible();
-    await expect(page.getByText('zupy')).toBeVisible();
+    await expect(page.getByText("1kg dojrzałych pomidorów")).toBeVisible();
+    await expect(page.getByText("zupy")).toBeVisible();
   });
 
-  test('should handle navigation back to recipes page on cancel', async ({ page, baseURL }) => {
+  test("should handle navigation back to recipes page on cancel", async ({ page, baseURL }) => {
     // Navigate to AI recipe creation page
-    await page.goto(`${baseURL}/recipes/new-ai`, { waitUntil: 'networkidle' });
+    await page.goto(`${baseURL}/recipes/new-ai`, { waitUntil: "networkidle" });
     await page.waitForTimeout(500);
 
     // Verify we're on the AI creation page
-    await expect(page.getByText('Stwórz przepis z AI')).toBeVisible();
+    await expect(page.getByText("Stwórz przepis z AI")).toBeVisible();
 
     // In the input phase, the back button should be visible
     const backButton = page.locator('button[data-testid="ai-recipe-button-back"]');
-    await backButton.waitFor({ state: 'visible' });
+    await backButton.waitFor({ state: "visible" });
 
     // Click back (form is not dirty, so should navigate immediately to recipes page)
     await backButton.click();
@@ -229,9 +229,9 @@ bulion warzywny, śmietana, bazylia. Zupa powinna być kremowa i aromatyczna. To
     await page.waitForURL(`${baseURL}/recipes`, { timeout: 10000 });
   });
 
-  test('should handle adding multiple ingredients and steps in edit phase', async ({ page, baseURL }) => {
+  test("should handle adding multiple ingredients and steps in edit phase", async ({ page, baseURL }) => {
     // Navigate to AI recipe creation
-    await page.goto(`${baseURL}/recipes/new-ai`, { waitUntil: 'networkidle' });
+    await page.goto(`${baseURL}/recipes/new-ai`, { waitUntil: "networkidle" });
     await page.waitForTimeout(500);
 
     // Generate a recipe
@@ -247,7 +247,7 @@ Omlet powinien być puszyisty i delikatny. Przygotowanie zajmuje około 10 minut
     await generateButton.click();
 
     // Wait for edit phase
-    await expect(page.getByText('Edytuj wygenerowany przepis')).toBeVisible({ timeout: 30000 });
+    await expect(page.getByText("Edytuj wygenerowany przepis")).toBeVisible({ timeout: 30000 });
 
     // Count existing ingredients and steps before adding new ones
     const existingIngredientsCount = await page.locator('input[data-testid^="recipe-input-ingredient-"]').count();
@@ -255,18 +255,18 @@ Omlet powinien być puszyisty i delikatny. Przygotowanie zajmuje około 10 minut
 
     // Add more ingredients
     const addIngredientButton = page.locator('button[data-testid="recipe-button-add-ingredient"]');
-    await addIngredientButton.waitFor({ state: 'visible' });
+    await addIngredientButton.waitFor({ state: "visible" });
 
     // Add two more ingredients and fill them
     await addIngredientButton.click();
     const newIngredient1 = page.locator(`input[data-testid="recipe-input-ingredient-${existingIngredientsCount}"]`);
-    await newIngredient1.waitFor({ state: 'visible' });
-    await newIngredient1.fill('Dodatkowy składnik 1');
+    await newIngredient1.waitFor({ state: "visible" });
+    await newIngredient1.fill("Dodatkowy składnik 1");
 
     await addIngredientButton.click();
     const newIngredient2 = page.locator(`input[data-testid="recipe-input-ingredient-${existingIngredientsCount + 1}"]`);
-    await newIngredient2.waitFor({ state: 'visible' });
-    await newIngredient2.fill('Dodatkowy składnik 2');
+    await newIngredient2.waitFor({ state: "visible" });
+    await newIngredient2.fill("Dodatkowy składnik 2");
 
     // Verify multiple ingredient inputs exist
     await expect(page.locator('input[data-testid^="recipe-input-ingredient-"]')).toHaveCount(
@@ -275,18 +275,18 @@ Omlet powinien być puszyisty i delikatny. Przygotowanie zajmuje około 10 minut
 
     // Add more steps
     const addStepButton = page.locator('button[data-testid="recipe-button-add-step"]');
-    await addStepButton.waitFor({ state: 'visible' });
+    await addStepButton.waitFor({ state: "visible" });
 
     // Add two more steps and fill them
     await addStepButton.click();
     const newStep1 = page.locator(`textarea[data-testid="recipe-input-step-${existingStepsCount}"]`);
-    await newStep1.waitFor({ state: 'visible' });
-    await newStep1.fill('Dodatkowy krok przygotowania 1');
+    await newStep1.waitFor({ state: "visible" });
+    await newStep1.fill("Dodatkowy krok przygotowania 1");
 
     await addStepButton.click();
     const newStep2 = page.locator(`textarea[data-testid="recipe-input-step-${existingStepsCount + 1}"]`);
-    await newStep2.waitFor({ state: 'visible' });
-    await newStep2.fill('Dodatkowy krok przygotowania 2');
+    await newStep2.waitFor({ state: "visible" });
+    await newStep2.fill("Dodatkowy krok przygotowania 2");
 
     // Verify multiple step inputs exist
     await expect(page.locator('textarea[data-testid^="recipe-input-step-"]')).toHaveCount(existingStepsCount + 2);

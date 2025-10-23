@@ -1,7 +1,7 @@
-import * as React from "react"
-import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react"
+import * as React from "react";
+import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
 
-import { useIsMobile } from "@/hooks/use-mobile"
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -10,21 +10,19 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/navigation-menu";
+import { Button } from "@/components/ui/button";
 
 const components: { title: string; href: string; description: string }[] = [
   {
     title: "Alert Dialog",
     href: "/docs/primitives/alert-dialog",
-    description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
+    description: "A modal dialog that interrupts the user with important content and expects a response.",
   },
   {
     title: "Hover Card",
     href: "/docs/primitives/hover-card",
-    description:
-      "For sighted users to preview content available behind a link.",
+    description: "For sighted users to preview content available behind a link.",
   },
   {
     title: "Progress",
@@ -40,8 +38,7 @@ const components: { title: string; href: string; description: string }[] = [
   {
     title: "Tabs",
     href: "/docs/primitives/tabs",
-    description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+    description: "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
   },
   {
     title: "Tooltip",
@@ -49,30 +46,23 @@ const components: { title: string; href: string; description: string }[] = [
     description:
       "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   },
-]
+];
 
-function ListItem({
-  title,
-  children,
-  href,
-  ...props
-}: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
+function ListItem({ title, children, href, ...props }: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
   return (
     <li {...props}>
       <NavigationMenuLink asChild>
         <a href={href}>
           <div className="text-sm leading-none font-medium">{title}</div>
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-            {children}
-          </p>
+          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</p>
         </a>
       </NavigationMenuLink>
     </li>
-  )
+  );
 }
 
 export function NavigationMenuDemo() {
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
 
   return (
     <div className="flex items-center justify-between w-full max-w-7xl px-4">
@@ -92,9 +82,7 @@ export function NavigationMenuDemo() {
                         className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-4 no-underline outline-hidden transition-all duration-200 select-none focus:shadow-md md:p-6"
                         href="/"
                       >
-                        <div className="mb-2 text-lg font-medium sm:mt-4">
-                          shadcn/ui
-                        </div>
+                        <div className="mb-2 text-lg font-medium sm:mt-4">shadcn/ui</div>
                         <p className="text-muted-foreground text-sm leading-tight">
                           Beautifully designed components built with Tailwind CSS.
                         </p>
@@ -118,11 +106,7 @@ export function NavigationMenuDemo() {
               <NavigationMenuContent>
                 <ul className="grid gap-2 sm:w-[400px] md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                   {components.map((component) => (
-                    <ListItem
-                      key={component.title}
-                      title={component.title}
-                      href={component.href}
-                    >
+                    <ListItem key={component.title} title={component.title} href={component.href}>
                       {component.description}
                     </ListItem>
                   ))}
@@ -140,28 +124,22 @@ export function NavigationMenuDemo() {
                 <ul className="grid w-[300px] gap-4">
                   <li>
                     <NavigationMenuLink asChild>
-                      <a href="#">
+                      <button>
                         <div className="font-medium">Components</div>
-                        <div className="text-muted-foreground">
-                          Browse all components in the library.
-                        </div>
-                      </a>
+                        <div className="text-muted-foreground">Browse all components in the library.</div>
+                      </button>
                     </NavigationMenuLink>
                     <NavigationMenuLink asChild>
-                      <a href="#">
+                      <button>
                         <div className="font-medium">Documentation</div>
-                        <div className="text-muted-foreground">
-                          Learn how to use the library.
-                        </div>
-                      </a>
+                        <div className="text-muted-foreground">Learn how to use the library.</div>
+                      </button>
                     </NavigationMenuLink>
                     <NavigationMenuLink asChild>
-                      <a href="#">
+                      <button>
                         <div className="font-medium">Blog</div>
-                        <div className="text-muted-foreground">
-                          Read our latest blog posts.
-                        </div>
-                      </a>
+                        <div className="text-muted-foreground">Read our latest blog posts.</div>
+                      </button>
                     </NavigationMenuLink>
                   </li>
                 </ul>
@@ -173,13 +151,13 @@ export function NavigationMenuDemo() {
                 <ul className="grid w-[200px] gap-4">
                   <li>
                     <NavigationMenuLink asChild>
-                      <a href="#">Components</a>
+                      <button>Components</button>
                     </NavigationMenuLink>
                     <NavigationMenuLink asChild>
-                      <a href="#">Documentation</a>
+                      <button>Documentation</button>
                     </NavigationMenuLink>
                     <NavigationMenuLink asChild>
-                      <a href="#">Blocks</a>
+                      <button>Blocks</button>
                     </NavigationMenuLink>
                   </li>
                 </ul>
@@ -191,22 +169,22 @@ export function NavigationMenuDemo() {
                 <ul className="grid w-[200px] gap-4">
                   <li>
                     <NavigationMenuLink asChild>
-                      <a href="#" className="flex-row items-center gap-2">
+                      <button className="flex-row items-center gap-2">
                         <CircleHelpIcon />
                         Backlog
-                      </a>
+                      </button>
                     </NavigationMenuLink>
                     <NavigationMenuLink asChild>
-                      <a href="#" className="flex-row items-center gap-2">
+                      <button className="flex-row items-center gap-2">
                         <CircleIcon />
                         To Do
-                      </a>
+                      </button>
                     </NavigationMenuLink>
                     <NavigationMenuLink asChild>
-                      <a href="#" className="flex-row items-center gap-2">
+                      <button className="flex-row items-center gap-2">
                         <CircleCheckIcon />
                         Done
-                      </a>
+                      </button>
                     </NavigationMenuLink>
                   </li>
                 </ul>
@@ -224,5 +202,5 @@ export function NavigationMenuDemo() {
         </Button>
       </div>
     </div>
-  )
+  );
 }

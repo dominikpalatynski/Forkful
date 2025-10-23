@@ -144,7 +144,12 @@ export const AIRecipeTextInput = React.memo<AIRecipeTextInputProps>(
 
           {/* Przycisk Generuj */}
           <div className="flex justify-end">
-            <Button type="submit" disabled={!isValid || isGenerating} className="gap-2" data-testid="ai-recipe-button-generate">
+            <Button
+              type="submit"
+              disabled={!isValid || isGenerating}
+              className="gap-2"
+              data-testid="ai-recipe-button-generate"
+            >
               <Sparkles className="size-4" />
               {isGenerating ? "Generowanie..." : "Generuj przepis"}
             </Button>
