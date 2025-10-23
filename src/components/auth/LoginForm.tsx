@@ -51,7 +51,12 @@ export function LoginForm() {
 
             <LoginPasswordField control={form.control} />
 
-            <Button type="submit" className="w-full" disabled={!form.formState.isDirty || isPending}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={!form.formState.isDirty || isPending}
+              data-testid="auth-submit-button"
+            >
               {isPending ? "Signing in..." : "Sign in"}
             </Button>
           </form>

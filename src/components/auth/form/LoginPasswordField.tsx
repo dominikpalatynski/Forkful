@@ -25,6 +25,7 @@ export function LoginPasswordField({ control }: LoginPasswordFieldProps) {
               type="password"
               placeholder="Enter your password"
               autoComplete="current-password"
+              data-testid="auth-input-password"
               {...field}
             />
           </FormControl>
