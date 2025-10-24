@@ -2,12 +2,12 @@ import type { ComponentType } from "react";
 
 import {
   ArrowRightIcon,
+  Edit3Icon,
+  ListIcon,
   LockKeyholeIcon,
-  SearchIcon,
-  ShieldBanIcon,
   SmartphoneIcon,
-  StarIcon,
   SwatchBookIcon,
+  TagIcon,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -19,57 +19,58 @@ import { cn } from "@/lib/utils";
 const featuresListPrepared = [
   {
     icon: SwatchBookIcon,
-    title: "User-Friendly Interface",
+    title: "Generowanie przepisów z AI",
     description:
-      "Navigate effortlessly with our intuitive design, optimised for all devices. Enjoy a seamless experience whether you're on a computer or mobile.",
+      "Wklej tekst przepisu z dowolnego źródła, a AI automatycznie wyodrębni składniki, kroki i nazwę. Zaoszczędź czas na ręcznym formatowaniu i od razu przejdź do gotowania.",
     cardBorderColor: "border-primary/40 hover:border-primary",
     avatarTextColor: "text-primary",
     avatarBgColor: "bg-primary/10",
   },
   {
-    icon: ShieldBanIcon,
-    title: "Secure Checkout",
+    icon: ListIcon,
+    title: "Automatyczne rozdzielenie treści",
     description:
-      "Enjoy a safe shopping experience with multiple payment options and SSL encryption. Your personal and financial information is always protected.",
+      "System inteligentnie oddziela składniki od instrukcji, rozpoznaje strukturę przepisu i porządkuje dane. Nie musisz niczego formatować ręcznie.",
     cardBorderColor: "border-green-600/40 hover:border-green-600 dark:border-green-400/40 dark:hover:border-green-400",
     avatarTextColor: "text-green-600 dark:text-green-400",
     avatarBgColor: "bg-green-600/10 dark:bg-green-400/10",
   },
   {
-    icon: SearchIcon,
-    title: "Advanced Search",
+    icon: Edit3Icon,
+    title: "Edycja i tworzenie manualne",
     description:
-      "Find products quickly with advanced filters, sorting options, and suggestion. Save time and effortlessly locate exactly what you need with ease.",
+      "Dostosuj każdy przepis do swoich potrzeb lub stwórz nowy od zera. Dodawaj, usuwaj i przestawiaj składniki oraz kroki za pomocą prostego interfejsu drag-and-drop.",
     cardBorderColor: "border-amber-600/40 hover:border-amber-600 dark:border-amber-400/40 dark:hover:border-amber-400",
     avatarTextColor: "text-amber-600 dark:text-amber-400",
     avatarBgColor: "bg-amber-600/10 dark:bg-amber-400/10",
   },
   {
-    icon: StarIcon,
-    title: "Customer Reviews and Ratings",
+    icon: TagIcon,
+    title: "System tagów i kategorii",
     description:
-      "Make informed decisions with detailed product reviews and ratings from other buyers. Trust the experiences of fellow shoppers to guide choices.",
+      "Organizuj przepisy według własnych kategorii. Dodawaj tagi podczas zapisywania, a system będzie podpowiadał wcześniej użyte, aby zachować spójność Twojej kolekcji.",
     cardBorderColor: "border-destructive/40 hover:border-destructive",
     avatarTextColor: "text-destructive",
     avatarBgColor: "bg-destructive/10",
   },
   {
-    icon: SmartphoneIcon,
-    title: "Mobile App Integration",
+    icon: LockKeyholeIcon,
+    title: "Bezpieczna prywatna kolekcja",
     description:
-      "Enhance your shopping experience with our mobile app and push notifications. Stay updated on arrivals and exclusive offers directly on phone.",
+      "Twoje przepisy są dostępne tylko dla Ciebie. Buduj osobistą cyfrową książkę kucharską bez obaw o prywatność, z pełnym dostępem z każdego urządzenia.",
+    cardBorderColor:
+      "border-violet-600/40 hover:border-violet-600 dark:border-violet-400/40 dark:hover:border-violet-400",
+    avatarTextColor: "text-violet-600 dark:text-violet-400",
+    avatarBgColor: "bg-violet-600/10 dark:bg-violet-400/10",
+  },
+  {
+    icon: SmartphoneIcon,
+    title: "Responsywny dostęp wszędzie",
+    description:
+      "Korzystaj z aplikacji na komputerze podczas przygotowań lub na telefonie bezpośrednio w kuchni. Interfejs dostosowuje się do każdego urządzenia.",
     cardBorderColor: "border-sky-600/40 hover:border-sky-600 dark:border-sky-400/40 dark:hover:border-sky-400",
     avatarTextColor: "text-sky-600 dark:text-sky-400",
     avatarBgColor: "bg-sky-600/10 dark:bg-sky-400/10",
-  },
-  {
-    icon: LockKeyholeIcon,
-    title: "Security Features",
-    description:
-      "Protect your data with fraud detection and two-factor authentication. Ensure a secure environment for all transactions and account activities.",
-    cardBorderColor: "border-primary/40 hover:border-primary",
-    avatarTextColor: "text-primary",
-    avatarBgColor: "bg-primary/10",
   },
 ];
 
@@ -88,13 +89,15 @@ const Features = ({ featuresList = featuresListPrepared }: { featuresList?: Feat
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-12 space-y-4 sm:mb-16 lg:mb-24">
-          <h2 className="text-2xl font-semibold md:text-3xl lg:text-4xl">Discover the Exclusive Perks Today</h2>
+          <h2 className="text-2xl font-semibold md:text-3xl lg:text-4xl">
+            Wszystko, czego potrzebujesz do cyfrowej książki kucharskiej
+          </h2>
           <p className="text-muted-foreground text-xl">
-            Explore key features designed to enhance your shopping experience with intuitive navigation, robust
-            security, and seamless functionality.
+            Odkryj funkcje zaprojektowane z myślą o oszczędności Twojego czasu. Inteligentne przetwarzanie AI, łatwa
+            edycja i pełna kontrola nad Twoją kolekcją przepisów.
           </p>
           <Button variant="outline" className="rounded-lg text-base shadow-none has-[>svg]:px-6" size="lg">
-            See all features
+            Zobacz wszystkie funkcje
             <ArrowRightIcon />
           </Button>
         </div>
