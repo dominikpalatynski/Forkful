@@ -2,6 +2,7 @@
 // src/layouts/BaseLayout.astro
 import "../styles/global.css";
 import { NavigationMenuDemo } from "../components/marketing/NavBar";
+import FooterSection from "../components/marketing/Footer";
 interface Props {
   title?: string;
 }
@@ -24,6 +25,7 @@ const { title = "Forkful" } = Astro.props as Props;
       <NavigationMenuDemo client:load />
     </header>
     <slot />
+    <FooterSection client:load />
   </body>
 </html>
 
