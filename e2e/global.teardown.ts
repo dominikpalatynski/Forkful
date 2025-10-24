@@ -27,89 +27,24 @@ if (!E2E_USERNAME_ID) {
 const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY);
 
 teardown("cleanup database", async () => {
-  console.log("🧹 Starting database cleanup...");
+  // 1. Delete recipe_tags (junction table with foreign keys to recipes and tags)
+  await supabase.from("recipe_tags").delete().neq("recipe_id", "").eq("user_id", E2E_USERNAME_ID);
 
-  try {
-    // Delete data in order to respect foreign key constraints
-    // 1. Delete recipe_tags (junction table with foreign keys to recipes and tags)
-    const { error: recipeTagsError } = await supabase
-      .from("recipe_tags")
-      .delete()
-      .neq("recipe_id", "")
-      .eq("user_id", E2E_USERNAME_ID);
-    if (recipeTagsError) {
-      console.error("Error deleting recipe_tags:", recipeTagsError);
-    } else {
-      console.log("✓ Deleted all recipe_tags");
-    }
+  // 2. Delete ingredients (has foreign key to recipes)
+  await supabase.from("ingredients").delete().neq("id", "").eq("user_id", E2E_USERNAME_ID);
 
-    // 2. Delete ingredients (has foreign key to recipes)
-    const { error: ingredientsError } = await supabase
-      .from("ingredients")
-      .delete()
-      .neq("id", "")
-      .eq("user_id", E2E_USERNAME_ID);
-    if (ingredientsError) {
-      console.error("Error deleting ingredients:", ingredientsError);
-    } else {
-      console.log("✓ Deleted all ingredients");
-    }
+  // 3. Delete steps (has foreign key to recipes)
+  await supabase.from("steps").delete().neq("id", "").eq("user_id", E2E_USERNAME_ID);
 
-    // 3. Delete steps (has foreign key to recipes)
-    const { error: stepsError } = await supabase.from("steps").delete().neq("id", "").eq("user_id", E2E_USERNAME_ID);
-    if (stepsError) {
-      console.error("Error deleting steps:", stepsError);
-    } else {
-      console.log("✓ Deleted all steps");
-    }
+  // 4. Delete recipes (has foreign key to generation)
+  await supabase.from("recipes").delete().neq("id", "").eq("user_id", E2E_USERNAME_ID);
 
-    // 4. Delete recipes (has foreign key to generation)
-    const { error: recipesError } = await supabase
-      .from("recipes")
-      .delete()
-      .neq("id", "")
-      .eq("user_id", E2E_USERNAME_ID);
-    if (recipesError) {
-      console.error("Error deleting recipes:", recipesError);
-    } else {
-      console.log("✓ Deleted all recipes");
-    }
+  // 5. Delete tags (standalone table)
+  await supabase.from("tags").delete().neq("id", "").eq("user_id", E2E_USERNAME_ID);
 
-    // 5. Delete tags (standalone table)
-    const { error: tagsError } = await supabase.from("tags").delete().neq("id", "").eq("user_id", E2E_USERNAME_ID);
-    if (tagsError) {
-      console.error("Error deleting tags:", tagsError);
-    } else {
-      console.log("✓ Deleted all tags");
-    }
+  // 6. Delete generation (standalone table)
+  await supabase.from("generation").delete().neq("id", "").eq("user_id", E2E_USERNAME_ID);
 
-    // 6. Delete generation (standalone table)
-    const { error: generationError } = await supabase
-      .from("generation")
-      .delete()
-      .neq("id", "")
-      .eq("user_id", E2E_USERNAME_ID);
-    if (generationError) {
-      console.error("Error deleting generation:", generationError);
-    } else {
-      console.log("✓ Deleted all generation records");
-    }
-
-    // 7. Delete generation_errors (standalone table)
-    const { error: generationErrorsError } = await supabase
-      .from("generation_errors")
-      .delete()
-      .neq("id", "")
-      .eq("user_id", E2E_USERNAME_ID);
-    if (generationErrorsError) {
-      console.error("Error deleting generation_errors:", generationErrorsError);
-    } else {
-      console.log("✓ Deleted all generation_errors");
-    }
-
-    console.log("✅ Database cleanup completed successfully");
-  } catch (error) {
-    console.error("❌ Unexpected error during database cleanup:", error);
-    throw error;
-  }
+  // 7. Delete generation_errors (standalone table)
+  await supabase.from("generation_errors").delete().neq("id", "").eq("user_id", E2E_USERNAME_ID);
 });

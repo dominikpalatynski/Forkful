@@ -29,17 +29,15 @@ export function ForgotPasswordForm() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Reset your password</CardTitle>
-        <CardDescription>
-          Enter your email address and we&apos;ll send you a link to reset your password
-        </CardDescription>
+        <CardTitle className="text-2xl">Resetuj swoje hasło</CardTitle>
+        <CardDescription>Wpisz swój adres e-mail i wyślemy Ci link do resetowania hasła</CardDescription>
       </CardHeader>
 
       <CardContent>
         {isError && error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="text-sm">
-              <p className="font-medium text-red-800">Reset request failed</p>
+              <p className="font-medium text-red-800">Żądanie resetowania hasła nie powiodło się</p>
               <p className="text-red-700 mt-1">{error.message}</p>
             </div>
           </div>
@@ -50,22 +48,22 @@ export function ForgotPasswordForm() {
             <ForgotPasswordEmailField control={form.control} />
 
             <Button type="submit" className="w-full" disabled={!form.formState.isDirty || isPending}>
-              {isPending ? "Sending reset link..." : "Send reset link"}
+              {isPending ? "Wysyłanie linku resetowania..." : "Wyślij link resetowania"}
             </Button>
           </form>
         </Form>
 
         <div className="text-center space-y-2 mt-6">
           <p className="text-sm text-muted-foreground">
-            Remember your password?{" "}
-            <a href="/auth/login" className="text-primary hover:underline font-medium">
-              Sign in
+            Zapomniałeś hasła?{" "}
+            <a href="/auth/login" className="text-primary h over:underline font-medium">
+              Zaloguj się
             </a>
           </p>
           <p className="text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
+            Nie masz jeszcze konta?{" "}
             <a href="/auth/register" className="text-primary hover:underline font-medium">
-              Sign up
+              Zarejestruj się
             </a>
           </p>
         </div>

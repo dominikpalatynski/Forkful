@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { CharacterCounter } from "./CharacterCounter";
 import type { AIRecipeTextInputProps } from "../types/ai.types";
 
-const MIN_CHARS = 100;
+const MIN_CHARS = 30;
 const MAX_CHARS = 10000;
 
 /**

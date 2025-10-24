@@ -94,7 +94,6 @@ export function AIRecipeForm() {
           generatedData={generatedData}
           generationId={generationId}
           onSubmit={handleSubmit}
-          onBackToTextEdit={dialogs.backToText.open}
           hasData={hasData}
           onCancel={handleBack}
           isSubmitting={createMutation.isPending}

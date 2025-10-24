@@ -19,54 +19,49 @@ const PUBLIC_PATHS = [
 ];
 
 const validateRequest = defineMiddleware(async ({ locals, url, redirect }, next) => {
-  try {
-    const supabase = supabaseClient;
+  const supabase = supabaseClient;
 
-    // Attach supabase client to locals
-    locals.supabase = supabase;
+  // Attach supabase client to locals
+  locals.supabase = supabase;
 
-    // Get user session
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  // Get user session
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    // Always set user in locals if available, regardless of path
-    if (user) {
-      locals.user = {
-        email: user.email ?? null,
-        id: user.id,
-      };
-    }
+  // Always set user in locals if available, regardless of path
+  if (user) {
+    locals.user = {
+      email: user.email ?? null,
+      id: user.id,
+    };
+  }
 
-    if (user && url.pathname.startsWith("/auth/")) {
-      return redirect("/recipes");
-    }
+  if (user && url.pathname.startsWith("/auth/")) {
+    return redirect("/recipes");
+  }
 
-    // Skip auth check for public paths
-    if (PUBLIC_PATHS.includes(url.pathname)) {
-      return next();
-    }
-
-    // For protected routes, check if user exists
-    if (!user) {
-      // For API routes, return 401 instead of redirecting
-      if (url.pathname.startsWith("/api/")) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
-      // Redirect to login for protected routes
-      return redirect("/auth/login");
-    }
-
-    return next();
-  } catch (error) {
-    console.error("Error in middleware:", error instanceof Error ? error.message : error);
+  // Skip auth check for public paths
+  if (PUBLIC_PATHS.includes(url.pathname)) {
     return next();
   }
+
+  // For protected routes, check if user exists
+  if (!user) {
+    // For API routes, return 401 instead of redirecting
+    if (url.pathname.startsWith("/api/")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
+    // Redirect to login for protected routes
+    return redirect("/auth/login");
+  }
+
+  return next();
 });
 
 export const onRequest = sequence(validateRequest);

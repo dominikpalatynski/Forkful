@@ -2,6 +2,17 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TagService } from "./tag.service";
 import type { SupabaseClientType } from "../../db/supabase.client";
 
+// Type definitions for mock Supabase responses
+interface MockSupabaseResponse<T> {
+  data: T | null;
+  error: { message: string } | null;
+}
+type ThenableResolver<T> = (response: MockSupabaseResponse<T>) => MockSupabaseResponse<T>;
+interface MockThenable<T> {
+  ilike?: ReturnType<typeof vi.fn>;
+  then: (resolve: ThenableResolver<T>) => MockSupabaseResponse<T>;
+}
+
 const createBaseMocks = () => {
   const mockIlike = vi.fn();
   const mockOrder = vi.fn();
@@ -36,11 +47,11 @@ describe("TagService", () => {
     // Default: order returns object that can be awaited or chained with ilike
     baseMocks.order.mockReturnValue({
       ilike: baseMocks.ilike,
-      then: (resolve: any) => resolve({ data: [], error: null }),
+      then: <T>(resolve: ThenableResolver<T>) => resolve({ data: [] as T, error: null }),
     });
 
     baseMocks.ilike.mockReturnValue({
-      then: (resolve: any) => resolve({ data: [], error: null }),
+      then: <T>(resolve: ThenableResolver<T>) => resolve({ data: [] as T, error: null }),
     });
 
     // Create service with mock client
@@ -61,7 +72,7 @@ describe("TagService", () => {
 
         baseMocks.order.mockReturnValue({
           ilike: baseMocks.ilike,
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         const result = await service.getTags("user-123");
@@ -80,7 +91,7 @@ describe("TagService", () => {
 
         baseMocks.order.mockReturnValue({
           ilike: baseMocks.ilike,
-          then: (resolve: any) => resolve({ data: mockTag, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTag as T, error: null }),
         });
 
         const result = await service.getTags("user-456");
@@ -93,7 +104,7 @@ describe("TagService", () => {
       it("should return empty array when user has no tags", async () => {
         baseMocks.order.mockReturnValue({
           ilike: baseMocks.ilike,
-          then: (resolve: any) => resolve({ data: null, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: null, error: null }),
         });
 
         const result = await service.getTags("user-789");
@@ -111,7 +122,7 @@ describe("TagService", () => {
 
         baseMocks.order.mockReturnValue({
           ilike: baseMocks.ilike,
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         const result = await service.getTags("user-123");
@@ -129,7 +140,7 @@ describe("TagService", () => {
         ];
 
         baseMocks.ilike.mockReturnValue({
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         const result = await service.getTags("user-123", "Pasta");
@@ -143,7 +154,7 @@ describe("TagService", () => {
         const mockTags = [{ id: "tag-1", name: "Pasta" }];
 
         baseMocks.ilike.mockReturnValue({
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         const result = await service.getTags("user-123", "pAsTa");
@@ -159,7 +170,7 @@ describe("TagService", () => {
         ];
 
         baseMocks.ilike.mockReturnValue({
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         const result = await service.getTags("user-123", "Ital");
@@ -171,7 +182,7 @@ describe("TagService", () => {
 
       it("should return empty array when search query matches no tags", async () => {
         baseMocks.ilike.mockReturnValue({
-          then: (resolve: any) => resolve({ data: [], error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: [] as T, error: null }),
         });
 
         const result = await service.getTags("user-123", "NonExistentTag");
@@ -184,7 +195,7 @@ describe("TagService", () => {
         const mockTags = [{ id: "tag-1", name: "Spicy & Hot" }];
 
         baseMocks.ilike.mockReturnValue({
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         const result = await service.getTags("user-123", "Spicy & Hot");
@@ -204,7 +215,7 @@ describe("TagService", () => {
 
         baseMocks.order.mockReturnValue({
           ilike: baseMocks.ilike,
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         const result = await service.getTags("user-123", "");
@@ -221,7 +232,7 @@ describe("TagService", () => {
 
         baseMocks.order.mockReturnValue({
           ilike: baseMocks.ilike,
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         const result = await service.getTags("user-123", "   ");
@@ -234,7 +245,7 @@ describe("TagService", () => {
         const mockTags = [{ id: "tag-1", name: "Vegetarian" }];
 
         baseMocks.ilike.mockReturnValue({
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         const result = await service.getTags("user-123", "  Vegetarian  ");
@@ -250,7 +261,7 @@ describe("TagService", () => {
         ];
 
         baseMocks.ilike.mockReturnValue({
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         const result = await service.getTags("user-123", "A");
@@ -264,7 +275,7 @@ describe("TagService", () => {
         const mockTags = [{ id: "tag-1", name: longQuery }];
 
         baseMocks.ilike.mockReturnValue({
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         const result = await service.getTags("user-123", longQuery);
@@ -278,7 +289,7 @@ describe("TagService", () => {
       it("should handle Supabase database error gracefully", async () => {
         baseMocks.order.mockReturnValue({
           ilike: baseMocks.ilike,
-          then: (resolve: any) => resolve({ data: null, error: { message: "Connection timeout" } }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: null, error: { message: "Connection timeout" } }),
         });
 
         await expect(service.getTags("user-123")).rejects.toThrow("Failed to fetch tags: Connection timeout");
@@ -287,7 +298,8 @@ describe("TagService", () => {
       it("should handle permission/authorization errors", async () => {
         baseMocks.order.mockReturnValue({
           ilike: baseMocks.ilike,
-          then: (resolve: any) => resolve({ data: null, error: { message: "row level security violation" } }),
+          then: <T>(resolve: ThenableResolver<T>) =>
+            resolve({ data: null, error: { message: "row level security violation" } }),
         });
 
         await expect(service.getTags("unauthorized-user")).rejects.toThrow(
@@ -298,7 +310,7 @@ describe("TagService", () => {
       it("should handle case when query succeeds but returns null", async () => {
         baseMocks.order.mockReturnValue({
           ilike: baseMocks.ilike,
-          then: (resolve: any) => resolve({ data: null, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: null, error: null }),
         });
 
         const result = await service.getTags("user-123");
@@ -339,7 +351,7 @@ describe("TagService", () => {
 
         baseMocks.order.mockReturnValue({
           ilike: baseMocks.ilike,
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         await service.getTags("user-123");
@@ -354,7 +366,7 @@ describe("TagService", () => {
         const mockTags = [{ id: "tag-1", name: "Pasta" }];
 
         baseMocks.ilike.mockReturnValue({
-          then: (resolve: any) => resolve({ data: mockTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: mockTags as T, error: null }),
         });
 
         await service.getTags("user-123", "Pasta");
@@ -376,7 +388,7 @@ describe("TagService", () => {
         customMockSelect.mockReturnValue({ eq: customMockEq });
         customMockEq.mockReturnValue({ order: customMockOrder });
         customMockOrder.mockReturnValue({
-          then: (resolve: any) => resolve({ data: [], error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: [] as T, error: null }),
         });
 
         const customClient = { from: customMockFrom } as unknown as SupabaseClientType;
@@ -397,7 +409,7 @@ describe("TagService", () => {
 
         baseMocks.order.mockReturnValue({
           ilike: baseMocks.ilike,
-          then: (resolve: any) => resolve({ data: rawDbRecords, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: rawDbRecords as T, error: null }),
         });
 
         const result = await service.getTags("user-123");
@@ -421,7 +433,7 @@ describe("TagService", () => {
 
         baseMocks.order.mockReturnValue({
           ilike: baseMocks.ilike,
-          then: (resolve: any) => resolve({ data: orderedTags, error: null }),
+          then: <T>(resolve: ThenableResolver<T>) => resolve({ data: orderedTags as T, error: null }),
         });
 
         const result = await service.getTags("user-123");

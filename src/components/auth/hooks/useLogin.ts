@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import type { LoginSchemaType } from "@/lib/schemas/auth.schema";
 import { queryClient } from "@/store/query";
@@ -47,15 +48,18 @@ export function useLogin() {
   const mutation = useMutation(
     {
       mutationFn: loginUser,
-      onSuccess: () => {
-        window.location.href = "/recipes";
-      },
       onError: (error: Error) => {
         toast.error(`Login failed: ${error.message}`);
       },
     },
     queryClient
   );
+
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      window.location.href = "/recipes";
+    }
+  }, [mutation.isSuccess]);
 
   return {
     mutate: mutation.mutate,

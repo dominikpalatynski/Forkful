@@ -1,7 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useCallback, useMemo } from "react";
-import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Trash2, GripVertical } from "lucide-react";
@@ -66,56 +66,60 @@ export function DraggableIngredientItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-start gap-3 rounded-md transition-colors ${
+      className={`space-y-2 rounded-md p-3 transition-colors ${
         isOver ? "bg-accent/50" : ""
       } ${isDragging ? "opacity-50" : ""}`}
     >
-      {/* Drag Handle */}
-      <button
-        type="button"
-        className="flex-shrink-0 mt-3 p-1 cursor-grab active:cursor-grabbing hover:text-primary transition-colors text-muted-foreground"
-        aria-label={`Drag to reorder ingredient ${index + 1}`}
-        title="Drag to reorder"
-        {...dragHandleAttrs}
-      >
-        <GripVertical className="w-5 h-5" />
-      </button>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {/* Drag Handle */}
+          <button
+            type="button"
+            className="p-1 cursor-grab active:cursor-grabbing hover:text-primary transition-colors text-muted-foreground touch-none select-none"
+            aria-label={`Drag to reorder ingredient ${index + 1}`}
+            title="Drag to reorder"
+            {...dragHandleAttrs}
+          >
+            <GripVertical className="w-5 h-5" />
+          </button>
 
-      {/* Input Field */}
-      <div className="flex-1">
-        <FormField
-          control={control}
-          name={`ingredients.${index}.content`}
-          render={({ field: inputField }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder={`Składnik ${index + 1}`}
-                  autoComplete="off"
-                  {...inputField}
-                  disabled={isDragging}
-                  className={isDragging ? "opacity-50" : ""}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          {/* Ingredient Label */}
+          <FormLabel className="text-sm font-medium">Składnik {index + 1}</FormLabel>
+        </div>
+
+        {/* Remove Button */}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleRemoveClick}
+          className="flex items-center gap-2 text-destructive hover:text-destructive"
+          disabled={isDisabledRemove}
+          title={isDisabledRemove ? "Cannot remove the only ingredient" : "Remove ingredient"}
+        >
+          <Trash2 className="w-4 h-4" />
+        </Button>
       </div>
 
-      {/* Remove Button */}
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={handleRemoveClick}
-        className="flex-shrink-0 mt-2 flex items-center gap-2 text-destructive hover:text-destructive"
-        disabled={isDisabledRemove}
-        title={isDisabledRemove ? "Cannot remove the only ingredient" : "Remove ingredient"}
-      >
-        <Trash2 className="w-4 h-4" />
-      </Button>
+      {/* Input Field */}
+      <FormField
+        control={control}
+        name={`ingredients.${index}.content`}
+        render={({ field: inputField }) => (
+          <FormItem>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder={`Składnik ${index + 1}`}
+                autoComplete="off"
+                disabled={isDragging}
+                {...inputField}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 }

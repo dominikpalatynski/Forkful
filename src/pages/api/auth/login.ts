@@ -103,7 +103,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
 
       // Handle other service errors
-      console.error("Failed to authenticate user:", authError);
       return new Response(
         JSON.stringify({
           error: "Authentication failed",
@@ -125,9 +124,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
         "Content-Type": "application/json",
       },
     });
-  } catch (error) {
+  } catch {
     // Catch-all for unexpected errors
-    console.error("Unexpected error in POST /api/auth/login:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",

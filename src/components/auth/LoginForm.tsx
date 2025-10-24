@@ -31,15 +31,15 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Welcome back</CardTitle>
-        <CardDescription>Sign in to your account to continue</CardDescription>
+        <CardTitle className="text-2xl">Witaj z powrotem</CardTitle>
+        <CardDescription>Zaloguj się do swojego konta, aby kontynuować</CardDescription>
       </CardHeader>
 
       <CardContent>
         {isError && error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="text-sm">
-              <p className="font-medium text-red-800">Login failed</p>
+              <p className="font-medium text-red-800">Logowanie nie powiodło się</p>
               <p className="text-red-700 mt-1">{error.message}</p>
             </div>
           </div>
@@ -57,22 +57,22 @@ export function LoginForm() {
               disabled={!form.formState.isDirty || isPending}
               data-testid="auth-submit-button"
             >
-              {isPending ? "Signing in..." : "Sign in"}
+              {isPending ? "Logowanie..." : "Zaloguj się"}
             </Button>
           </form>
         </Form>
 
         <div className="text-center space-y-2 mt-6">
           <p className="text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
+            Nie masz jeszcze konta?{" "}
             <a href="/auth/register" className="text-primary hover:underline font-medium">
-              Sign up
+              Zarejestruj się
             </a>
           </p>
           <p className="text-sm text-muted-foreground">
-            Forgot your password?{" "}
+            Zapomniałeś hasła?{" "}
             <a href="/auth/forgot-password" className="text-primary hover:underline font-medium">
-              Reset password
+              Resetuj hasło
             </a>
           </p>
         </div>

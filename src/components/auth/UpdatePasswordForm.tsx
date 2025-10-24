@@ -38,7 +38,7 @@ export function UpdatePasswordForm() {
 
   // Show loading state during token verification
   if (tokenVerification.isPending) {
-    return <LoadingState message="Verifying reset link..." />;
+    return <LoadingState message="Weryfikowanie linku resetowania hasła..." />;
   }
 
   // Show error state if token verification failed
@@ -46,7 +46,7 @@ export function UpdatePasswordForm() {
     return (
       <ErrorState title="Invalid Reset Link" error={tokenVerification.error}>
         <a href="/auth/forgot-password" className="text-primary hover:underline font-medium">
-          Request a new password reset link
+          Poproś o nowy link resetowania hasła
         </a>
       </ErrorState>
     );

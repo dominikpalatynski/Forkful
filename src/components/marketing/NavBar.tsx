@@ -182,10 +182,10 @@ export function NavigationMenuDemo() {
       </div>
       <div className="flex items-center gap-3">
         <Button variant="ghost" asChild>
-          <a href="/auth/login">Sign In</a>
+          <a href="/auth/login">Zaloguj się</a>
         </Button>
         <Button asChild>
-          <a href="/auth/register">Sign Up</a>
+          <a href="/auth/register">Zarejestruj się</a>
         </Button>
       </div>
     </div>
