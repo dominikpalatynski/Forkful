@@ -52,7 +52,7 @@ export default function FooterSection() {
             <LinkedinIcon className="h-5 w-5" />
           </a>
           <a href="/terms" className="hover:text-foreground transition-colors text-sm">
-            Terms & Privacy
+            Polityka prywatności
           </a>
         </div>
       </FooterBottom>
