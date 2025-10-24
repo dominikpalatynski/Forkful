@@ -33,3 +33,42 @@ export interface AIFormActionButtonsProps {
   onCancel: () => void;
   isSubmitting: boolean;
 }
+
+/** Dialog object interface */
+export interface DialogState {
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+}
+
+/** Props dla AIRecipeFormInputPhase */
+export interface AIRecipeFormInputPhaseProps {
+  inputText: string;
+  onInputChange: (value: string) => void;
+  onGenerate: (inputText: string) => void;
+  isGenerating: boolean;
+  hasData: boolean;
+  onBack: () => void;
+  confirmCancelDialog: DialogState;
+}
+
+/** Props dla AIRecipeFormEditPhase */
+export interface AIRecipeFormEditPhaseProps {
+  generatedData: import("@/types").GeneratedRecipeDto;
+  generationId: string;
+  onSubmit: (data: import("@/types").CreateRecipeCommand) => void;
+  hasData: boolean;
+  onCancel: () => void;
+  isSubmitting: boolean;
+  confirmCancelDialog: DialogState;
+  backToTextDialog: DialogState;
+}
+
+/** Props dla AIRecipeFormConfirmationDialogs */
+export interface AIRecipeFormConfirmationDialogsProps {
+  phase: AIRecipeFormPhase;
+  confirmCancelDialog: DialogState;
+  backToTextDialog: DialogState;
+  onConfirmCancel: () => void;
+  onConfirmBackToText: () => void;
+}

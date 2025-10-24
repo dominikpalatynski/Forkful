@@ -10,6 +10,19 @@ import { queryClient } from "@/store/query";
  * @throws Error if the fetch fails or response is not OK
  */
 async function fetchRecipeById(recipeId: string): Promise<RecipeDetailDto> {
+
+  if (recipeId === "skip-fetch") {
+    return {
+      id: "",
+      name: "",
+      description: "",
+      created_at: "",
+      ingredients: [],
+      steps: [],
+      tags: [],
+    };
+  }
+
   const response = await fetch(`/api/recipes/${recipeId}`);
 
   if (!response.ok) {
