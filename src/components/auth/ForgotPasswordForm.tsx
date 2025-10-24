@@ -30,9 +30,7 @@ export function ForgotPasswordForm() {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Resetuj swoje hasło</CardTitle>
-        <CardDescription>
-          Wpisz swój adres e-mail i wyślemy Ci link do resetowania hasła
-        </CardDescription>
+        <CardDescription>Wpisz swój adres e-mail i wyślemy Ci link do resetowania hasła</CardDescription>
       </CardHeader>
 
       <CardContent>

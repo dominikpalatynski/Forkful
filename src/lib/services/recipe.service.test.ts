@@ -2,6 +2,15 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { RecipeService, NotFoundError, ForbiddenError } from "./recipe.service";
 import type { SupabaseClientType } from "../../db/supabase.client";
 
+// Type definitions for test mocks
+type MockFn = ReturnType<typeof vi.fn>;
+
+// Type helper to access internal/private methods for testing
+type RecipeServiceInternal = RecipeService & {
+  getRecipeById: (recipeId: string, userId: string) => Promise<unknown>;
+  rollbackRecipeUpdate: (recipeId: string) => Promise<void>;
+};
+
 // Create reusable mock functions for Supabase fluent API
 const createBaseMocks = () => {
   const mockSingle = vi.fn();
@@ -1476,9 +1485,9 @@ describe("RecipeService", () => {
   });
 
   describe("getRecipesForUser()", () => {
-    let mockRange: any;
-    let mockOrder: any;
-    let mockEqTag: any;
+    let mockRange: MockFn;
+    let mockOrder: MockFn;
+    let mockEqTag: MockFn;
 
     // Helper function to generate valid UUIDs for testing
     const generateUUID = (index: number) => `550e8400-e29b-41d4-a716-4466554400${index.toString().padStart(2, "0")}`;
@@ -2015,21 +2024,23 @@ describe("RecipeService", () => {
         const localRecipeService = new RecipeService(mockSupabaseClient);
 
         // Mock final getRecipeById
-        const mockGetRecipeById = vi.spyOn(localRecipeService as any, "getRecipeById").mockResolvedValue({
-          id: testRecipeId,
-          name: "Updated Recipe Name",
-          description: "Updated description",
-          created_at: "2024-01-15T10:30:00Z",
-          ingredients: [
-            { id: "ing-1", content: "Updated ingredient 1", position: 1 },
-            { id: "new-ing-2", content: "New ingredient 2", position: 2 },
-          ],
-          steps: [
-            { id: "step-1", content: "Updated step 1", position: 1 },
-            { id: "new-step-2", content: "New step 2", position: 2 },
-          ],
-          tags: ["Updated", "New"],
-        });
+        const mockGetRecipeById = vi
+          .spyOn(localRecipeService as RecipeServiceInternal, "getRecipeById")
+          .mockResolvedValue({
+            id: testRecipeId,
+            name: "Updated Recipe Name",
+            description: "Updated description",
+            created_at: "2024-01-15T10:30:00Z",
+            ingredients: [
+              { id: "ing-1", content: "Updated ingredient 1", position: 1 },
+              { id: "new-ing-2", content: "New ingredient 2", position: 2 },
+            ],
+            steps: [
+              { id: "step-1", content: "Updated step 1", position: 1 },
+              { id: "new-step-2", content: "New step 2", position: 2 },
+            ],
+            tags: ["Updated", "New"],
+          });
 
         const result = await localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId);
 
@@ -2118,21 +2129,23 @@ describe("RecipeService", () => {
         const localRecipeService = new RecipeService(mockSupabaseClient);
 
         // Mock final getRecipeById
-        const mockGetRecipeById = vi.spyOn(localRecipeService as any, "getRecipeById").mockResolvedValue({
-          id: testRecipeId,
-          name: "New Name",
-          description: "New description",
-          created_at: "2024-01-15T10:30:00Z",
-          ingredients: [
-            { id: "ing-1", content: "Existing ingredient 1", position: 1 },
-            { id: "ing-2", content: "Existing ingredient 2", position: 2 },
-          ],
-          steps: [
-            { id: "step-1", content: "Existing step 1", position: 1 },
-            { id: "step-2", content: "Existing step 2", position: 2 },
-          ],
-          tags: ["Existing", "Tags"],
-        });
+        const mockGetRecipeById = vi
+          .spyOn(localRecipeService as RecipeServiceInternal, "getRecipeById")
+          .mockResolvedValue({
+            id: testRecipeId,
+            name: "New Name",
+            description: "New description",
+            created_at: "2024-01-15T10:30:00Z",
+            ingredients: [
+              { id: "ing-1", content: "Existing ingredient 1", position: 1 },
+              { id: "ing-2", content: "Existing ingredient 2", position: 2 },
+            ],
+            steps: [
+              { id: "step-1", content: "Existing step 1", position: 1 },
+              { id: "step-2", content: "Existing step 2", position: 2 },
+            ],
+            tags: ["Existing", "Tags"],
+          });
 
         const result = await localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId);
 
@@ -2238,20 +2251,22 @@ describe("RecipeService", () => {
         const localRecipeService = new RecipeService(mockSupabaseClient);
 
         // Mock final getRecipeById
-        const mockGetRecipeById = vi.spyOn(localRecipeService as any, "getRecipeById").mockResolvedValue({
-          id: testRecipeId,
-          name: "Recipe Name",
-          description: "Description",
-          created_at: "2024-01-15T10:30:00Z",
-          ingredients: [
-            { id: "ing-1", content: "Existing ingredient 1", position: 1 },
-            { id: "ing-2", content: "Existing ingredient 2", position: 2 },
-            { id: "new-ing-3", content: "New ingredient 3", position: 3 },
-            { id: "new-ing-4", content: "New ingredient 4", position: 4 },
-          ],
-          steps: [],
-          tags: [],
-        });
+        const mockGetRecipeById = vi
+          .spyOn(localRecipeService as RecipeServiceInternal, "getRecipeById")
+          .mockResolvedValue({
+            id: testRecipeId,
+            name: "Recipe Name",
+            description: "Description",
+            created_at: "2024-01-15T10:30:00Z",
+            ingredients: [
+              { id: "ing-1", content: "Existing ingredient 1", position: 1 },
+              { id: "ing-2", content: "Existing ingredient 2", position: 2 },
+              { id: "new-ing-3", content: "New ingredient 3", position: 3 },
+              { id: "new-ing-4", content: "New ingredient 4", position: 4 },
+            ],
+            steps: [],
+            tags: [],
+          });
 
         const result = await localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId);
 
@@ -2338,18 +2353,20 @@ describe("RecipeService", () => {
         const localRecipeService = new RecipeService(mockSupabaseClient);
 
         // Mock final getRecipeById
-        const mockGetRecipeById = vi.spyOn(localRecipeService as any, "getRecipeById").mockResolvedValue({
-          id: testRecipeId,
-          name: "Recipe Name",
-          description: "Description",
-          created_at: "2024-01-15T10:30:00Z",
-          ingredients: [
-            { id: "ing-1", content: "Updated ingredient 1", position: 1 },
-            { id: "ing-3", content: "Updated ingredient 3", position: 2 },
-          ],
-          steps: [],
-          tags: [],
-        });
+        const mockGetRecipeById = vi
+          .spyOn(localRecipeService as RecipeServiceInternal, "getRecipeById")
+          .mockResolvedValue({
+            id: testRecipeId,
+            name: "Recipe Name",
+            description: "Description",
+            created_at: "2024-01-15T10:30:00Z",
+            ingredients: [
+              { id: "ing-1", content: "Updated ingredient 1", position: 1 },
+              { id: "ing-3", content: "Updated ingredient 3", position: 2 },
+            ],
+            steps: [],
+            tags: [],
+          });
 
         const result = await localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId);
 
@@ -2429,19 +2446,21 @@ describe("RecipeService", () => {
         const localRecipeService = new RecipeService(mockSupabaseClient);
 
         // Mock final getRecipeById
-        const mockGetRecipeById = vi.spyOn(localRecipeService as any, "getRecipeById").mockResolvedValue({
-          id: testRecipeId,
-          name: "Recipe Name",
-          description: "Description",
-          created_at: "2024-01-15T10:30:00Z",
-          ingredients: [
-            { id: "new-ing-1", content: "New ingredient 1", position: 1 },
-            { id: "new-ing-2", content: "New ingredient 2", position: 2 },
-            { id: "new-ing-3", content: "New ingredient 3", position: 3 },
-          ],
-          steps: [],
-          tags: [],
-        });
+        const mockGetRecipeById = vi
+          .spyOn(localRecipeService as RecipeServiceInternal, "getRecipeById")
+          .mockResolvedValue({
+            id: testRecipeId,
+            name: "Recipe Name",
+            description: "Description",
+            created_at: "2024-01-15T10:30:00Z",
+            ingredients: [
+              { id: "new-ing-1", content: "New ingredient 1", position: 1 },
+              { id: "new-ing-2", content: "New ingredient 2", position: 2 },
+              { id: "new-ing-3", content: "New ingredient 3", position: 3 },
+            ],
+            steps: [],
+            tags: [],
+          });
 
         const result = await localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId);
 
@@ -2515,15 +2534,17 @@ describe("RecipeService", () => {
         const localRecipeService = new RecipeService(mockSupabaseClient);
 
         // Mock final getRecipeById
-        const mockGetRecipeById = vi.spyOn(localRecipeService as any, "getRecipeById").mockResolvedValue({
-          id: testRecipeId,
-          name: "Recipe Name",
-          description: "Description",
-          created_at: "2024-01-15T10:30:00Z",
-          ingredients: [],
-          steps: [],
-          tags: [],
-        });
+        const mockGetRecipeById = vi
+          .spyOn(localRecipeService as RecipeServiceInternal, "getRecipeById")
+          .mockResolvedValue({
+            id: testRecipeId,
+            name: "Recipe Name",
+            description: "Description",
+            created_at: "2024-01-15T10:30:00Z",
+            ingredients: [],
+            steps: [],
+            tags: [],
+          });
 
         const result = await localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId);
 
@@ -2618,15 +2639,17 @@ describe("RecipeService", () => {
         const localRecipeService = new RecipeService(mockSupabaseClient);
 
         // Mock final getRecipeById
-        const mockGetRecipeById = vi.spyOn(localRecipeService as any, "getRecipeById").mockResolvedValue({
-          id: testRecipeId,
-          name: "Recipe Name",
-          description: "Description",
-          created_at: "2024-01-15T10:30:00Z",
-          ingredients: [],
-          steps: [],
-          tags: ["Vegetarian", "Easy", "New"],
-        });
+        const mockGetRecipeById = vi
+          .spyOn(localRecipeService as RecipeServiceInternal, "getRecipeById")
+          .mockResolvedValue({
+            id: testRecipeId,
+            name: "Recipe Name",
+            description: "Description",
+            created_at: "2024-01-15T10:30:00Z",
+            ingredients: [],
+            steps: [],
+            tags: ["Vegetarian", "Easy", "New"],
+          });
 
         const result = await localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId);
 
@@ -2699,15 +2722,17 @@ describe("RecipeService", () => {
         const localRecipeService = new RecipeService(mockSupabaseClient);
 
         // Mock final getRecipeById
-        const mockGetRecipeById = vi.spyOn(localRecipeService as any, "getRecipeById").mockResolvedValue({
-          id: testRecipeId,
-          name: "Recipe Name",
-          description: "Description",
-          created_at: "2024-01-15T10:30:00Z",
-          ingredients: [],
-          steps: [],
-          tags: [],
-        });
+        const mockGetRecipeById = vi
+          .spyOn(localRecipeService as RecipeServiceInternal, "getRecipeById")
+          .mockResolvedValue({
+            id: testRecipeId,
+            name: "Recipe Name",
+            description: "Description",
+            created_at: "2024-01-15T10:30:00Z",
+            ingredients: [],
+            steps: [],
+            tags: [],
+          });
 
         const result = await localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId);
 
@@ -2796,15 +2821,17 @@ describe("RecipeService", () => {
         const localRecipeService = new RecipeService(mockSupabaseClient);
 
         // Mock final getRecipeById
-        const mockGetRecipeById = vi.spyOn(localRecipeService as any, "getRecipeById").mockResolvedValue({
-          id: testRecipeId,
-          name: "Recipe Name",
-          description: "Description",
-          created_at: "2024-01-15T10:30:00Z",
-          ingredients: [],
-          steps: [],
-          tags: ["Vegetarian", "Quick"],
-        });
+        const mockGetRecipeById = vi
+          .spyOn(localRecipeService as RecipeServiceInternal, "getRecipeById")
+          .mockResolvedValue({
+            id: testRecipeId,
+            name: "Recipe Name",
+            description: "Description",
+            created_at: "2024-01-15T10:30:00Z",
+            ingredients: [],
+            steps: [],
+            tags: ["Vegetarian", "Quick"],
+          });
 
         const result = await localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId);
 
@@ -2943,7 +2970,7 @@ describe("RecipeService", () => {
 
         // Mock rollback
         const mockRollbackRecipeUpdate = vi
-          .spyOn(localRecipeService as any, "rollbackRecipeUpdate")
+          .spyOn(localRecipeService as RecipeServiceInternal, "rollbackRecipeUpdate")
           .mockResolvedValue(undefined);
 
         await expect(localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId)).rejects.toThrow(
@@ -3046,7 +3073,7 @@ describe("RecipeService", () => {
 
         // Mock rollback
         const mockRollbackRecipeUpdate = vi
-          .spyOn(localRecipeService as any, "rollbackRecipeUpdate")
+          .spyOn(localRecipeService as RecipeServiceInternal, "rollbackRecipeUpdate")
           .mockResolvedValue(undefined);
 
         await expect(localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId)).rejects.toThrow(); // Expect any error to be thrown
@@ -3140,7 +3167,7 @@ describe("RecipeService", () => {
 
         // Mock rollback
         const mockRollbackRecipeUpdate = vi
-          .spyOn(localRecipeService as any, "rollbackRecipeUpdate")
+          .spyOn(localRecipeService as RecipeServiceInternal, "rollbackRecipeUpdate")
           .mockResolvedValue(undefined);
 
         await expect(localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId)).rejects.toThrow(); // Expect any error to be thrown
@@ -3217,7 +3244,7 @@ describe("RecipeService", () => {
 
         // Mock rollback
         const mockRollbackRecipeUpdate = vi
-          .spyOn(localRecipeService as any, "rollbackRecipeUpdate")
+          .spyOn(localRecipeService as RecipeServiceInternal, "rollbackRecipeUpdate")
           .mockResolvedValue(undefined);
 
         await expect(localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId)).rejects.toThrow(
@@ -3316,7 +3343,7 @@ describe("RecipeService", () => {
 
         // Mock rollback
         const mockRollbackRecipeUpdate = vi
-          .spyOn(localRecipeService as any, "rollbackRecipeUpdate")
+          .spyOn(localRecipeService as RecipeServiceInternal, "rollbackRecipeUpdate")
           .mockResolvedValue(undefined);
 
         await expect(localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId)).rejects.toThrow(
@@ -3411,7 +3438,7 @@ describe("RecipeService", () => {
 
         // Mock rollback
         const mockRollbackRecipeUpdate = vi
-          .spyOn(localRecipeService as any, "rollbackRecipeUpdate")
+          .spyOn(localRecipeService as RecipeServiceInternal, "rollbackRecipeUpdate")
           .mockResolvedValue(undefined);
 
         await expect(localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId)).rejects.toThrow(
@@ -3493,12 +3520,12 @@ describe("RecipeService", () => {
 
         // Mock getRecipeById to fail
         const mockGetRecipeById = vi
-          .spyOn(localRecipeService as any, "getRecipeById")
+          .spyOn(localRecipeService as RecipeServiceInternal, "getRecipeById")
           .mockRejectedValue(new Error("Fetch failed"));
 
         // Mock rollback
         const mockRollbackRecipeUpdate = vi
-          .spyOn(localRecipeService as any, "rollbackRecipeUpdate")
+          .spyOn(localRecipeService as RecipeServiceInternal, "rollbackRecipeUpdate")
           .mockResolvedValue(undefined);
 
         await expect(localRecipeService.updateRecipe(testRecipeId, updateRecipeData, testUserId)).rejects.toThrow(

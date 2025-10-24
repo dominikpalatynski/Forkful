@@ -43,10 +43,10 @@ export function CreateRecipeIngredientsList({ control }: CreateRecipeIngredients
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 300,      // Hold for 300ms before drag starts
-        tolerance: 8,    // Allow 8px of movement during the delay
+        delay: 300, // Hold for 300ms before drag starts
+        tolerance: 8, // Allow 8px of movement during the delay
       },
-    }),
+    })
   );
 
   // Memoize the ingredient IDs for the SortableContext
