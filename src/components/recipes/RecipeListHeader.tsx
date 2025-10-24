@@ -14,15 +14,20 @@ export function RecipeListHeader({ searchValue, onSearchChange }: RecipeListHead
   }, []);
 
   return (
-    <header className="mb-6 flex justify-between items-center gap-4">
-      <div className="flex-1">
+    <header className="mb-6 flex flex-col md:flex-row md:justify-between md:items-center gap-3 md:gap-4">
+      <div className="w-full md:flex-1">
         <SearchInput value={searchValue} onChange={onSearchChange} placeholder="Szukaj przepisów..." />
       </div>
-      <div className="flex gap-2">
-        <Button variant="outline" onClick={handleNewAI} data-testid="recipe-new-ai-button">
+      <div className="flex gap-2 w-full md:w-auto">
+        <Button
+          variant="outline"
+          onClick={handleNewAI}
+          data-testid="recipe-new-ai-button"
+          className="flex-1 md:flex-none min-h-11"
+        >
           <Sparkles className="mr-2 h-4 w-4" /> Z AI
         </Button>
-        <Button onClick={handleNew} data-testid="recipe-new-button">
+        <Button onClick={handleNew} data-testid="recipe-new-button" className="flex-1 md:flex-none min-h-11">
           <Plus className="mr-2 h-4 w-4" /> Nowy przepis
         </Button>
       </div>
