@@ -60,11 +60,11 @@ export function useAIRecipeFormFlow() {
   );
 
   /**
-   * Handler for navigating back to home
+   * Handler for navigating back to recipes page
    */
   const handleBack = useCallback(() => {
     reset();
-    window.location.href = "/";
+    window.location.href = "/recipes";
   }, [reset]);
 
   /**
@@ -82,7 +82,7 @@ export function useAIRecipeFormFlow() {
    */
   const handleConfirmCancel = useCallback(() => {
     reset();
-    window.location.href = "/";
+    window.location.href = "/recipes";
   }, [reset]);
 
   /**

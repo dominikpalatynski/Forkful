@@ -59,6 +59,24 @@ const reactConfig = tseslint.config({
   },
 });
 
+// Node.js config for files that run in Node.js environment
+const nodeConfig = tseslint.config({
+  files: ["**/*.config.{js,ts,mjs}", "**/*.config.js", "playwright.config.js"],
+  languageOptions: {
+    globals: {
+      process: "readonly",
+      console: "readonly",
+      Buffer: "readonly",
+      __dirname: "readonly",
+      __filename: "readonly",
+      global: "readonly",
+      module: "readonly",
+      require: "readonly",
+      exports: "readonly",
+    },
+  },
+});
+
 // Test files config - more relaxed rules
 const testConfig = tseslint.config({
   files: ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"],
@@ -73,6 +91,7 @@ export default tseslint.config(
   baseConfig,
   jsxA11yConfig,
   reactConfig,
+  nodeConfig,
   testConfig,
   eslintPluginAstro.configs["flat/recommended"],
   eslintPluginPrettier

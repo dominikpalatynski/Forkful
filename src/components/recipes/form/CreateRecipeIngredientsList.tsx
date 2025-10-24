@@ -99,6 +99,7 @@ export function CreateRecipeIngredientsList({ control }: CreateRecipeIngredients
             size="sm"
             onClick={handleAddIngredient}
             className="flex items-center gap-2"
+            data-testid="recipe-button-add-ingredient"
           >
             <Plus className="w-4 h-4" />
             Dodaj składnik

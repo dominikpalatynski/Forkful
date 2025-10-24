@@ -106,6 +106,7 @@ export function CreateRecipeTagInput({ control }: CreateRecipeTagInputProps) {
               onKeyDown={handleKeyPress}
               className="w-full"
               autoComplete="off"
+              data-testid="recipe-input-tag"
             />
 
             {/* Suggestions dropdown */}
@@ -136,6 +137,7 @@ export function CreateRecipeTagInput({ control }: CreateRecipeTagInputProps) {
             onClick={handleAddTag}
             disabled={!newTagValue.trim()}
             className="flex items-center gap-2"
+            data-testid="recipe-button-add-tag"
           >
             <Plus className="w-4 h-4" />
             Dodaj

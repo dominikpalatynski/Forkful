@@ -37,11 +37,18 @@ export function AIFormActionButtons({ onBackToTextEdit, onCancel, isSubmitting }
 
       {/* Przyciski po prawej stronie */}
       <div className="flex items-center gap-4">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting} className="px-6">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          disabled={isSubmitting}
+          className="px-6"
+          data-testid="ai-recipe-button-cancel"
+        >
           Anuluj
         </Button>
 
-        <Button type="submit" disabled={isSubmitting} className="px-6">
+        <Button type="submit" disabled={isSubmitting} className="px-6" data-testid="ai-recipe-button-submit">
           {isSubmitting ? "Zapisywanie..." : "Zapisz przepis"}
         </Button>
       </div>

@@ -1,8 +1,15 @@
 ---
-import DashboardLayout from "../layouts/DashboardLayout.astro";
-import { RecipeListView } from "../components/recipes/RecipeListView";
+import Layout from "../layouts/Layout.astro";
+import Features from "../components/marketing/Features";
+import HeroSection from "../components/marketing/HeroSection";
 ---
 
-<DashboardLayout>
-  <RecipeListView client:load />
-</DashboardLayout>
+<Layout>
+  <main>
+    <div class="min-h-screen grid place-items-center">
+      <!-- <Hero client:load heading="Forkful" description="Forkful is a platform for creating and sharing recipes." button={{ text: "Get Started", url: "/auth/login" }} /> -->
+      <HeroSection client:load />
+      <Features client:load />
+    </div>
+  </main>
+</Layout>

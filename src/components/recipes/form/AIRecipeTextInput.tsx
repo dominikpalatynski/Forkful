@@ -94,6 +94,7 @@ export const AIRecipeTextInput = React.memo<AIRecipeTextInputProps>(
               onClick={onBack}
               disabled={isGenerating}
               aria-label="Wróć do listy przepisów"
+              data-testid="ai-recipe-button-back"
             >
               <ArrowLeft />
             </Button>
@@ -125,6 +126,7 @@ export const AIRecipeTextInput = React.memo<AIRecipeTextInputProps>(
                     autoFocus
                     className="min-h-[200px] resize-y"
                     aria-describedby="char-counter"
+                    data-testid="ai-recipe-input-text"
                   />
                 </FormControl>
                 <div className="flex items-center justify-between">
@@ -142,7 +144,12 @@ export const AIRecipeTextInput = React.memo<AIRecipeTextInputProps>(
 
           {/* Przycisk Generuj */}
           <div className="flex justify-end">
-            <Button type="submit" disabled={!isValid || isGenerating} className="gap-2">
+            <Button
+              type="submit"
+              disabled={!isValid || isGenerating}
+              className="gap-2"
+              data-testid="ai-recipe-button-generate"
+            >
               <Sparkles className="size-4" />
               {isGenerating ? "Generowanie..." : "Generuj przepis"}
             </Button>

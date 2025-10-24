@@ -23,7 +23,7 @@ import {
  * - Three actions available:
  *   1. "Save recipe" → POST /api/recipes → redirect to /recipes/:id
  *   2. "Back to text edit" → return to 'input' phase (preserves text)
- *   3. "Cancel" → redirect to /
+ *   3. "Cancel" → redirect to /recipes
  *
  * Architecture:
  * - State managed by Zustand store with localStorage persistence
@@ -121,7 +121,7 @@ export function AIRecipeForm() {
     <div className="space-y-4">
       <p className="text-muted-foreground">Wystąpił błąd w przepływie tworzenia przepisu. Spróbuj ponownie.</p>
       <button type="button" onClick={handleBack} className="text-primary hover:underline">
-        Wróć do strony głównej
+        Wróć do listy przepisów
       </button>
     </div>
   );

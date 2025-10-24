@@ -94,7 +94,14 @@ export function CreateRecipeStepsList({ control }: CreateRecipeStepsListProps) {
       <EditableSectionHeader
         title="Kroki przygotowania"
         action={
-          <Button type="button" variant="outline" size="sm" onClick={handleAddStep} className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleAddStep}
+            className="flex items-center gap-2"
+            data-testid="recipe-button-add-step"
+          >
             <Plus className="w-4 h-4" />
             Dodaj krok
           </Button>

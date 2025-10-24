@@ -38,6 +38,10 @@ const validateRequest = defineMiddleware(async ({ locals, url, redirect }, next)
       };
     }
 
+    if (user && url.pathname.startsWith("/auth/")) {
+      return redirect("/recipes");
+    }
+
     // Skip auth check for public paths
     if (PUBLIC_PATHS.includes(url.pathname)) {
       return next();
@@ -54,7 +58,6 @@ const validateRequest = defineMiddleware(async ({ locals, url, redirect }, next)
           },
         });
       }
-
       // Redirect to login for protected routes
       return redirect("/auth/login");
     }
