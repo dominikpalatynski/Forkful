@@ -1,0 +1,49 @@
+{
+  "component": "HeroSection",
+  "version": "1.0",
+  "variants": {
+    "primary": {
+      "badge": {
+        "label": "AI-Powered",
+        "description": "Dla wszystkich, którzy kochają gotować"
+      },
+      "headline": {
+        "line1": "Twoja cyfrowa książka kucharska.",
+        "line2": "Bez żmudnego przepisywania.",
+        "highlightedWord": "Bez"
+      },
+      "description": {
+        "line1": "Wklej tekst przepisu z dowolnego źródła, a Forkful automatycznie wyodrębni składniki i kroki.",
+        "line2": "Zbuduj uporządkowaną bazę swoich kulinarnych inspiracji w kilka sekund."
+      },
+      "cta": {
+        "text": "Zacznij za darmo",
+        "url": "/auth/register"
+      }
+    },
+    "alternative": {
+      "badge": {
+        "label": "AI-Powered",
+        "description": "Dla wszystkich, którzy kochają gotować"
+      },
+      "headline": {
+        "line1": "Zapisuj przepisy błyskawicznie.",
+        "line2": "AI zrobi to za Ciebie.",
+        "highlightedWord": "błyskawicznie"
+      },
+      "description": {
+        "line1": "Koniec z przepisywaniem przepisów ręcznie. Wklej tekst, a AI natychmiast przygotuje dla Ciebie",
+        "line2": "uporządkowany przepis ze składnikami, krokami i tagami."
+      },
+      "cta": {
+        "text": "Wypróbuj teraz",
+        "url": "/auth/register"
+      }
+    }
+  },
+  "image": {
+    "alt": "Forkful - Aplikacja do zarządzania przepisami",
+    "currentSrc": "https://cdn.shadcnstudio.com/ss-assets/blocks/marketing/hero/image-19.png",
+    "note": "Rozważ zamianę na zdjęcie przedstawiające uporządkowaną cyfrową bibliotekę przepisów lub osobę łatwo dodającą przepis przez telefon"
+  }
+}

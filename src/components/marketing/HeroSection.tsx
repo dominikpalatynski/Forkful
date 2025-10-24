@@ -3,19 +3,19 @@ import { Button } from "@/components/ui/button";
 
 const HeroSection = () => {
   return (
-    <section className="flex min-h-[calc(100dvh-4rem)] flex-1 flex-col justify-between gap-12 overflow-x-hidden pt-8 sm:gap-16 sm:pt-16 lg:gap-24 lg:pt-24">
+    <section className="flex flex-1 flex-col gap-12 overflow-x-hidden pt-8 sm:gap-12 sm:pt-16 lg:gap-16 lg:pt-24">
       {/* Hero Content */}
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-8 px-4 text-center sm:px-6 lg:px-8">
         <div className="bg-muted flex items-center gap-2.5 rounded-full border px-3 py-2">
           <Badge className="rounded-full">AI-Powered</Badge>
-          <span className="text-muted-foreground">Solution for client-facing businesses</span>
+          <span className="text-muted-foreground">Dla wszystkich, którzy kochają gotować</span>
         </div>
 
         <h1 className="text-3xl leading-[1.29167] font-bold text-balance sm:text-4xl lg:text-5xl">
-          Sizzling Summer Delights
+          Twoja cyfrowa książka kucharska.
           <br />
           <span className="relative">
-            Effortless
+            Bez
             <svg
               width="223"
               height="12"
@@ -45,24 +45,24 @@ const HeroSection = () => {
               </defs>
             </svg>
           </span>{" "}
-          Recipes for Parties!
+          żmudnego przepisywania.
         </h1>
 
         <p className="text-muted-foreground">
-          Dive into a world of flavor this summer with our collection of Sizzling Summer Delights!
+          Wklej tekst przepisu z dowolnego źródła, a Forkful automatycznie wyodrębni składniki i kroki.
           <br />
-          From refreshing appetizers to delightful desserts
+          Zbuduj uporządkowaną bazę swoich kulinarnych inspiracji w kilka sekund.
         </p>
 
         <Button size="lg" asChild>
-          <a href="/auth/register">Try It Now</a>
+          <a href="/auth/register">Zacznij za darmo</a>
         </Button>
       </div>
 
       {/* Image */}
       <img
         src="https://cdn.shadcnstudio.com/ss-assets/blocks/marketing/hero/image-19.png"
-        alt="Dishes"
+        alt="Forkful - Aplikacja do zarządzania przepisami"
         className="min-h-67 w-full object-cover"
       />
     </section>
