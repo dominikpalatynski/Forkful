@@ -75,8 +75,6 @@ export class AuthService {
         throw error;
       }
 
-      // Handle unexpected errors
-      console.error("Unexpected error during login:", error);
       throw new Error("An unexpected error occurred during authentication. Please try again.");
     }
   }
@@ -156,9 +154,6 @@ export class AuthService {
       if (error instanceof Error && error.message.startsWith("Logout failed:")) {
         throw error;
       }
-
-      // Handle unexpected errors
-      console.error("Unexpected error during logout:", error);
       throw new Error("An unexpected error occurred during logout. Please try again.");
     }
   }
@@ -200,9 +195,6 @@ export class AuthService {
       if (error instanceof ValidationError) {
         throw error;
       }
-
-      // Handle unexpected errors
-      console.error("Unexpected error during password reset:", error);
       throw new Error("An unexpected error occurred while processing your password reset request. Please try again.");
     }
   }
@@ -251,9 +243,6 @@ export class AuthService {
       if (error instanceof AuthenticationError || error instanceof ValidationError) {
         throw error;
       }
-
-      // Handle unexpected errors
-      console.error("Unexpected error during password reset:", error);
       throw new Error("An unexpected error occurred while updating your password. Please try again.");
     }
   }
@@ -326,9 +315,6 @@ export class AuthService {
       if (error instanceof AuthenticationError || error instanceof ValidationError) {
         throw error;
       }
-
-      // Handle unexpected errors
-      console.error("Unexpected error during token verification:", error);
       throw new Error("An unexpected error occurred while verifying your password reset token. Please try again.");
     }
   }

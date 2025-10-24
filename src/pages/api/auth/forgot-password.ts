@@ -85,7 +85,6 @@ export const POST: APIRoute = async ({ request, locals, url }) => {
       }
 
       // Handle other service errors
-      console.error("Failed to initiate password reset:", authError);
       return new Response(
         JSON.stringify({
           error: "Password reset failed",
@@ -108,9 +107,8 @@ export const POST: APIRoute = async ({ request, locals, url }) => {
         "Content-Type": "application/json",
       },
     });
-  } catch (error) {
+  } catch {
     // Catch-all for unexpected errors
-    console.error("Unexpected error in POST /api/auth/forgot-password:", error);
     return new Response(
       JSON.stringify({
         error: "Internal server error",

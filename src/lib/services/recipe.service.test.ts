@@ -756,6 +756,8 @@ describe("RecipeService", () => {
         const existenceCheckResult = { data: { id: testRecipeId, user_id: testUserId }, error: null };
         const recipeFetchResult = { data: null, error: { message: "Recipe fetch failed" } };
 
+        // Track select calls to differentiate between existence check and full fetch
+        let selectCallCount = 0;
         baseMocks.from.mockImplementation((tableName: string) => {
           if (tableName === "recipes") {
             return {
@@ -764,7 +766,20 @@ describe("RecipeService", () => {
                   single: vi.fn().mockResolvedValue(recipeInsertResult),
                 }),
               }),
-              select: baseMocks.select,
+              select: vi.fn(() => {
+                selectCallCount++;
+                return {
+                  eq: vi.fn(() => ({
+                    eq: vi.fn(() => ({
+                      single: vi
+                        .fn()
+                        .mockResolvedValue(selectCallCount === 1 ? existenceCheckResult : recipeFetchResult),
+                    })),
+                    single: vi.fn().mockResolvedValue(selectCallCount === 1 ? existenceCheckResult : recipeFetchResult),
+                  })),
+                  single: vi.fn().mockResolvedValue(selectCallCount === 1 ? existenceCheckResult : recipeFetchResult),
+                };
+              }),
               delete: vi.fn().mockReturnValue({
                 eq: vi.fn().mockResolvedValue({}),
               }),
@@ -772,9 +787,6 @@ describe("RecipeService", () => {
           }
           return { select: baseMocks.select, insert: baseMocks.insert, update: baseMocks.update, delete: vi.fn() };
         });
-
-        baseMocks.single.mockResolvedValueOnce(existenceCheckResult);
-        baseMocks.single.mockResolvedValueOnce(recipeFetchResult);
 
         await expect(recipeService.createRecipe(createRecipeData, testUserId)).rejects.toThrow(
           "Failed to fetch recipe details: Recipe fetch failed"
@@ -799,6 +811,8 @@ describe("RecipeService", () => {
           error: null,
         };
 
+        // Track select calls to differentiate between existence check and full fetch
+        let selectCallCount = 0;
         baseMocks.from.mockImplementation((tableName: string) => {
           if (tableName === "recipes") {
             return {
@@ -807,7 +821,24 @@ describe("RecipeService", () => {
                   single: vi.fn().mockResolvedValue(recipeInsertResult),
                 }),
               }),
-              select: baseMocks.select,
+              select: vi.fn(() => {
+                selectCallCount++;
+                return {
+                  eq: vi.fn(() => ({
+                    eq: vi.fn(() => ({
+                      single: vi
+                        .fn()
+                        .mockResolvedValue(selectCallCount === 1 ? existenceCheckResult : invalidRecipeFetchResult),
+                    })),
+                    single: vi
+                      .fn()
+                      .mockResolvedValue(selectCallCount === 1 ? existenceCheckResult : invalidRecipeFetchResult),
+                  })),
+                  single: vi
+                    .fn()
+                    .mockResolvedValue(selectCallCount === 1 ? existenceCheckResult : invalidRecipeFetchResult),
+                };
+              }),
               delete: vi.fn().mockReturnValue({
                 eq: vi.fn().mockResolvedValue({}),
               }),
@@ -815,9 +846,6 @@ describe("RecipeService", () => {
           }
           return { select: baseMocks.select, insert: baseMocks.insert, update: baseMocks.update, delete: vi.fn() };
         });
-
-        baseMocks.single.mockResolvedValueOnce(existenceCheckResult);
-        baseMocks.single.mockResolvedValueOnce(invalidRecipeFetchResult);
 
         await expect(recipeService.createRecipe(createRecipeData, testUserId)).rejects.toThrow(
           "Invalid recipe data structure:"
