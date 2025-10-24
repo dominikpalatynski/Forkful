@@ -8,6 +8,7 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
+  TouchSensor,
 } from "@dnd-kit/core";
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,13 @@ export function CreateRecipeIngredientsList({ control }: CreateRecipeIngredients
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 300,      // Hold for 300ms before drag starts
+        tolerance: 8,    // Allow 8px of movement during the delay
+      },
+    }),
   );
 
   // Memoize the ingredient IDs for the SortableContext

@@ -69,7 +69,7 @@ export function DraggableStepItem({ field, index, control, onRemove, isDisabledR
           {/* Drag Handle */}
           <button
             type="button"
-            className="p-1 cursor-grab active:cursor-grabbing hover:text-primary transition-colors text-muted-foreground"
+            className="p-1 cursor-grab active:cursor-grabbing hover:text-primary transition-colors text-muted-foreground touch-none select-none"
             aria-label={`Drag to reorder step ${index + 1}`}
             title="Drag to reorder"
             {...dragHandleAttrs}

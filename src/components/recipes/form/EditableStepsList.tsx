@@ -8,6 +8,7 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
+  TouchSensor,
 } from "@dnd-kit/core";
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
@@ -34,11 +35,19 @@ export function EditableStepsList({ control }: EditableStepsListProps) {
   // Configure sensors for drag interactions (mouse + keyboard)
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      distance: 8, // Minimum distance before drag is triggered
+      activationConstraint: {
+        distance: 8, // Minimum distance before drag is triggered
+      },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 300,      // Hold for 300ms before drag starts
+        tolerance: 8,    // Allow 8px of movement during the delay
+      },
+    }),
   );
 
   // Memoize the step IDs for the SortableContext

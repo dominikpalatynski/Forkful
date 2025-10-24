@@ -73,7 +73,7 @@ export function DraggableIngredientItem({
       {/* Drag Handle */}
       <button
         type="button"
-        className="flex-shrink-0 mt-3 p-1 cursor-grab active:cursor-grabbing hover:text-primary transition-colors text-muted-foreground"
+        className="flex-shrink-0 mt-3 p-1 cursor-grab active:cursor-grabbing hover:text-primary transition-colors text-muted-foreground touch-none select-none"
         aria-label={`Drag to reorder ingredient ${index + 1}`}
         title="Drag to reorder"
         {...dragHandleAttrs}
