@@ -58,7 +58,8 @@ const featuresListPrepared = [
     title: "Bezpieczna prywatna kolekcja",
     description:
       "Twoje przepisy są dostępne tylko dla Ciebie. Buduj osobistą cyfrową książkę kucharską bez obaw o prywatność, z pełnym dostępem z każdego urządzenia.",
-    cardBorderColor: "border-violet-600/40 hover:border-violet-600 dark:border-violet-400/40 dark:hover:border-violet-400",
+    cardBorderColor:
+      "border-violet-600/40 hover:border-violet-600 dark:border-violet-400/40 dark:hover:border-violet-400",
     avatarTextColor: "text-violet-600 dark:text-violet-400",
     avatarBgColor: "bg-violet-600/10 dark:bg-violet-400/10",
   },
@@ -88,9 +89,12 @@ const Features = ({ featuresList = featuresListPrepared }: { featuresList?: Feat
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-12 space-y-4 sm:mb-16 lg:mb-24">
-          <h2 className="text-2xl font-semibold md:text-3xl lg:text-4xl">Wszystko, czego potrzebujesz do cyfrowej książki kucharskiej</h2>
+          <h2 className="text-2xl font-semibold md:text-3xl lg:text-4xl">
+            Wszystko, czego potrzebujesz do cyfrowej książki kucharskiej
+          </h2>
           <p className="text-muted-foreground text-xl">
-            Odkryj funkcje zaprojektowane z myślą o oszczędności Twojego czasu. Inteligentne przetwarzanie AI, łatwa edycja i pełna kontrola nad Twoją kolekcją przepisów.
+            Odkryj funkcje zaprojektowane z myślą o oszczędności Twojego czasu. Inteligentne przetwarzanie AI, łatwa
+            edycja i pełna kontrola nad Twoją kolekcją przepisów.
           </p>
           <Button variant="outline" className="rounded-lg text-base shadow-none has-[>svg]:px-6" size="lg">
             Zobacz wszystkie funkcje

@@ -1,16 +1,3 @@
-import * as React from "react";
-import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
-
-import { useIsMobile } from "@/hooks/use-mobile";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 
 // const components: { title: string; href: string; description: string }[] = [
@@ -48,21 +35,21 @@ import { Button } from "@/components/ui/button";
 //   },
 // ];
 
-function ListItem({ title, children, href, ...props }: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
-  return (
-    <li {...props}>
-      <NavigationMenuLink asChild>
-        <a href={href}>
-          <div className="text-sm leading-none font-medium">{title}</div>
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-}
+// function ListItem({ title, children, href, ...props }: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
+//   return (
+//     <li {...props}>
+//       <NavigationMenuLink asChild>
+//         <a href={href}>
+//           <div className="text-sm leading-none font-medium">{title}</div>
+//           <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</p>
+//         </a>
+//       </NavigationMenuLink>
+//     </li>
+//   );
+// }
 
 export function NavigationMenuDemo() {
-  const isMobile = useIsMobile();
+  // const isMobile = useIsMobile();
 
   return (
     <div className="flex items-center justify-between w-full max-w-7xl px-4">
@@ -101,7 +88,7 @@ export function NavigationMenuDemo() {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem> */}
-            {/* <NavigationMenuItem>
+        {/* <NavigationMenuItem>
               <NavigationMenuTrigger>Components</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid gap-2 sm:w-[400px] md:w-[500px] md:grid-cols-2 lg:w-[600px]">
@@ -113,12 +100,12 @@ export function NavigationMenuDemo() {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem> */}
-            {/* <NavigationMenuItem>
+        {/* <NavigationMenuItem>
               <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
                 <a href="/docs">Docs</a>
               </NavigationMenuLink>
             </NavigationMenuItem> */}
-            {/* <NavigationMenuItem className="hidden md:block">
+        {/* <NavigationMenuItem className="hidden md:block">
               <NavigationMenuTrigger>List</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[300px] gap-4">
@@ -145,7 +132,7 @@ export function NavigationMenuDemo() {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem> */}
-            {/* <NavigationMenuItem className="hidden md:block">
+        {/* <NavigationMenuItem className="hidden md:block">
               <NavigationMenuTrigger>Simple</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[200px] gap-4">
@@ -190,7 +177,7 @@ export function NavigationMenuDemo() {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem> */}
-          {/* </NavigationMenuList>
+        {/* </NavigationMenuList>
         </NavigationMenu> */}
       </div>
       <div className="flex items-center gap-3">
